@@ -44,6 +44,7 @@ func ConnectDatabase() {
 		&models.Player{},
 		&models.Game{},
 		&models.Match{},
+		&models.TournamentTeam{},
 		&models.Tournament{},
 		&models.User{},
 	)

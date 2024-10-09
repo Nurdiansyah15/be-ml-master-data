@@ -29,11 +29,17 @@ func CreateTeamInTournament(c *gin.Context) {
 		return
 	}
 
-	match := models.Match{
-		TournamentID: uint(tournamentID),
-		HomeTeamID:   requestBody.TeamID,
+	var team models.Team
+	if err := config.DB.First(&team, requestBody.TeamID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
+		return
 	}
-	err := config.DB.Create(&match).Error
+
+	tournamentTeams := models.TournamentTeam{
+		TournamentID: uint(tournamentID),
+		TeamID:       uint(requestBody.TeamID),
+	}
+	err := config.DB.Create(&tournamentTeams).Error
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -48,8 +54,8 @@ func GetAllTeamsInTournament(c *gin.Context) {
 
 	// Menggunakan query untuk mendapatkan tim yang terlibat dalam turnamen tertentu
 	if err := config.DB.Model(&models.Team{}).
-		Joins("JOIN matches ON teams.team_id = matches.home_team_id OR teams.team_id = matches.away_team_id").
-		Where("matches.tournament_id = ?", tournamentID).
+		Joins("JOIN tournament_teams ON teams.team_id = tournament_teams.team_id").
+		Where("tournament_teams.tournament_id = ?", tournamentID).
 		Distinct().
 		Find(&teams).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
