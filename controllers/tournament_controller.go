@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
 	"ml-master-data/config" // Ganti dengan path yang sesuai untuk package database Anda
@@ -24,13 +23,20 @@ func GetAllTournaments(c *gin.Context) {
 
 // CreateTournament creates a new tournament
 func CreateTournament(c *gin.Context) {
-	var tournament models.Tournament
-	if err := c.ShouldBindJSON(&tournament); err != nil {
+	input := struct {
+		Name   string `json:"name" binding:"required"`
+		Season string `json:"season" binding:"required"`
+	}{}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	fmt.Println(tournament)
+	var tournament models.Tournament
+
+	tournament.Name = input.Name
+	tournament.Season = input.Season
 
 	if err := config.DB.Create(&tournament).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -43,6 +49,11 @@ func CreateTournament(c *gin.Context) {
 // UpdateTournament updates an existing tournament
 func UpdateTournament(c *gin.Context) {
 	tournamentID := c.Param("tournamentID")
+	if tournamentID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Tournament ID is required"})
+		return
+	}
+
 	var tournament models.Tournament
 
 	if err := config.DB.First(&tournament, tournamentID).Error; err != nil {
@@ -50,9 +61,21 @@ func UpdateTournament(c *gin.Context) {
 		return
 	}
 
-	if err := c.ShouldBindJSON(&tournament); err != nil {
+	input := struct {
+		Name   string `json:"name"`
+		Season string `json:"season"`
+	}{}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
+	}
+
+	if input.Name != "" {
+		tournament.Name = input.Name
+	}
+	if input.Season != "" {
+		tournament.Season = input.Season
 	}
 
 	// Update the tournament's name

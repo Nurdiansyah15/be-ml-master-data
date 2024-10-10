@@ -13,8 +13,13 @@ import (
 // CreateTeamInTournament adds a team to a tournament
 func CreateTeamInTournament(c *gin.Context) {
 	tournamentID, _ := strconv.Atoi(c.Param("tournamentID"))
+	if tournamentID == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Tournament ID is required"})
+		return
+	}
+
 	var requestBody struct {
-		TeamID uint `json:"team_id" binding:"required"`
+		TeamID uint `json:"teamID" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&requestBody); err != nil {
@@ -39,6 +44,12 @@ func CreateTeamInTournament(c *gin.Context) {
 		TournamentID: uint(tournamentID),
 		TeamID:       uint(requestBody.TeamID),
 	}
+
+	if err := config.DB.Where("tournament_id = ? AND team_id = ?", tournamentID, requestBody.TeamID).First(&tournamentTeams).Error; err == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Team already added to tournament"})
+		return
+	}
+
 	err := config.DB.Create(&tournamentTeams).Error
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

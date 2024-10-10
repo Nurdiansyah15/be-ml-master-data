@@ -1,0 +1,545 @@
+{
+  "info": {
+    "name": "Tournament API Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/login",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"username\": \"your_username\", \"password\": \"your_password\" }"
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/logout",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tournaments",
+      "item": [
+        {
+          "name": "Get All Tournaments",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/tournaments"
+          }
+        },
+        {
+          "name": "Create Tournament",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/tournaments",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Tournament Name\" }"
+            }
+          }
+        },
+        {
+          "name": "Update Tournament",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/tournaments/{{tournamentID}}",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Updated Tournament Name\" }"
+            }
+          }
+        },
+        {
+          "name": "Delete Tournament",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/tournaments/{{tournamentID}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Team Management in Tournament",
+      "item": [
+        {
+          "name": "Get All Teams in Tournament",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/tournaments/{{tournamentID}}/teams"
+          }
+        },
+        {
+          "name": "Create Team in Tournament",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/tournaments/{{tournamentID}}/teams",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"teamID\": \"123\" }"
+            }
+          }
+        },
+        {
+          "name": "Delete Team from Tournament",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/tournaments/{{tournamentID}}/teams/{{teamID}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Match Management in Tournament",
+      "item": [
+        {
+          "name": "Get All Matches for a Team in Tournament",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/tournaments/{{tournamentID}}/teams/{{teamID}}/matches"
+          }
+        },
+        {
+          "name": "Create Match for a Team in Tournament",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/tournaments/{{tournamentID}}/teams/{{teamID}}/matches",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"week\": 1, \"day\": \"Monday\", \"date\": \"2024-10-08\", \"time\": \"16:00\" }"
+            }
+          }
+        },
+        {
+          "name": "Update Match in Tournament",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/matches/{{matchID}}",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"opponentTeamID\": \"456\" }"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Game Management",
+      "item": [
+        {
+          "name": "Create Game for a Match",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/matches/{{matchID}}/games",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"gameNumber\": 123, \"firstPickTeamID\": \"123\", \"secondPickTeamID\": \"456\", \"winnerTeamID\": \"123\" }"
+            }
+          }
+        },
+        {
+          "name": "Get All Games for a Match",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/matches/{{matchID}}/games"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Player & Coach Stats Management",
+      "item": [
+        {
+          "name": "Add Player Stats",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/matches/{{matchID}}/player-stats",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"playerID\": \"789\", \"gameRate\": 8.5, \"matchRate\": 9.0 }"
+            }
+          }
+        },
+        {
+          "name": "Add Coach Stats",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/matches/{{matchID}}/coach-stats",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"coachID\": \"987\", \"gameRate\": 7.0, \"matchRate\": 7.5 }"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Hero Picks & Bans Management",
+      "item": [
+        {
+          "name": "Add Flex Picks",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/matches/{{matchID}}/flex-picks",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"heroID\": \"123\", \"teamID\": \"456\", \"total\": 5, \"role\": \"support\", \"ratePick\": 3.5 }"
+            }
+          }
+        },
+        {
+          "name": "Add Priority Bans",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/matches/{{matchID}}/priority-bans",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"heroID\": \"789\", \"teamID\": \"456\", \"total\": 3, \"role\": \"tank\", \"rateBan\": 2.5 }"
+            }
+          }
+        },
+        {
+          "name": "Add Priority Picks",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/matches/{{matchID}}/priority-picks",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"heroID\": \"456\", \"teamID\": \"123\", \"total\": 7, \"role\": \"carry\", \"ratePick\": 4.0 }"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Master Data",
+      "item": [
+        {
+          "name": "Create Team",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/teams",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Team Name\", \"logo\": \"URL to logo\" }"
+            }
+          }
+        },
+        {
+          "name": "Edit Team",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/teams/{{teamID}}",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Updated Team Name\", \"logo\": \"URL to updated logo\" }"
+            }
+          }
+        },
+        {
+          "name": "Get All Teams",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/teams"
+          }
+        },
+        {
+          "name": "Get All Players and Coaches in Team",
+          "item": [
+            {
+              "name": "Get All Players in Team",
+              "request": {
+                "method": "GET",
+                "url": "{{base_url}}/api/teams/{{teamID}}/players"
+              }
+            },
+            {
+              "name": "Get All Coaches in Team",
+              "request": {
+                "method": "GET",
+                "url": "{{base_url}}/api/teams/{{teamID}}/coaches"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Player",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/teams/{{teamID}}/players",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Player Name\", \"role\": \"Role\", \"image\": \"URL to image\" }"
+            }
+          }
+        },
+        {
+          "name": "Update Player",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/players/{{playerID}}",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"teamID\": \"123\", \"name\": \"Updated Player Name\", \"role\": \"Updated Role\", \"image\": \"Updated URL to image\" }"
+            }
+          }
+        },
+        {
+          "name": "Create Coach",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/teams/{{teamID}}/coaches",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Coach Name\", \"role\": \"Role\", \"image\": \"URL to image\" }"
+            }
+          }
+        },
+        {
+          "name": "Update Coach",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/coaches/{{coachID}}",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"teamID\": \"123\", \"name\": \"Updated Coach Name\", \"role\": \"Updated Role\", \"image\": \"Updated URL to image\" }"
+            }
+          }
+        },
+        {
+          "name": "Create Hero",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/heroes",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Hero Name\", \"image\": \"URL to image\" }"
+            }
+          }
+        },
+        {
+          "name": "Edit Hero",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/heroes/{{heroID}}",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Updated Hero Name\", \"image\": \"Updated URL to image\" }"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

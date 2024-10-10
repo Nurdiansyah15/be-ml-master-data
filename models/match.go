@@ -7,8 +7,8 @@ type Match struct {
 	Week             string
 	Day              string
 	Date             int
-	HomeTeamScore    int
-	AwayTeamScore    int
-	WinnerTeamID     uint
-	TotalGames       int
+	// HomeTeamScore    int
+	// AwayTeamScore    int
+	// WinnerTeamID     uint
+	// TotalGames       int
 }
