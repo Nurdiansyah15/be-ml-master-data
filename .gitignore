@@ -1,0 +1,35 @@
+# Go binary files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Dependency directories
+/vendor/
+bin/
+obj/
+
+# Test binary, build cache, and other temporary files
+*.test
+*.out
+*.log
+*.tmp
+*.swp
+
+# IDE files
+.idea/
+*.sublime-workspace
+*.sublime-project
+*.vscode/
+*.code-workspace
+
+# Environment variables
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# khusus folder public/images
+public/images/

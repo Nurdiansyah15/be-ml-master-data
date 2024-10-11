@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"ml-master-data/models"
 	"ml-master-data/utils"
 	"strings"
 
@@ -36,8 +37,14 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		user := models.User{
+			UserID:   claims.UserID,
+			Username: claims.Subject,
+		}
+
 		// Set the userID in the context for later use
 		c.Set("userID", claims.UserID)
+		c.Set("user", user)
 		c.Next()
 	}
 }

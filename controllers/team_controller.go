@@ -1,9 +1,14 @@
 package controllers
 
 import (
+	"fmt"
 	"ml-master-data/config"
 	"ml-master-data/models"
+	"ml-master-data/utils"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,23 +26,40 @@ func GetAllTeams(c *gin.Context) {
 
 func CreateTeam(c *gin.Context) {
 
-	input := struct {
-		Name string `json:"name" binding:"required"`
-		Logo string `json:"logo"`
-	}{}
-
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	name := c.Request.FormValue("name")
+	if name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Name is required"})
 		return
 	}
 
-	if input.Logo == "" {
-		input.Logo = "https://placehold.co/400x600"
+	file, err := c.FormFile("logo")
+	var logoPath string
+
+	if err != nil {
+		logoPath = "https://placehold.co/400x600"
+	} else {
+
+		ext := strings.ToLower(filepath.Ext(file.Filename))
+
+		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file type"})
+			return
+		}
+
+		newFileName := utils.GenerateUniqueFileName("team") + ext
+		logoPath = fmt.Sprintf("public/images/%s", newFileName)
+
+		if err := c.SaveUploadedFile(file, logoPath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save logo file"})
+			return
+		}
+
+		logoPath = os.Getenv("BASE_URL") + "/" + logoPath
 	}
 
 	team := models.Team{
-		Name: input.Name,
-		Logo: input.Logo,
+		Name: name,
+		Logo: logoPath,
 	}
 
 	if err := config.DB.Create(&team).Error; err != nil {
@@ -49,41 +71,73 @@ func CreateTeam(c *gin.Context) {
 }
 
 func UpdateTeam(c *gin.Context) {
+	// Ambil parameter teamID dari URL
 	teamID := c.Param("teamID")
 	if teamID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID is required"})
 		return
 	}
 
+	// Cari tim di database
 	var team models.Team
-
 	if err := config.DB.First(&team, teamID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
 		return
 	}
 
-	input := struct {
-		Name string `json:"name"`
-		Logo string `json:"logo"`
-	}{}
+	// Tangkap data form dari request (name dan logo jika ada file)
+	name := c.Request.FormValue("name")
 
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	// Jika ada perubahan name, update
+	if name != "" {
+		team.Name = name
 	}
 
-	if input.Name != "" {
-		team.Name = input.Name
-	}
-	if input.Logo != "" {
-		team.Logo = input.Logo
+	// Tangani file logo baru jika ada
+	file, err := c.FormFile("logo")
+	if err == nil {
+
+		ext := strings.ToLower(filepath.Ext(file.Filename))
+
+		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file type"})
+			return
+		}
+
+		// Jika ada file logo baru, hapus logo lama
+		if team.Logo != "" && team.Logo != "https://placehold.co/400x600" {
+			team.Logo = strings.Replace(team.Logo, os.Getenv("BASE_URL")+"/", "", 1)
+			// Cek apakah file logo lama ada di sistem
+			if _, err := os.Stat(team.Logo); err == nil {
+				// Jika file ada, hapus file logo lama dari folder images
+				if err := os.Remove(team.Logo); err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove old logo"})
+					return
+				}
+			} else if os.IsNotExist(err) {
+				// Jika file tidak ada, berikan pesan peringatan (opsional)
+				c.JSON(http.StatusNotFound, gin.H{"warning": "Old logo not found, skipping deletion"})
+			}
+		}
+
+		newFileName := utils.GenerateUniqueFileName("team") + ext
+		newLogoPath := fmt.Sprintf("public/images/%s", newFileName)
+		if err := c.SaveUploadedFile(file, newLogoPath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save new logo"})
+			return
+		}
+
+		// Update path logo di database
+		team.Logo = os.Getenv("BASE_URL") + "/" + newLogoPath
 	}
 
+	// Simpan perubahan ke database
 	if err := config.DB.Save(&team).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	// Kembalikan response sukses
 	c.JSON(http.StatusOK, team)
 }
 
@@ -93,82 +147,127 @@ func CreatePlayerInTeam(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID is required"})
 		return
 	}
-	var requestBody struct {
-		Name  string `json:"name" binding:"required"`
-		Role  string `json:"role" binding:"required"`
-		Image string `json:"image" binding:"required"`
-	}
 
-	if err := c.ShouldBindJSON(&requestBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// Tangkap data name dan role dari form-data
+	name := c.Request.FormValue("name")
+	role := c.Request.FormValue("role")
+
+	if name == "" || role == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Name and Role are required"})
 		return
 	}
 
+	// Cari tim di database berdasarkan teamID
 	var team models.Team
 	if err := config.DB.First(&team, teamID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
 		return
 	}
 
-	if requestBody.Image == "" {
-		requestBody.Image = "https://placehold.co/400x600"
+	// Tangani file gambar jika ada
+	file, err := c.FormFile("image")
+	var imagePath string
+	if err != nil {
+		// Jika tidak ada file yang diupload, gunakan placeholder
+		imagePath = "https://placehold.co/400x600"
+	} else {
+		ext := strings.ToLower(filepath.Ext(file.Filename))
+
+		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file type"})
+			return
+		}
+
+		newFileName := utils.GenerateUniqueFileName("player") + ext
+		imagePath = fmt.Sprintf("public/images/%s", newFileName)
+		if err := c.SaveUploadedFile(file, imagePath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
+			return
+		}
+
+		imagePath = os.Getenv("BASE_URL") + "/" + imagePath
 	}
 
+	// Buat objek Player
 	player := models.Player{
-		Name:   requestBody.Name,
-		Role:   requestBody.Role,
-		Image:  requestBody.Image,
+		Name:   name,
+		Role:   role,
+		Image:  imagePath,
 		TeamID: team.TeamID,
 	}
 
+	// Simpan player ke database
 	if err := config.DB.Create(&player).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	// Kembalikan response sukses
 	c.JSON(http.StatusCreated, player)
 }
 
 func CreateCoachInTeam(c *gin.Context) {
+	// Ambil parameter teamID dari URL
 	teamID := c.Param("teamID")
 	if teamID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID is required"})
 		return
 	}
 
-	var requestBody struct {
-		Name  string `json:"name" binding:"required"`
-		Role  string `json:"role" binding:"required"`
-		Image string `json:"image" binding:"required"`
-	}
-
-	if err := c.ShouldBindJSON(&requestBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
+	// Cari tim di database berdasarkan teamID
 	var team models.Team
 	if err := config.DB.First(&team, teamID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
 		return
 	}
 
-	if requestBody.Image == "" {
-		requestBody.Image = "https://placehold.co/400x600"
+	// Tangkap data name dan role dari form-data
+	name := c.Request.FormValue("name")
+	role := c.Request.FormValue("role")
+
+	if name == "" || role == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Name and Role are required"})
+		return
 	}
 
+	// Tangani file gambar jika ada
+	file, err := c.FormFile("image")
+	var imagePath string
+	if err != nil {
+		// Jika tidak ada file yang diupload, gunakan placeholder
+		imagePath = "https://placehold.co/400x600"
+	} else {
+		ext := strings.ToLower(filepath.Ext(file.Filename))
+
+		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file type"})
+			return
+		}
+
+		newFileName := utils.GenerateUniqueFileName("coach") + ext
+		imagePath = fmt.Sprintf("public/images/%s", newFileName)
+		if err := c.SaveUploadedFile(file, imagePath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
+			return
+		}
+		imagePath = os.Getenv("BASE_URL") + "/" + imagePath
+	}
+
+	// Buat objek Coach
 	coach := models.Coach{
-		Name:   requestBody.Name,
-		Role:   requestBody.Role,
-		Image:  requestBody.Image,
+		Name:   name,
+		Role:   role,
+		Image:  imagePath,
 		TeamID: team.TeamID,
 	}
 
+	// Simpan coach ke database
 	if err := config.DB.Create(&coach).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	// Kembalikan response sukses
 	c.JSON(http.StatusCreated, coach)
 }
 
@@ -178,81 +277,135 @@ func UpdatePlayerInTeam(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Player ID is required"})
 		return
 	}
-	var requestBody struct {
-		Name  string `json:"name"`
-		Role  string `json:"role"`
-		Image string `json:"image"`
-	}
 
-	if err := c.ShouldBindJSON(&requestBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
+	// Mencari pemain berdasarkan playerID
 	var player models.Player
 	if err := config.DB.First(&player, playerID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Player not found"})
 		return
 	}
 
-	if requestBody.Name != "" {
-		player.Name = requestBody.Name
+	// Menangkap data name dan role dari form-data
+	name := c.Request.FormValue("name")
+	role := c.Request.FormValue("role")
+
+	// Update data jika ada input baru
+	if name != "" {
+		player.Name = name
 	}
-	if requestBody.Role != "" {
-		player.Role = requestBody.Role
-	}
-	if requestBody.Image != "" {
-		player.Image = requestBody.Image
+	if role != "" {
+		player.Role = role
 	}
 
+	// Tangani file gambar jika ada
+	file, err := c.FormFile("image")
+	if err == nil {
+		ext := strings.ToLower(filepath.Ext(file.Filename))
+
+		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file type"})
+			return
+		}
+
+		// Cek apakah file image lama ada di sistem dan hapus jika ada
+		if player.Image != "" && player.Image != "https://placehold.co/400x600" {
+			player.Image = strings.Replace(player.Image, os.Getenv("BASE_URL")+"/", "", 1)
+			if _, err := os.Stat(player.Image); err == nil {
+				if err := os.Remove(player.Image); err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove old image"})
+					return
+				}
+			}
+		}
+
+		newFileName := utils.GenerateUniqueFileName("player") + ext
+		imagePath := fmt.Sprintf("public/images/%s", newFileName)
+		if err := c.SaveUploadedFile(file, imagePath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save new image"})
+			return
+		}
+
+		// Update path image di database
+		player.Image = os.Getenv("BASE_URL") + "/" + imagePath
+	}
+
+	// Simpan perubahan ke database
 	if err := config.DB.Save(&player).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	// Kembalikan response sukses
 	c.JSON(http.StatusOK, player)
 }
 
 func UpdateCoachInTeam(c *gin.Context) {
+	// Ambil parameter coachID dari URL
 	coachID := c.Param("coachID")
-
 	if coachID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Coach ID is required"})
 		return
 	}
 
-	var requestBody struct {
-		Name  string `json:"name"`
-		Role  string `json:"role"`
-		Image string `json:"image"`
-	}
-
-	if err := c.ShouldBindJSON(&requestBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
+	// Cari pelatih di database berdasarkan coachID
 	var coach models.Coach
 	if err := config.DB.First(&coach, coachID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Coach not found"})
 		return
 	}
 
-	if requestBody.Name != "" {
-		coach.Name = requestBody.Name
+	// Tangkap data name dan role dari form-data
+	name := c.Request.FormValue("name")
+	role := c.Request.FormValue("role")
+
+	// Update data jika ada input baru
+	if name != "" {
+		coach.Name = name
 	}
-	if requestBody.Role != "" {
-		coach.Role = requestBody.Role
-	}
-	if requestBody.Image != "" {
-		coach.Image = requestBody.Image
+	if role != "" {
+		coach.Role = role
 	}
 
+	// Tangani file gambar jika ada
+	file, err := c.FormFile("image")
+	if err == nil {
+
+		ext := strings.ToLower(filepath.Ext(file.Filename))
+
+		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file type"})
+			return
+		}
+
+		// Cek apakah file image lama ada di sistem dan hapus jika ada
+		if coach.Image != "" && coach.Image != "https://placehold.co/400x600" {
+			coach.Image = strings.Replace(coach.Image, os.Getenv("BASE_URL")+"/", "", 1)
+			if _, err := os.Stat(coach.Image); err == nil {
+				if err := os.Remove(coach.Image); err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove old image"})
+					return
+				}
+			}
+		}
+
+		newFileName := utils.GenerateUniqueFileName("coach") + ext
+		imagePath := fmt.Sprintf("public/images/%s", newFileName)
+		if err := c.SaveUploadedFile(file, imagePath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save new image"})
+			return
+		}
+
+		// Update path image di database
+		coach.Image = os.Getenv("BASE_URL") + "/" + imagePath
+	}
+
+	// Simpan perubahan ke database
 	if err := config.DB.Save(&coach).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	// Kembalikan response sukses
 	c.JSON(http.StatusOK, coach)
 }
 

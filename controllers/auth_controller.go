@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"ml-master-data/config"
 	"ml-master-data/models"
 	"ml-master-data/utils"
@@ -31,11 +32,23 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, err := utils.GenerateJWT(user.ID)
+	token, err := utils.GenerateJWT(user)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Could not generate token"})
 		return
 	}
 
 	c.JSON(200, gin.H{"token": token})
+}
+
+func Me(c *gin.Context) {
+	userCtx, _ := c.Get("user")
+
+	fmt.Println(userCtx)
+
+	var user models.User
+	user.UserID = userCtx.(models.User).UserID
+	user.Username = userCtx.(models.User).Username
+
+	c.JSON(200, gin.H{"user": user})
 }

@@ -2,6 +2,7 @@ package utils
 
 import (
 	"errors"
+	"ml-master-data/models"
 	"os"
 	"time"
 
@@ -13,7 +14,7 @@ type JWTClaim struct {
 	jwt.RegisteredClaims
 }
 
-func GenerateJWT(userID uint) (string, error) {
+func GenerateJWT(user models.User) (string, error) {
 	// Get JWT secret from environment variable
 	jwtSecret := os.Getenv("JWT_SECRET")
 	if jwtSecret == "" {
@@ -22,13 +23,13 @@ func GenerateJWT(userID uint) (string, error) {
 
 	// Create claims with multiple fields populated
 	claims := JWTClaim{
-		UserID: userID,
+		UserID: user.UserID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 			Issuer:    "ml-master-data-api",
-			Subject:   "user-token",
+			Subject:   user.Username,
 		},
 	}
 

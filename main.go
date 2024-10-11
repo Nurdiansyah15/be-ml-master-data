@@ -20,5 +20,6 @@ func main() {
 	seeders.Seed()
 
 	r := routes.SetupRouter()
+	r.Static("/public", "./public")
 	r.Run(":8080")
 }

@@ -24,6 +24,9 @@ func SetupRouter() *gin.Engine {
 	protected := r.Group("/api")
 	protected.Use(middlewares.AuthMiddleware())
 	{
+
+		protected.GET("/me", controllers.Me)
+
 		protected.GET("/tournaments", controllers.GetAllTournaments)
 		protected.POST("/tournaments", controllers.CreateTournament)              //ok
 		protected.PUT("/tournaments/:tournamentID", controllers.UpdateTournament) //ok
@@ -31,10 +34,6 @@ func SetupRouter() *gin.Engine {
 
 		protected.POST("/tournaments/:tournamentID/teams", controllers.CreateTeamInTournament) //ok
 		protected.GET("/tournaments/:tournamentID/teams", controllers.GetAllTeamsInTournament)
-
-		protected.GET("/teams", controllers.GetAllTeams)
-		protected.POST("/teams", controllers.CreateTeam)        //ok
-		protected.PUT("/teams/:teamID", controllers.UpdateTeam) //ok
 
 		protected.GET("/tournaments/:tournamentID/teams/:teamID/matches", controllers.GetAllTeamMatchesinTournament)
 		protected.POST("/tournaments/:tournamentID/teams/:teamID/matches", controllers.CreateTeamMatchinTournament) //ok
@@ -44,17 +43,21 @@ func SetupRouter() *gin.Engine {
 		protected.PUT("games/:gameID", controllers.UpdateMatchGame)           //ok
 		protected.GET("matches/:matchID/games", controllers.GetAllGameMatches)
 
+		protected.GET("/teams", controllers.GetAllTeams)
+		protected.POST("/teams", controllers.CreateTeam)        //ok image ok
+		protected.PUT("/teams/:teamID", controllers.UpdateTeam) //ok image ok
+
 		protected.GET("teams/:teamID/coaches", controllers.GetAllCoachesInTeam)
-		protected.POST("teams/:teamID/coaches", controllers.CreateCoachInTeam) //ok
-		protected.PUT("coaches/:coachID", controllers.UpdateCoachInTeam)       //ok
+		protected.POST("teams/:teamID/coaches", controllers.CreateCoachInTeam) //ok image ok
+		protected.PUT("coaches/:coachID", controllers.UpdateCoachInTeam)       //ok image ok
 
 		protected.GET("teams/:teamID/players", controllers.GetAllPlayersInTeam)
-		protected.POST("teams/:teamID/players", controllers.CreatePlayerInTeam) //ok
-		protected.PUT("players/:playerID", controllers.UpdatePlayerInTeam)      //ok
+		protected.POST("teams/:teamID/players", controllers.CreatePlayerInTeam) //ok image ok
+		protected.PUT("players/:playerID", controllers.UpdatePlayerInTeam)      //ok image ok
 
 		protected.GET("heroes", controllers.GetAllHeroes)
-		protected.POST("heroes", controllers.CreateHero)        //ok
-		protected.PUT("heroes/:heroID", controllers.UpdateHero) //ok
+		protected.POST("heroes", controllers.CreateHero)        //ok image ok
+		protected.PUT("heroes/:heroID", controllers.UpdateHero) //ok image ok
 
 		protected.POST("matches/:matchID/player-stats", controllers.AddPlayerStatsToMatch) //ok
 		protected.PUT("player-stats/:playerStatID", controllers.UpdatePlayerStats)         //ok
