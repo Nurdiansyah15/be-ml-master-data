@@ -28,6 +28,7 @@ func SetupRouter() *gin.Engine {
 		protected.GET("/me", controllers.Me)
 
 		protected.GET("/tournaments", controllers.GetAllTournaments)
+		protected.GET(("/tournaments/:tournamentID"), controllers.GetTournamentByID)
 		protected.POST("/tournaments", controllers.CreateTournament)              //ok
 		protected.PUT("/tournaments/:tournamentID", controllers.UpdateTournament) //ok
 		protected.DELETE("/tournaments/:tournamentID", controllers.DeleteTournament)
@@ -36,6 +37,7 @@ func SetupRouter() *gin.Engine {
 		protected.GET("/tournaments/:tournamentID/teams", controllers.GetAllTeamsInTournament)
 
 		protected.GET("/tournaments/:tournamentID/teams/:teamID/matches", controllers.GetAllTeamMatchesinTournament)
+		protected.GET("/matches/:matchID", controllers.GetMatchByID)
 		protected.POST("/tournaments/:tournamentID/teams/:teamID/matches", controllers.CreateTeamMatchinTournament) //ok
 		protected.PUT("/matches/:matchID", controllers.UpdateTeamMatchinTournament)                                 //ok
 

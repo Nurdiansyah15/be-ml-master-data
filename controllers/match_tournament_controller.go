@@ -139,6 +139,22 @@ func UpdateTeamMatchinTournament(c *gin.Context) {
 	c.JSON(http.StatusOK, match)
 }
 
+func GetMatchByID(c *gin.Context) {
+	matchID := c.Param("matchID")
+	if matchID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID is required"})
+		return
+	}
+
+	var match models.Match
+	if err := config.DB.First(&match, matchID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, match)
+}
+
 func AddPlayerStatsToMatch(c *gin.Context) {
 	matchID := c.Param("matchID")
 	if matchID == "" {

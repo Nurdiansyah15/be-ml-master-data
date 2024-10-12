@@ -21,11 +21,28 @@ func GetAllTournaments(c *gin.Context) {
 	c.JSON(http.StatusOK, tournaments)
 }
 
+func GetTournamentByID(c *gin.Context) {
+	tournamentID := c.Param("tournamentID")
+	if tournamentID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Tournament ID is required"})
+		return
+	}
+
+	var tournament models.Tournament
+
+	if err := config.DB.First(&tournament, tournamentID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, tournament)
+}
+
 // CreateTournament creates a new tournament
 func CreateTournament(c *gin.Context) {
 	input := struct {
 		Name   string `json:"name" binding:"required"`
-		Season string `json:"season" binding:"required"`
+		Season string `json:"season"`
 	}{}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
