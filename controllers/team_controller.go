@@ -141,6 +141,25 @@ func UpdateTeam(c *gin.Context) {
 	c.JSON(http.StatusOK, team)
 }
 
+func GetTeamByID(c *gin.Context) {
+	// Ambil parameter teamID dari URL
+	teamID := c.Param("teamID")
+	if teamID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID is required"})
+		return
+	}
+
+	// Cari tim di database
+	var team models.Team
+	if err := config.DB.First(&team, teamID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
+		return
+	}
+
+	// Kembalikan data tim dalam format JSON
+	c.JSON(http.StatusOK, team)
+}
+
 func CreatePlayerInTeam(c *gin.Context) {
 	teamID := c.Param("teamID")
 	if teamID == "" {
@@ -421,6 +440,25 @@ func GetAllPlayersInTeam(c *gin.Context) {
 	c.JSON(http.StatusOK, players)
 }
 
+func GetPlayerByID(c *gin.Context) {
+	// Ambil parameter playerID dari URL
+	playerID := c.Param("playerID")
+	if playerID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Player ID is required"})
+		return
+	}
+
+	// Cari pemain di database
+	var player models.Player
+	if err := config.DB.First(&player, playerID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Player not found"})
+		return
+	}
+
+	// Kembalikan data pemain dalam format JSON
+	c.JSON(http.StatusOK, player)
+}
+
 func GetAllCoachesInTeam(c *gin.Context) {
 	teamID := c.Param("teamID")
 
@@ -431,4 +469,23 @@ func GetAllCoachesInTeam(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, coaches)
+}
+
+func GetCoachByID(c *gin.Context) {
+	// Ambil parameter coachID dari URL
+	coachID := c.Param("coachID")
+	if coachID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Coach ID is required"})
+		return
+	}
+
+	// Cari pelatih di database
+	var coach models.Coach
+	if err := config.DB.First(&coach, coachID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Coach not found"})
+		return
+	}
+
+	// Kembalikan data pelatih dalam format JSON
+	c.JSON(http.StatusOK, coach)
 }
