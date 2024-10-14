@@ -9,3 +9,4 @@ type HeroBan struct {
 	FirstPhaseCount  int  `gorm:"not null"`
 	SecondPhaseCount int  `gorm:"not null"`
 }
+	

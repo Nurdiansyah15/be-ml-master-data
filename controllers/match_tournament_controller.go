@@ -12,22 +12,99 @@ import (
 func GetAllTeamMatchesinTournament(c *gin.Context) {
 
 	tournamentID := c.Param("tournamentID")
+	if tournamentID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Tournament ID is required"})
+		return
+	}
 	teamID := c.Param("teamID")
+	if teamID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID is required"})
+		return
+	}
 
-	tournamentTeam := models.TournamentTeam{}
+	type Result struct {
+		MatchID          uint   `json:"MatchID"`
+		TournamentTeamID uint   `json:"TournamentTeamID"`
+		TournamentID     uint   `json:"TournamentID"`
+		TeamID           uint   `json:"TeamID"`
+		OpponentTeamID   uint   `json:"OpponentTeamID"`
+		OpponentTeamName string `json:"OpponentTeamName"`
+		OpponentTeamLogo string `json:"OpponentTeamLogo"`
+		Week             int    `json:"Week"`
+		Day              int    `json:"Day"`
+		Date             int    `json:"Date"`
+	}
 
-	if err := config.DB.Where("tournament_id = ? AND team_id = ?", tournamentID, teamID).First(&tournamentTeam).Error; err != nil {
+	var results []Result
+
+	query := `
+		SELECT 
+			m.match_id, m.tournament_team_id, tt.tournament_id, tt.team_id,
+			m.opponent_team_id, t.name AS opponent_team_name, t.logo AS opponent_team_logo,
+			m.week, m.day, m.date
+		FROM matches m
+		JOIN tournament_teams tt ON m.tournament_team_id = tt.tournament_team_id
+		JOIN teams t ON m.opponent_team_id = t.team_id
+		WHERE tt.tournament_id = ? AND tt.team_id = ?
+	`
+
+	if err := config.DB.Raw(query, tournamentID, teamID).Scan(&results).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	var matches []models.Match
-	if err := config.DB.Model(&models.Match{}).Where("tournament_team_id = ?", tournamentTeam.TournamentID).Find(&matches).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+	type CustomMatch struct {
+		MatchID          uint `json:"MatchID"`
+		TournamentTeamID uint `json:"TournamentTeamID"`
+		TournamentTeam   struct {
+			TournamentTeamID uint `json:"TournamentTeamID"`
+			TournamentID     uint `json:"TournamentID"`
+			TeamID           uint `json:"TeamID"`
+		} `json:"TournamentTeam"`
+		OpponentTeamID uint `json:"OpponentTeamID"`
+		OpponentTeam   struct {
+			TeamID uint   `json:"TeamID"`
+			Name   string `json:"Name"`
+			Logo   string `json:"Logo"`
+		} `json:"OpponentTeam"`
+		Week int `json:"Week"`
+		Day  int `json:"Day"`
+		Date int `json:"Date"`
 	}
 
-	c.JSON(http.StatusOK, matches)
+	var response []CustomMatch
+
+	for _, r := range results {
+		match := CustomMatch{
+			MatchID:          r.MatchID,
+			TournamentTeamID: r.TournamentTeamID,
+			TournamentTeam: struct {
+				TournamentTeamID uint `json:"TournamentTeamID"`
+				TournamentID     uint `json:"TournamentID"`
+				TeamID           uint `json:"TeamID"`
+			}{
+				TournamentTeamID: r.TournamentTeamID,
+				TournamentID:     r.TournamentID,
+				TeamID:           r.TeamID,
+			},
+			OpponentTeamID: r.OpponentTeamID,
+			OpponentTeam: struct {
+				TeamID uint   `json:"TeamID"`
+				Name   string `json:"Name"`
+				Logo   string `json:"Logo"`
+			}{
+				TeamID: r.OpponentTeamID,
+				Name:   r.OpponentTeamName,
+				Logo:   r.OpponentTeamLogo,
+			},
+			Week: r.Week,
+			Day:  r.Day,
+			Date: r.Date,
+		}
+		response = append(response, match)
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 func CreateTeamMatchinTournament(c *gin.Context) {
@@ -49,19 +126,28 @@ func CreateTeamMatchinTournament(c *gin.Context) {
 		return
 	}
 
-	if err := config.DB.Where("tournament_id = ? AND team_id = ?", tournamentID, teamID).First(&tournamentTeam).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
 	input := struct {
-		Week string `json:"week" binding:"required"`
-		Day  string `json:"day" binding:"required"`
-		Date int    `json:"date" binding:"required"`
+		Week           int  `json:"week" binding:"required"`
+		Day            int  `json:"day" binding:"required"`
+		Date           int  `json:"date" binding:"required"`
+		OpponentTeamID uint `json:"opponent_team_id" binding:"required"`
 	}{}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Check if opponent team exists
+	var opponentTeam models.Team
+	if err := config.DB.First(&opponentTeam, input.OpponentTeamID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Opponent team not found"})
+		return
+	}
+
+	// check if oppnent team same with tournament team
+	if tournamentTeam.TeamID == opponentTeam.TeamID {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Opponent team cannot be same with tournament team"})
 		return
 	}
 
@@ -70,7 +156,8 @@ func CreateTeamMatchinTournament(c *gin.Context) {
 	match.Week = input.Week
 	match.Day = input.Day
 	match.Date = input.Date
-	match.TournamentTeamID = tournamentTeam.TournamentID
+	match.OpponentTeamID = input.OpponentTeamID
+	match.TournamentTeamID = tournamentTeam.TournamentTeamID
 
 	if err := config.DB.Create(&match).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -95,10 +182,10 @@ func UpdateTeamMatchinTournament(c *gin.Context) {
 
 	// totalGames := match.TotalGames
 	input := struct {
-		OpponentTeamID uint   `json:"opponent_team_id"`
-		Week           string `json:"week"`
-		Day            string `json:"day"`
-		Date           int    `json:"date"`
+		OpponentTeamID uint `json:"opponent_team_id"`
+		Week           int  `json:"week"`
+		Day            int  `json:"day"`
+		Date           int  `json:"date"`
 	}{}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -106,25 +193,32 @@ func UpdateTeamMatchinTournament(c *gin.Context) {
 		return
 	}
 
-	// if match.AwayTeamScore != 0 || match.HomeTeamScore != 0 {
-	// 	match.TotalGames = match.AwayTeamScore + match.HomeTeamScore
-	// }
-
-	// if totalGames != match.TotalGames {
-	// 	err := config.DB.Delete(&models.Game{}, "match_id = ?", matchID).Error
-	// 	if err != nil {
-	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	// 		return
-	// 	}
-	// }
-
 	if input.OpponentTeamID != 0 {
+		// check if opponent team exists
+		var opponentTeam models.Team
+		if err := config.DB.First(&opponentTeam, input.OpponentTeamID).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Opponent team not found"})
+			return
+		}
+
+		var tournamentTeam models.TournamentTeam
+		if err := config.DB.First(&tournamentTeam, match.TournamentTeamID).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Tournament or team not found"})
+			return
+		}
+
+		// check if oppnent team same with tournament team
+		if tournamentTeam.TeamID == opponentTeam.TeamID {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Opponent team cannot be same with tournament team"})
+			return
+		}
+
 		match.OpponentTeamID = input.OpponentTeamID
 	}
-	if input.Week != "" {
+	if input.Week != 0 {
 		match.Week = input.Week
 	}
-	if input.Day != "" {
+	if input.Day != 0 {
 		match.Day = input.Day
 	}
 	if input.Date != 0 {
@@ -146,13 +240,105 @@ func GetMatchByID(c *gin.Context) {
 		return
 	}
 
-	var match models.Match
-	if err := config.DB.First(&match, matchID).Error; err != nil {
+	type Result struct {
+		MatchID          uint   `json:"MatchID"`
+		TournamentTeamID uint   `json:"TournamentTeamID"`
+		TournamentID     uint   `json:"TournamentID"`
+		HomeTeamID       uint   `json:"HomeTeamID"`
+		HomeTeamName     string `json:"HomeTeamName"`
+		HomeTeamLogo     string `json:"HomeTeamLogo"`
+		AwayTeamID       uint   `json:"AwayTeamID"`
+		AwayTeamName     string `json:"AwayTeamName"`
+		AwayTeamLogo     string `json:"AwayTeamLogo"`
+		Week             int    `json:"Week"`
+		Day              int    `json:"Day"`
+		Date             int    `json:"Date"`
+	}
+
+	var result Result
+
+	query := `
+		SELECT 
+			m.match_id, m.tournament_team_id, tt.tournament_id, home_team.team_id as home_team_id, home_team.name as home_team_name, home_team.logo as home_team_logo, opponent_team.team_id as away_team_id, opponent_team.name as away_team_name, opponent_team.logo as away_team_logo, m.week, m.day, m.date
+		FROM matches m
+		JOIN tournament_teams tt ON m.tournament_team_id = tt.tournament_team_id
+		JOIN teams home_team ON tt.team_id = home_team.team_id
+		JOIN teams opponent_team ON m.opponent_team_id = opponent_team.team_id
+		WHERE m.match_id = ?
+	`
+
+	if err := config.DB.Raw(query, matchID).Scan(&result).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
 		return
 	}
 
-	c.JSON(http.StatusOK, match)
+	type CustomMatch struct {
+		MatchID          uint `json:"MatchID"`
+		TournamentTeamID uint `json:"TournamentTeamID"`
+		TournamentTeam   struct {
+			TournamentTeamID uint `json:"TournamentTeamID"`
+			TournamentID     uint `json:"TournamentID"`
+			TeamID           uint `json:"TeamID"`
+			Team             struct {
+				TeamID uint   `json:"TeamID"`
+				Name   string `json:"Name"`
+				Logo   string `json:"Logo"`
+			} `json:"Team"`
+		} `json:"TournamentTeam"`
+		OpponentTeamID uint `json:"OpponentTeamID"`
+		OpponentTeam   struct {
+			TeamID uint   `json:"TeamID"`
+			Name   string `json:"Name"`
+			Logo   string `json:"Logo"`
+		} `json:"OpponentTeam"`
+		Week int `json:"Week"`
+		Day  int `json:"Day"`
+		Date int `json:"Date"`
+	}
+
+	// Menyusun response dengan struktur custom
+	response := CustomMatch{
+		MatchID:          result.MatchID,
+		TournamentTeamID: result.TournamentTeamID,
+		TournamentTeam: struct {
+			TournamentTeamID uint `json:"TournamentTeamID"`
+			TournamentID     uint `json:"TournamentID"`
+			TeamID           uint `json:"TeamID"`
+			Team             struct {
+				TeamID uint   `json:"TeamID"`
+				Name   string `json:"Name"`
+				Logo   string `json:"Logo"`
+			} `json:"Team"`
+		}{
+			TournamentTeamID: result.TournamentTeamID,
+			TournamentID:     result.TournamentID,
+			TeamID:           result.HomeTeamID,
+			Team: struct {
+				TeamID uint   `json:"TeamID"`
+				Name   string `json:"Name"`
+				Logo   string `json:"Logo"`
+			}{
+				TeamID: result.HomeTeamID,
+				Name:   result.HomeTeamName,
+				Logo:   result.HomeTeamLogo,
+			},
+		},
+		OpponentTeamID: result.AwayTeamID,
+		OpponentTeam: struct {
+			TeamID uint   `json:"TeamID"`
+			Name   string `json:"Name"`
+			Logo   string `json:"Logo"`
+		}{
+			TeamID: result.AwayTeamID,
+			Name:   result.AwayTeamName,
+			Logo:   result.AwayTeamLogo,
+		},
+		Week: result.Week,
+		Day:  result.Day,
+		Date: result.Date,
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 func AddPlayerStatsToMatch(c *gin.Context) {
@@ -811,4 +997,32 @@ func GetAllPriorityPicksinMatch(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, priorityPicks)
+}
+
+func GetAllTeamsInMatch(c *gin.Context) {
+	matchID := c.Param("matchID")
+	if matchID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID is required"})
+		return
+	}
+
+	var match models.Match
+	if err := config.DB.First(&match, matchID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+		return
+	}
+
+	var tournamentTeam models.TournamentTeam
+	if err := config.DB.First(&tournamentTeam, "tournament_team_id = ?", match.TournamentTeamID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament or team not found"})
+		return
+	}
+
+	var teams []models.Team
+	if err := config.DB.Model(&models.Team{}).Where("team_id IN (?, ?)", tournamentTeam.TeamID, match.OpponentTeamID).Find(&teams).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, teams)
 }
