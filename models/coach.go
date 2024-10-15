@@ -1,9 +1,9 @@
 package models
 
 type Coach struct {
-	CoachID uint   `gorm:"primaryKey;autoIncrement"`
-	TeamID  uint   `gorm:"not null"`
-	Name    string `gorm:"size:100;not null"`
-	Role    string `gorm:"size:50"`
-	Image   string `gorm:"size:255"`
+	CoachID uint   `gorm:"primaryKey;autoIncrement" json:"coach_id"`
+	TeamID  uint   `json:"team_id"`
+	Name    string `json:"name"`
+	Role    string `json:"role"`
+	Image   string `json:"image"`
 }

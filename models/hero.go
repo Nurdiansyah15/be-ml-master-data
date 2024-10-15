@@ -1,7 +1,7 @@
 package models
 
 type Hero struct {
-	HeroID    uint   `gorm:"primaryKey;autoIncrement"`
-	Name      string `gorm:"size:50;not null"`
-	HeroImage string `gorm:"size:255"`
+	HeroID uint   `gorm:"primaryKey;autoIncrement" json:"hero_id"`
+	Name   string `json:"name"`
+	Image  string `json:"image"`
 }

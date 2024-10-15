@@ -39,6 +39,12 @@ func CreateHero(c *gin.Context) {
 	if err != nil {
 		heroImagePath = "https://placehold.co/400x600"
 	} else {
+		// Memeriksa ukuran file
+		if file.Size > 500*1024 { // 500 KB
+			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
+			return
+		}
+
 		// Mendapatkan ekstensi file
 		ext := strings.ToLower(filepath.Ext(file.Filename))
 
@@ -63,8 +69,8 @@ func CreateHero(c *gin.Context) {
 
 	// Membuat objek hero baru
 	hero := models.Hero{
-		Name:      name,
-		HeroImage: heroImagePath,
+		Name:  name,
+		Image: heroImagePath,
 	}
 
 	// Menyimpan hero ke database
@@ -115,6 +121,11 @@ func UpdateHero(c *gin.Context) {
 
 	// Memeriksa jika ada gambar baru yang diupload
 	if err == nil {
+		// Memeriksa ukuran file
+		if file.Size > 500*1024 { // 500 KB
+			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
+			return
+		}
 
 		// Validasi ekstensi file
 		ext := strings.ToLower(filepath.Ext(file.Filename))
@@ -124,12 +135,12 @@ func UpdateHero(c *gin.Context) {
 		}
 
 		// Cek apakah file gambar lama ada di sistem
-		if hero.HeroImage != "" && hero.HeroImage != "https://placehold.co/400x600" {
+		if hero.Image != "" && hero.Image != "https://placehold.co/400x600" {
 			// Cek apakah file gambar lama ada di sistem
-			hero.HeroImage = strings.Replace(hero.HeroImage, os.Getenv("BASE_URL")+"/", "", 1)
-			if _, err := os.Stat(hero.HeroImage); err == nil {
+			heroImagePath := strings.Replace(hero.Image, os.Getenv("BASE_URL")+"/", "", 1)
+			if _, err := os.Stat(heroImagePath); err == nil {
 				// Jika file ada, hapus file gambar lama dari folder images
-				if err := os.Remove(hero.HeroImage); err != nil {
+				if err := os.Remove(heroImagePath); err != nil {
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove old image"})
 					return
 				}
@@ -148,7 +159,7 @@ func UpdateHero(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save new image"})
 			return
 		}
-		hero.HeroImage = os.Getenv("BASE_URL") + "/" + heroImagePath // Perbarui dengan path gambar baru
+		hero.Image = os.Getenv("BASE_URL") + "/" + heroImagePath // Perbarui dengan path gambar baru
 	}
 
 	// Simpan perubahan ke database

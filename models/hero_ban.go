@@ -1,12 +1,10 @@
 package models
 
 type HeroBan struct {
-	BanID            uint `gorm:"primaryKey;autoIncrement"`
-	MatchID          uint `gorm:"not null"`
-	TeamID           uint `gorm:"not null"`
-	HeroID           uint `gorm:"not null"`
-	TotalBans        int  `gorm:"not null"`
-	FirstPhaseCount  int  `gorm:"not null"`
-	SecondPhaseCount int  `gorm:"not null"`
+	HeroBanID         uint `gorm:"primaryKey;autoIncrement" json:"hero_ban_id"`
+	MatchTeamDetailID uint `json:"match_team_detail_id"`
+	HeroID            uint `json:"hero_id"`
+	FirstPhase        int  `json:"first_phase"`
+	SecondPhase       int  `json:"second_phase"`
+	Total             int  `json:"total"`
 }
-	

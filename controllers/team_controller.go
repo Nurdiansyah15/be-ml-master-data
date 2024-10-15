@@ -39,6 +39,12 @@ func CreateTeam(c *gin.Context) {
 		logoPath = "https://placehold.co/400x600"
 	} else {
 
+		// Memeriksa ukuran file
+		if file.Size > 500*1024 { // 500 KB
+			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
+			return
+		}
+
 		ext := strings.ToLower(filepath.Ext(file.Filename))
 
 		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
@@ -58,8 +64,8 @@ func CreateTeam(c *gin.Context) {
 	}
 
 	team := models.Team{
-		Name: name,
-		Logo: logoPath,
+		Name:  name,
+		Image: logoPath,
 	}
 
 	if err := config.DB.Create(&team).Error; err != nil {
@@ -97,6 +103,12 @@ func UpdateTeam(c *gin.Context) {
 	file, err := c.FormFile("logo")
 	if err == nil {
 
+		// Memeriksa ukuran file
+		if file.Size > 500*1024 { // 500 KB
+			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
+			return
+		}
+
 		ext := strings.ToLower(filepath.Ext(file.Filename))
 
 		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
@@ -105,18 +117,18 @@ func UpdateTeam(c *gin.Context) {
 		}
 
 		// Jika ada file logo baru, hapus logo lama
-		if team.Logo != "" && team.Logo != "https://placehold.co/400x600" {
-			team.Logo = strings.Replace(team.Logo, os.Getenv("BASE_URL")+"/", "", 1)
-			// Cek apakah file logo lama ada di sistem
-			if _, err := os.Stat(team.Logo); err == nil {
-				// Jika file ada, hapus file logo lama dari folder images
-				if err := os.Remove(team.Logo); err != nil {
-					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove old logo"})
+		if team.Image != "" && team.Image != "https://placehold.co/400x600" {
+			team.Image = strings.Replace(team.Image, os.Getenv("BASE_URL")+"/", "", 1)
+			// Cek apakah file Image lama ada di sistem
+			if _, err := os.Stat(team.Image); err == nil {
+				// Jika file ada, hapus file Image lama dari folder images
+				if err := os.Remove(team.Image); err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove old image"})
 					return
 				}
 			} else if os.IsNotExist(err) {
 				// Jika file tidak ada, berikan pesan peringatan (opsional)
-				c.JSON(http.StatusNotFound, gin.H{"warning": "Old logo not found, skipping deletion"})
+				c.JSON(http.StatusNotFound, gin.H{"warning": "Old image not found, skipping deletion"})
 			}
 		}
 
@@ -128,7 +140,7 @@ func UpdateTeam(c *gin.Context) {
 		}
 
 		// Update path logo di database
-		team.Logo = os.Getenv("BASE_URL") + "/" + newLogoPath
+		team.Image = os.Getenv("BASE_URL") + "/" + newLogoPath
 	}
 
 	// Simpan perubahan ke database
@@ -190,6 +202,13 @@ func CreatePlayerInTeam(c *gin.Context) {
 		// Jika tidak ada file yang diupload, gunakan placeholder
 		imagePath = "https://placehold.co/400x600"
 	} else {
+
+		// Memeriksa ukuran file
+		if file.Size > 500*1024 { // 500 KB
+			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
+			return
+		}
+
 		ext := strings.ToLower(filepath.Ext(file.Filename))
 
 		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
@@ -256,6 +275,12 @@ func CreateCoachInTeam(c *gin.Context) {
 		// Jika tidak ada file yang diupload, gunakan placeholder
 		imagePath = "https://placehold.co/400x600"
 	} else {
+		// Memeriksa ukuran file
+		if file.Size > 500*1024 { // 500 KB
+			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
+			return
+		}
+
 		ext := strings.ToLower(filepath.Ext(file.Filename))
 
 		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
@@ -319,6 +344,12 @@ func UpdatePlayerInTeam(c *gin.Context) {
 	// Tangani file gambar jika ada
 	file, err := c.FormFile("image")
 	if err == nil {
+		// Memeriksa ukuran file
+		if file.Size > 500*1024 { // 500 KB
+			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
+			return
+		}
+
 		ext := strings.ToLower(filepath.Ext(file.Filename))
 
 		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
@@ -389,6 +420,12 @@ func UpdateCoachInTeam(c *gin.Context) {
 	file, err := c.FormFile("image")
 	if err == nil {
 
+		// Memeriksa ukuran file
+		if file.Size > 500*1024 { // 500 KB
+			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
+			return
+		}
+
 		ext := strings.ToLower(filepath.Ext(file.Filename))
 
 		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
@@ -430,6 +467,16 @@ func UpdateCoachInTeam(c *gin.Context) {
 
 func GetAllPlayersInTeam(c *gin.Context) {
 	teamID := c.Param("teamID")
+	if teamID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID is required"})
+		return
+	}
+
+	var team models.Team
+	if err := config.DB.First(&team, teamID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
+		return
+	}
 
 	var players []models.Player
 	if err := config.DB.Where("team_id = ?", teamID).Find(&players).Error; err != nil {
@@ -461,6 +508,16 @@ func GetPlayerByID(c *gin.Context) {
 
 func GetAllCoachesInTeam(c *gin.Context) {
 	teamID := c.Param("teamID")
+	if teamID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID is required"})
+		return
+	}
+
+	var team models.Team
+	if err := config.DB.First(&team, teamID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
+		return
+	}
 
 	var coaches []models.Coach
 	if err := config.DB.Where("team_id = ?", teamID).Find(&coaches).Error; err != nil {

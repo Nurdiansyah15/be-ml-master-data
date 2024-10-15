@@ -41,8 +41,7 @@ func GetTournamentByID(c *gin.Context) {
 // CreateTournament creates a new tournament
 func CreateTournament(c *gin.Context) {
 	input := struct {
-		Name   string `json:"name" binding:"required"`
-		Season string `json:"season"`
+		Name string `json:"name" binding:"required"`
 	}{}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -53,7 +52,6 @@ func CreateTournament(c *gin.Context) {
 	var tournament models.Tournament
 
 	tournament.Name = input.Name
-	tournament.Season = input.Season
 
 	if err := config.DB.Create(&tournament).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -79,8 +77,7 @@ func UpdateTournament(c *gin.Context) {
 	}
 
 	input := struct {
-		Name   string `json:"name"`
-		Season string `json:"season"`
+		Name string `json:"name"`
 	}{}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -90,9 +87,6 @@ func UpdateTournament(c *gin.Context) {
 
 	if input.Name != "" {
 		tournament.Name = input.Name
-	}
-	if input.Season != "" {
-		tournament.Season = input.Season
 	}
 
 	// Update the tournament's name
