@@ -2,12 +2,26 @@ package controllers
 
 import (
 	"ml-master-data/config"
+	"ml-master-data/dto"
 	"ml-master-data/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
+// @Tags Game
+// @Summary Create a new game
+// @Description Create a new game with the given match ID and additional information
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param matchID path string true "Match ID"
+// @Param game body dto.GameRequestDto true "Game data"
+// @Success 201 {object} models.Game "Game created successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games [post]
 func CreateGame(c *gin.Context) {
 	matchID := c.Param("matchID")
 	if matchID == "" {
@@ -21,14 +35,7 @@ func CreateGame(c *gin.Context) {
 		return
 	}
 
-	input := struct {
-		FirstPickTeamID  uint   `json:"first_pick_team_id" binding:"required"`
-		SecondPickTeamID uint   `json:"second_pick_team_id" binding:"required"`
-		WinnerTeamID     uint   `json:"winner_team_id" binding:"required"`
-		GameNumber       int    `json:"game_number" binding:"required"`
-		VideoLink        string `json:"video_link"`
-		FullDraftImage   string `json:"full_draft_image"`
-	}{}
+	input := dto.GameRequestDto{}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -53,6 +60,20 @@ func CreateGame(c *gin.Context) {
 	c.JSON(http.StatusCreated, game)
 }
 
+// @Tags Game
+// @Summary Update a game
+// @Description Update a game with the given game ID and match ID with the given information
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param matchID path string true "Match ID"
+// @Param game body dto.GameRequestDto true "Game data"
+// @Success 200 {object} models.Game "Game updated successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Game not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID} [put]
 func UpdateGame(c *gin.Context) {
 	gameID := c.Param("gameID")
 	matchID := c.Param("matchID")
@@ -74,14 +95,7 @@ func UpdateGame(c *gin.Context) {
 		return
 	}
 
-	input := struct {
-		FirstPickTeamID  uint   `json:"first_pick_team_id"`
-		SecondPickTeamID uint   `json:"second_pick_team_id"`
-		WinnerTeamID     uint   `json:"winner_team_id"`
-		GameNumber       int    `json:"game_number"`
-		VideoLink        string `json:"video_link"`
-		FullDraftImage   string `json:"full_draft_image"`
-	}{}
+	input := dto.GameRequestDto{}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -115,6 +129,16 @@ func UpdateGame(c *gin.Context) {
 	c.JSON(http.StatusOK, game)
 }
 
+// @Tags Game
+// @Summary Get all games for a match
+// @Description Get all games for a match with the given match ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param matchID path string true "Match ID"
+// @Success 200 {array} dto.GameResponseDto
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games [get]
 func GetAllGames(c *gin.Context) {
 	matchID := c.Param("matchID")
 	if matchID == "" {
@@ -127,33 +151,7 @@ func GetAllGames(c *gin.Context) {
 		return
 	}
 
-	type GameResponse struct {
-		GameID          uint `json:"game_id"`
-		MatchID         uint `json:"match_id"`
-		FirstPickTeamID uint `json:"first_pick_team_id"`
-		FirstTeam       struct {
-			TeamID uint   `json:"team_id"`
-			Name   string `json:"name"`
-			Image  string `json:"image"`
-		}
-		SecondPickTeamID uint `json:"second_pick_team_id"`
-		SecondTeam       struct {
-			TeamID uint   `json:"team_id"`
-			Name   string `json:"name"`
-			Image  string `json:"image"`
-		}
-		WinnerTeamID uint `json:"winner_team_id"`
-		WinnerTeam   struct {
-			TeamID uint   `json:"team_id"`
-			Name   string `json:"name"`
-			Image  string `json:"image"`
-		}
-		GameNumber     int    `json:"game_number"`
-		VideoLink      string `json:"video_link"`
-		FullDraftImage string `json:"full_draft_image"`
-	}
-
-	var games []GameResponse
+	var games []dto.GameResponseDto
 
 	query := `
 		SELECT 
@@ -179,6 +177,19 @@ func GetAllGames(c *gin.Context) {
 	c.JSON(http.StatusOK, games)
 }
 
+// @Tags Game
+// @Summary Get a game by ID
+// @Description Get a game by ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param matchID path string true "Match ID"
+// @Success 200 {object} dto.GameResponseDto
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Game not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID} [get]
 func GetGameByID(c *gin.Context) {
 	gameID := c.Param("gameID")
 	matchID := c.Param("matchID")
@@ -188,33 +199,7 @@ func GetGameByID(c *gin.Context) {
 		return
 	}
 
-	type GameResponse struct {
-		GameID          uint `json:"game_id"`
-		MatchID         uint `json:"match_id"`
-		FirstPickTeamID uint `json:"first_pick_team_id"`
-		FirstTeam       struct {
-			TeamID uint   `json:"team_id"`
-			Name   string `json:"name"`
-			Image  string `json:"image"`
-		}
-		SecondPickTeamID uint `json:"second_pick_team_id"`
-		SecondTeam       struct {
-			TeamID uint   `json:"team_id"`
-			Name   string `json:"name"`
-			Image  string `json:"image"`
-		}
-		WinnerTeamID uint `json:"winner_team_id"`
-		WinnerTeam   struct {
-			TeamID uint   `json:"team_id"`
-			Name   string `json:"name"`
-			Image  string `json:"image"`
-		}
-		GameNumber     int    `json:"game_number"`
-		VideoLink      string `json:"video_link"`
-		FullDraftImage string `json:"full_draft_image"`
-	}
-
-	var game GameResponse
+	var game dto.GameResponseDto
 
 	query := `
 		SELECT 
@@ -240,6 +225,20 @@ func GetGameByID(c *gin.Context) {
 	c.JSON(http.StatusOK, game)
 }
 
+// @Tags Game
+// @Summary Add a lord result
+// @Description Add a lord result for a game with the given game ID and match ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param matchID path string true "Match ID"
+// @Param lordResult body dto.LordResultRequestDto true "Lord result data"
+// @Success 201 {string} string "Lord result added successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or game not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/lord-results [post]
 func AddLordResult(c *gin.Context) {
 
 	gameID := c.Param("gameID")
@@ -262,14 +261,21 @@ func AddLordResult(c *gin.Context) {
 		return
 	}
 
-	var lordResult models.LordResult
+	var input dto.LordResultRequestDto
 
-	if err := c.ShouldBindJSON(&lordResult); err != nil {
+	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	lordResult.GameID = game.GameID
+	lordResult := models.LordResult{
+		GameID:   game.GameID,
+		TeamID:   input.TeamID,
+		Phase:    input.Phase,
+		Setup:    input.Setup,
+		Initiate: input.Initiate,
+		Result:   input.Result,
+	}
 
 	if err := config.DB.Create(&lordResult).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -279,6 +285,21 @@ func AddLordResult(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Lord result added successfully"})
 }
 
+// @Tags Game
+// @Summary Update a LordResult
+// @Description Update a LordResult with the given game ID, match ID, and Lord Result ID with the given information
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param matchID path string true "Match ID"
+// @Param lordResultID path string true "Lord Result ID"
+// @Param lordResult body dto.LordResultRequestDto true "Lord result data"
+// @Success 200 {object} models.LordResult "Lord result updated successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Game or Lord result not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/lord-results/{lordResultID} [put]
 func UpdateLordResult(c *gin.Context) {
 	gameID := c.Param("gameID")
 	matchID := c.Param("matchID")
@@ -309,13 +330,7 @@ func UpdateLordResult(c *gin.Context) {
 	}
 
 	// Struct input untuk pembaruan
-	var input struct {
-		TeamID   *uint   `json:"team_id"`
-		Phase    *string `json:"phase"`
-		Setup    *string `json:"setup"`
-		Initiate *string `json:"initiate"`
-		Result   *string `json:"result"`
-	}
+	input := dto.LordResultRequestDto{}
 
 	// Validasi input JSON
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -324,21 +339,11 @@ func UpdateLordResult(c *gin.Context) {
 	}
 
 	// Update hanya field yang tidak bernilai null
-	if input.TeamID != nil {
-		lordResult.TeamID = *input.TeamID
-	}
-	if input.Phase != nil {
-		lordResult.Phase = *input.Phase
-	}
-	if input.Setup != nil {
-		lordResult.Setup = *input.Setup
-	}
-	if input.Initiate != nil {
-		lordResult.Initiate = *input.Initiate
-	}
-	if input.Result != nil {
-		lordResult.Result = *input.Result
-	}
+	lordResult.TeamID = input.TeamID
+	lordResult.Phase = input.Phase
+	lordResult.Setup = input.Setup
+	lordResult.Initiate = input.Initiate
+	lordResult.Result = input.Result
 
 	// Simpan perubahan ke database
 	if err := config.DB.Save(&lordResult).Error; err != nil {
@@ -349,6 +354,20 @@ func UpdateLordResult(c *gin.Context) {
 	c.JSON(http.StatusOK, lordResult)
 }
 
+// @Tags Game
+// @Summary Delete a LordResult
+// @Description Delete a LordResult with the given game ID, match ID, and Lord Result ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param matchID path string true "Match ID"
+// @Param lordResultID path string true "Lord Result ID"
+// @Success 200 {string} string "Lord result deleted successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Game or Lord result not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/lord-results/{lordResultID} [delete]
 func RemoveLordResult(c *gin.Context) {
 	matchID := c.Param("matchID")
 	gameID := c.Param("gameID")
@@ -387,6 +406,18 @@ func RemoveLordResult(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Lord result deleted successfully"})
 }
 
+// @Tags Game
+// @Summary Get all lord results for a game
+// @Description Get all lord results for a game with the given game ID and match ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param matchID path string true "Match ID"
+// @Param gameID path string true "Game ID"
+// @Success 200 {array} dto.LordResultResponseDto
+// @Failure 404 {string} string "Match or game not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/lord-results [get]
 func GetAllLordResults(c *gin.Context) {
 	matchID := c.Param("matchID")
 	gameID := c.Param("gameID")
@@ -402,22 +433,7 @@ func GetAllLordResults(c *gin.Context) {
 		return
 	}
 
-	type LordResultResponse struct {
-		LordResultID uint `json:"lord_result_id"`
-		GameID       uint `json:"game_id"`
-		TeamID       uint `json:"team_id"`
-		Team         struct {
-			TeamID uint   `json:"team_id"`
-			Name   string `json:"name"`
-			Image  string `json:"image"`
-		}
-		Phase    string `json:"phase"`
-		Setup    string `json:"setup"`
-		Initiate string `json:"initiate"`
-		Result   string `json:"result"`
-	}
-
-	var results []LordResultResponse
+	var results []dto.LordResultResponseDto
 
 	query := `
 		SELECT 
@@ -437,6 +453,19 @@ func GetAllLordResults(c *gin.Context) {
 	c.JSON(http.StatusOK, results)
 }
 
+// @Tags Game
+// @Summary Get a LordResult by ID
+// @Description Get a LordResult by the given game ID, match ID, and Lord Result ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param matchID path string true "Match ID"
+// @Param lordResultID path string true "Lord Result ID"
+// @Success 200 {object} dto.LordResultResponseDto
+// @Failure 404 {string} string "Match or game or Lord result not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/lord-results/{lordResultID} [get]
 func GetLordResultByID(c *gin.Context) {
 	matchID := c.Param("matchID")
 	gameID := c.Param("gameID")
@@ -453,22 +482,7 @@ func GetLordResultByID(c *gin.Context) {
 		return
 	}
 
-	type LordResultResponse struct {
-		LordResultID uint `json:"lord_result_id"`
-		GameID       uint `json:"game_id"`
-		TeamID       uint `json:"team_id"`
-		Team         struct {
-			TeamID uint   `json:"team_id"`
-			Name   string `json:"name"`
-			Image  string `json:"image"`
-		}
-		Phase    string `json:"phase"`
-		Setup    string `json:"setup"`
-		Initiate string `json:"initiate"`
-		Result   string `json:"result"`
-	}
-
-	var result LordResultResponse
+	var result dto.LordResultResponseDto
 
 	query := `
 		SELECT 
@@ -488,6 +502,20 @@ func GetLordResultByID(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+// @Tags Game
+// @Summary Add a turtle result
+// @Description Add a turtle result for a game with the given game ID and match ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param matchID path string true "Match ID"
+// @Param turtleResult body dto.TurtleResultRequestDto true "Turtle result data"
+// @Success 201 {string} string "Turtle result added successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or game not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/turtle-results [post]
 func AddTurtleResult(c *gin.Context) {
 	gameID := c.Param("gameID")
 	matchID := c.Param("matchID")
@@ -509,10 +537,19 @@ func AddTurtleResult(c *gin.Context) {
 		return
 	}
 
-	var turtleResult models.TurtleResult
-	if err := c.ShouldBindJSON(&turtleResult); err != nil {
+	input := dto.TurtleResultRequestDto{}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
+	}
+
+	turtleResult := models.TurtleResult{
+		TeamID:   input.TeamID,
+		Phase:    input.Phase,
+		Setup:    input.Setup,
+		Initiate: input.Initiate,
+		Result:   input.Result,
 	}
 
 	turtleResult.GameID = game.GameID
@@ -525,6 +562,21 @@ func AddTurtleResult(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Turtle result added successfully"})
 }
 
+// @Tags Game
+// @Summary Update a turtle result
+// @Description Update a turtle result with the given game ID, match ID, and turtle result ID with the given information
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param matchID path string true "Match ID"
+// @Param turtleResultID path string true "Turtle Result ID"
+// @Param turtleResult body dto.TurtleResultRequestDto true "Turtle result data"
+// @Success 200 {object} models.TurtleResult "Turtle result updated successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Game or Turtle result not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/turtle-results/{turtleResultID} [put]
 func UpdateTurtleResult(c *gin.Context) {
 	gameID := c.Param("gameID")
 	matchID := c.Param("matchID")
@@ -551,34 +603,17 @@ func UpdateTurtleResult(c *gin.Context) {
 		return
 	}
 
-	var input struct {
-		TeamID   *uint   `json:"team_id"`
-		Phase    *string `json:"phase"`
-		Setup    *string `json:"setup"`
-		Initiate *string `json:"initiate"`
-		Result   *string `json:"result"`
-	}
-
+	input := dto.TurtleResultRequestDto{}
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if input.TeamID != nil {
-		turtleResult.TeamID = *input.TeamID
-	}
-	if input.Phase != nil {
-		turtleResult.Phase = *input.Phase
-	}
-	if input.Setup != nil {
-		turtleResult.Setup = *input.Setup
-	}
-	if input.Initiate != nil {
-		turtleResult.Initiate = *input.Initiate
-	}
-	if input.Result != nil {
-		turtleResult.Result = *input.Result
-	}
+	turtleResult.TeamID = input.TeamID
+	turtleResult.Phase = input.Phase
+	turtleResult.Setup = input.Setup
+	turtleResult.Initiate = input.Initiate
+	turtleResult.Result = input.Result
 
 	if err := config.DB.Save(&turtleResult).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -588,6 +623,20 @@ func UpdateTurtleResult(c *gin.Context) {
 	c.JSON(http.StatusOK, turtleResult)
 }
 
+// @Tags Game
+// @Summary Delete a TurtleResult
+// @Description Delete a TurtleResult with the given game ID, match ID, and Turtle Result ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param matchID path string true "Match ID"
+// @Param turtleResultID path string true "Turtle Result ID"
+// @Success 200 {string} string "Turtle result deleted successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Game or Turtle result not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/turtle-results/{turtleResultID} [delete]
 func RemoveTurtleResult(c *gin.Context) {
 	matchID := c.Param("matchID")
 	gameID := c.Param("gameID")
@@ -623,6 +672,7 @@ func RemoveTurtleResult(c *gin.Context) {
 }
 
 func GetAllTurtleResults(c *gin.Context) {
+
 	matchID := c.Param("matchID")
 	gameID := c.Param("gameID")
 
@@ -636,22 +686,7 @@ func GetAllTurtleResults(c *gin.Context) {
 		return
 	}
 
-	type TurtleResultResponse struct {
-		TurtleResultID uint `json:"turtle_result_id"`
-		GameID         uint `json:"game_id"`
-		TeamID         uint `json:"team_id"`
-		Team           struct {
-			TeamID uint   `json:"team_id"`
-			Name   string `json:"name"`
-			Image  string `json:"image"`
-		} `json:"team"`
-		Phase    string `json:"phase"`
-		Setup    string `json:"setup"`
-		Initiate string `json:"initiate"`
-		Result   string `json:"result"`
-	}
-
-	var results []TurtleResultResponse
+	var results []dto.TurtleResultResponseDto
 
 	query := `
 		SELECT 
@@ -671,6 +706,19 @@ func GetAllTurtleResults(c *gin.Context) {
 	c.JSON(http.StatusOK, results)
 }
 
+// @Tags Game
+// @Summary Get a TurtleResult by ID
+// @Description Get a TurtleResult by ID for a game with the given game ID and match ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param matchID path string true "Match ID"
+// @Param gameID path string true "Game ID"
+// @Param turtleResultID path string true "Turtle result ID"
+// @Success 200 {object} dto.TurtleResultResponseDto
+// @Failure 404 {string} string "Match, Game, or Turtle result not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/turtle-results/{turtleResultID} [get]
 func GetTurtleResultByID(c *gin.Context) {
 	matchID := c.Param("matchID")
 	gameID := c.Param("gameID")
@@ -686,22 +734,7 @@ func GetTurtleResultByID(c *gin.Context) {
 		return
 	}
 
-	type TurtleResultResponse struct {
-		TurtleResultID uint `json:"turtle_result_id"`
-		GameID         uint `json:"game_id"`
-		TeamID         uint `json:"team_id"`
-		Team           struct {
-			TeamID uint   `json:"team_id"`
-			Name   string `json:"name"`
-			Image  string `json:"image"`
-		} `json:"team"`
-		Phase    string `json:"phase"`
-		Setup    string `json:"setup"`
-		Initiate string `json:"initiate"`
-		Result   string `json:"result"`
-	}
-
-	var result TurtleResultResponse
+	var result dto.TurtleResultResponseDto
 
 	query := `
 		SELECT 
@@ -721,6 +754,20 @@ func GetTurtleResultByID(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+// @Tags Game
+// @Summary Add an explaner
+// @Description Add an explaner for a game with the given game ID and match ID with the given information
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param matchID path string true "Match ID"
+// @Param explaner body dto.ExplanerRequestDto true "Explaner data"
+// @Success 201 {string} string "Explaner added successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or game not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/explaners [post]
 func AddExplaner(c *gin.Context) {
 	gameID := c.Param("gameID")
 	matchID := c.Param("matchID")
@@ -742,13 +789,18 @@ func AddExplaner(c *gin.Context) {
 		return
 	}
 
-	var explaner models.Explaner
-	if err := c.ShouldBindJSON(&explaner); err != nil {
+	var input dto.ExplanerRequestDto
+	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	explaner.GameID = game.GameID
+	explaner := models.Explaner{
+		GameID:      game.GameID,
+		TeamID:      input.TeamID,
+		HeroID:      input.HeroID,
+		EarlyResult: input.EarlyResult,
+	}
 
 	if err := config.DB.Create(&explaner).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -758,6 +810,21 @@ func AddExplaner(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Explaner added successfully"})
 }
 
+// @Tags Game
+// @Summary Update an Explaner
+// @Description Update an Explaner with the given game ID, match ID, and Explaner ID with the given information
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param matchID path string true "Match ID"
+// @Param explanerID path string true "Explaner ID"
+// @Param explaner body dto.ExplanerRequestDto true "Explaner data"
+// @Success 200 {object} models.Explaner "Explaner updated successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Game or Explaner not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/explaners/{explanerID} [put]
 func UpdateExplaner(c *gin.Context) {
 	gameID := c.Param("gameID")
 	matchID := c.Param("matchID")
@@ -784,26 +851,16 @@ func UpdateExplaner(c *gin.Context) {
 		return
 	}
 
-	var input struct {
-		TeamID      *uint   `json:"team_id"`
-		HeroID      *uint   `json:"hero_id"`
-		EarlyResult *string `json:"early_result"`
-	}
+	input := dto.ExplanerRequestDto{}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if input.TeamID != nil {
-		explaner.TeamID = *input.TeamID
-	}
-	if input.HeroID != nil {
-		explaner.HeroID = *input.HeroID
-	}
-	if input.EarlyResult != nil {
-		explaner.EarlyResult = *input.EarlyResult
-	}
+	explaner.TeamID = input.TeamID
+	explaner.HeroID = input.HeroID
+	explaner.EarlyResult = input.EarlyResult
 
 	if err := config.DB.Save(&explaner).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -813,6 +870,20 @@ func UpdateExplaner(c *gin.Context) {
 	c.JSON(http.StatusOK, explaner)
 }
 
+// @Tags Game
+// @Summary Delete an Explaner
+// @Description Delete an Explaner with the given game ID, match ID, and Explaner ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param matchID path string true "Match ID"
+// @Param explanerID path string true "Explaner ID"
+// @Success 200 {string} string "Explaner deleted successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Game or Explaner not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/explaners/{explanerID} [delete]
 func RemoveExplaner(c *gin.Context) {
 	matchID := c.Param("matchID")
 	gameID := c.Param("gameID")
@@ -847,6 +918,17 @@ func RemoveExplaner(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Explaner deleted successfully"})
 }
 
+// @Tags Game
+// @Summary Get all Explaners for a game
+// @Description Get all Explaners for a game with the given game ID and match ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param matchID path string true "Match ID"
+// @Param gameID path string true "Game ID"
+// @Success 200 {array} dto.ExplanerResponseDto
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/explaners [get]
 func GetAllExplaners(c *gin.Context) {
 	matchID := c.Param("matchID")
 	gameID := c.Param("gameID")
@@ -861,29 +943,7 @@ func GetAllExplaners(c *gin.Context) {
 		return
 	}
 
-	type TeamResponse struct {
-		TeamID uint   `json:"team_id"`
-		Name   string `json:"name"`
-		Image  string `json:"image"`
-	}
-
-	type HeroResponse struct {
-		HeroID uint   `json:"hero_id"`
-		Name   string `json:"name"`
-		Image  string `json:"image"`
-	}
-
-	type ExplanerResponse struct {
-		ExplanerID  uint         `json:"explaner_id"`
-		GameID      uint         `json:"game_id"`
-		TeamID      uint         `json:"team_id"`
-		Team        TeamResponse `json:"team"`
-		HeroID      uint         `json:"hero_id"`
-		Hero        HeroResponse `json:"hero"`
-		EarlyResult string       `json:"early_result"`
-	}
-
-	var results []ExplanerResponse
+	var results []dto.ExplanerResponseDto
 
 	query := `
 		SELECT 
@@ -904,6 +964,20 @@ func GetAllExplaners(c *gin.Context) {
 	c.JSON(http.StatusOK, results)
 }
 
+// @Tags Game
+// @Summary Get an explaner by ID
+// @Description Get an explaner by ID for a game with the given game ID and match ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param matchID path string true "Match ID"
+// @Param gameID path string true "Game ID"
+// @Param explanerID path string true "Explaner ID"
+// @Success 200 {object} dto.ExplanerResponseDto
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match, game, or Explaner not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/explaners/{explanerID} [get]
 func GetExplanerByID(c *gin.Context) {
 	matchID := c.Param("matchID")
 	gameID := c.Param("gameID")
@@ -919,29 +993,7 @@ func GetExplanerByID(c *gin.Context) {
 		return
 	}
 
-	type TeamResponse struct {
-		TeamID uint   `json:"team_id"`
-		Name   string `json:"name"`
-		Image  string `json:"image"`
-	}
-
-	type HeroResponse struct {
-		HeroID uint   `json:"hero_id"`
-		Name   string `json:"name"`
-		Image  string `json:"image"`
-	}
-
-	type ExplanerResponse struct {
-		ExplanerID  uint         `json:"explaner_id"`
-		GameID      uint         `json:"game_id"`
-		TeamID      uint         `json:"team_id"`
-		Team        TeamResponse `json:"team"`
-		HeroID      uint         `json:"hero_id"`
-		Hero        HeroResponse `json:"hero"`
-		EarlyResult string       `json:"early_result"`
-	}
-
-	var result ExplanerResponse
+	var result dto.ExplanerResponseDto
 
 	query := `
 		SELECT 
@@ -962,6 +1014,20 @@ func GetExplanerByID(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+// @Tags Game
+// @Summary Add a goldlaner
+// @Description Add a goldlaner for a game with the given game ID and match ID with the given information
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param matchID path string true "Match ID"
+// @Param goldlaner body dto.GoldlanerRequestDto true "Goldlaner data"
+// @Success 201 {string} string "Goldlaner added successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or game not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/goldlaners [post]
 func AddGoldlaner(c *gin.Context) {
 	gameID := c.Param("gameID")
 	matchID := c.Param("matchID")
@@ -983,12 +1049,16 @@ func AddGoldlaner(c *gin.Context) {
 		return
 	}
 
-	var goldlaner models.Goldlaner
-	if err := c.ShouldBindJSON(&goldlaner); err != nil {
+	var input dto.GoldlanerRequestDto
+	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	var goldlaner models.Goldlaner
+	goldlaner.TeamID = input.TeamID
+	goldlaner.HeroID = input.HeroID
+	goldlaner.EarlyResult = input.EarlyResult
 	goldlaner.GameID = game.GameID
 
 	if err := config.DB.Create(&goldlaner).Error; err != nil {
@@ -999,6 +1069,21 @@ func AddGoldlaner(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Goldlaner added successfully"})
 }
 
+// @Tags Game
+// @Summary Update a Goldlaner
+// @Description Update a Goldlaner with the given game ID, match ID, and Goldlaner ID with the given information
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param matchID path string true "Match ID"
+// @Param goldlanerID path string true "Goldlaner ID"
+// @Param goldlaner body dto.GoldlanerRequestDto true "Goldlaner data"
+// @Success 200 {object} models.Goldlaner "Goldlaner updated successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Game, Match, or Goldlaner not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/goldlaners/{goldlanerID} [put]
 func UpdateGoldlaner(c *gin.Context) {
 	gameID := c.Param("gameID")
 	matchID := c.Param("matchID")
@@ -1025,26 +1110,16 @@ func UpdateGoldlaner(c *gin.Context) {
 		return
 	}
 
-	var input struct {
-		TeamID      *uint   `json:"team_id"`
-		HeroID      *uint   `json:"hero_id"`
-		EarlyResult *string `json:"early_result"`
-	}
+	input := dto.GoldlanerRequestDto{}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if input.TeamID != nil {
-		goldlaner.TeamID = *input.TeamID
-	}
-	if input.HeroID != nil {
-		goldlaner.HeroID = *input.HeroID
-	}
-	if input.EarlyResult != nil {
-		goldlaner.EarlyResult = *input.EarlyResult
-	}
+	goldlaner.TeamID = input.TeamID
+	goldlaner.HeroID = input.HeroID
+	goldlaner.EarlyResult = input.EarlyResult
 
 	if err := config.DB.Save(&goldlaner).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -1054,6 +1129,20 @@ func UpdateGoldlaner(c *gin.Context) {
 	c.JSON(http.StatusOK, goldlaner)
 }
 
+// @Tags Game
+// @Summary Delete a Goldlaner
+// @Description Delete a Goldlaner with the given game ID, match ID, and Goldlaner ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param matchID path string true "Match ID"
+// @Param goldlanerID path string true "Goldlaner ID"
+// @Success 200 {string} string "Goldlaner deleted successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Game, Match, or Goldlaner not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/goldlaners/{goldlanerID} [delete]
 func RemoveGoldlaner(c *gin.Context) {
 	matchID := c.Param("matchID")
 	gameID := c.Param("gameID")
@@ -1088,6 +1177,18 @@ func RemoveGoldlaner(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Goldlaner deleted successfully"})
 }
 
+// @Tags Game
+// @Summary Get all Goldlaners for a game
+// @Description Get all Goldlaners for a game with the given game ID and match ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param matchID path string true "Match ID"
+// @Param gameID path string true "Game ID"
+// @Success 200 {array} dto.GoldlanerResponseDto
+// @Failure 404 {string} string "Match or game not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/goldlaners [get]
 func GetAllGoldlaners(c *gin.Context) {
 	matchID := c.Param("matchID")
 	gameID := c.Param("gameID")
@@ -1102,29 +1203,7 @@ func GetAllGoldlaners(c *gin.Context) {
 		return
 	}
 
-	type TeamResponse struct {
-		TeamID uint   `json:"team_id"`
-		Name   string `json:"name"`
-		Image  string `json:"image"`
-	}
-
-	type HeroResponse struct {
-		HeroID uint   `json:"hero_id"`
-		Name   string `json:"name"`
-		Image  string `json:"image"`
-	}
-
-	type GoldlanerResponse struct {
-		GoldlanerID uint         `json:"goldlaner_id"`
-		GameID      uint         `json:"game_id"`
-		TeamID      uint         `json:"team_id"`
-		Team        TeamResponse `json:"team"`
-		HeroID      uint         `json:"hero_id"`
-		Hero        HeroResponse `json:"hero"`
-		EarlyResult string       `json:"early_result"`
-	}
-
-	var results []GoldlanerResponse
+	var results []dto.GoldlanerResponseDto
 
 	query := `
 		SELECT 
@@ -1145,6 +1224,19 @@ func GetAllGoldlaners(c *gin.Context) {
 	c.JSON(http.StatusOK, results)
 }
 
+// @Tags Game
+// @Summary Get a Goldlaner by ID
+// @Description Get a Goldlaner by the given game ID, match ID, and Goldlaner ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param matchID path string true "Match ID"
+// @Param gameID path string true "Game ID"
+// @Param goldlanerID path string true "Goldlaner ID"
+// @Success 200 {object} dto.GoldlanerResponseDto
+// @Failure 404 {string} string "Match or game or Goldlaner not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/goldlaners/{goldlanerID} [get]
 func GetGoldlanerByID(c *gin.Context) {
 	matchID := c.Param("matchID")
 	gameID := c.Param("gameID")
@@ -1160,29 +1252,7 @@ func GetGoldlanerByID(c *gin.Context) {
 		return
 	}
 
-	type TeamResponse struct {
-		TeamID uint   `json:"team_id"`
-		Name   string `json:"name"`
-		Image  string `json:"image"`
-	}
-
-	type HeroResponse struct {
-		HeroID uint   `json:"hero_id"`
-		Name   string `json:"name"`
-		Image  string `json:"image"`
-	}
-
-	type GoldlanerResponse struct {
-		GoldlanerID uint         `json:"goldlaner_id"`
-		GameID      uint         `json:"game_id"`
-		TeamID      uint         `json:"team_id"`
-		Team        TeamResponse `json:"team"`
-		HeroID      uint         `json:"hero_id"`
-		Hero        HeroResponse `json:"hero"`
-		EarlyResult string       `json:"early_result"`
-	}
-
-	var result GoldlanerResponse
+	var result dto.GoldlanerResponseDto
 
 	query := `
 		SELECT 
@@ -1202,6 +1272,21 @@ func GetGoldlanerByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, result)
 }
+
+// @Tags Game
+// @Summary Add a TrioMid
+// @Description Add a TrioMid for a game with the given game ID and match ID with the given information
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param matchID path string true "Match ID"
+// @Param trioMid body dto.TrioMidRequestDto true "TrioMid data"
+// @Success 201 {string} string "TrioMid added successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or game not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/trio-mids [post]
 func AddTrioMid(c *gin.Context) {
 	gameID := c.Param("gameID")
 	matchID := c.Param("matchID")
@@ -1223,13 +1308,19 @@ func AddTrioMid(c *gin.Context) {
 		return
 	}
 
-	var trioMid models.TrioMid
-	if err := c.ShouldBindJSON(&trioMid); err != nil {
+	var input dto.TrioMidRequestDto
+	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	trioMid.GameID = game.GameID
+	trioMid := models.TrioMid{
+		GameID:      game.GameID,
+		TeamID:      input.TeamID,
+		HeroID:      input.HeroID,
+		Role:        input.Role,
+		EarlyResult: input.EarlyResult,
+	}
 
 	if err := config.DB.Create(&trioMid).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -1239,6 +1330,21 @@ func AddTrioMid(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "TrioMid added successfully"})
 }
 
+// @Tags Game
+// @Summary Update a TrioMid
+// @Description Update a TrioMid with the given game ID, match ID, and TrioMid ID with the given information
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param matchID path string true "Match ID"
+// @Param trioMidID path string true "TrioMid ID"
+// @Param trioMid body dto.TrioMidRequestDto true "Trio mid data"
+// @Success 200 {object} models.TrioMid "Trio mid updated successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Game or Trio mid not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/trio-mids/{trioMidID} [put]
 func UpdateTrioMid(c *gin.Context) {
 	gameID := c.Param("gameID")
 	matchID := c.Param("matchID")
@@ -1265,30 +1371,17 @@ func UpdateTrioMid(c *gin.Context) {
 		return
 	}
 
-	var input struct {
-		TeamID      *uint   `json:"team_id"`
-		HeroID      *uint   `json:"hero_id"`
-		Role        *string `json:"role"`
-		EarlyResult *string `json:"early_result"`
-	}
+	input := dto.TrioMidRequestDto{}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if input.TeamID != nil {
-		trioMid.TeamID = *input.TeamID
-	}
-	if input.HeroID != nil {
-		trioMid.HeroID = *input.HeroID
-	}
-	if input.Role != nil {
-		trioMid.Role = *input.Role
-	}
-	if input.EarlyResult != nil {
-		trioMid.EarlyResult = *input.EarlyResult
-	}
+	trioMid.TeamID = input.TeamID
+	trioMid.HeroID = input.HeroID
+	trioMid.Role = input.Role
+	trioMid.EarlyResult = input.EarlyResult
 
 	if err := config.DB.Save(&trioMid).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -1298,6 +1391,20 @@ func UpdateTrioMid(c *gin.Context) {
 	c.JSON(http.StatusOK, trioMid)
 }
 
+// @Tags Game
+// @Summary Delete a TrioMid
+// @Description Delete a TrioMid with the given game ID, match ID, and TrioMid ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param matchID path string true "Match ID"
+// @Param trioMidID path string true "TrioMid ID"
+// @Success 200 {string} string "TrioMid deleted successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match, game, or TrioMid not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/trio-mids/{trioMidID} [delete]
 func RemoveTrioMid(c *gin.Context) {
 	matchID := c.Param("matchID")
 	gameID := c.Param("gameID")
@@ -1332,6 +1439,17 @@ func RemoveTrioMid(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "TrioMid deleted successfully"})
 }
 
+// @Tags Game
+// @Summary Get all TrioMids for a game
+// @Description Get all TrioMids for a game with the given game ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param matchID path string true "Match ID"
+// @Param gameID path string true "Game ID"
+// @Success 200 {array} dto.TrioMidResponseDto
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/trio-mids [get]
 func GetAllTrioMids(c *gin.Context) {
 	matchID := c.Param("matchID")
 	gameID := c.Param("gameID")
@@ -1346,29 +1464,7 @@ func GetAllTrioMids(c *gin.Context) {
 		return
 	}
 
-	type TeamResponse struct {
-		TeamID uint   `json:"team_id"`
-		Name   string `json:"name"`
-		Image  string `json:"image"`
-	}
-
-	type HeroResponse struct {
-		HeroID uint   `json:"hero_id"`
-		Name   string `json:"name"`
-		Image  string `json:"image"`
-	}
-
-	type TrioMidResponse struct {
-		TrioMidID   uint         `json:"trio_mid_id"`
-		GameID      uint         `json:"game_id"`
-		TeamID      uint         `json:"team_id"`
-		Team        TeamResponse `json:"team"`
-		HeroID      uint         `json:"hero_id"`
-		Hero        HeroResponse `json:"hero"`
-		EarlyResult string       `json:"early_result"`
-	}
-
-	var results []TrioMidResponse
+	var results []dto.TrioMidResponseDto
 
 	query := `
 		SELECT 
@@ -1389,6 +1485,20 @@ func GetAllTrioMids(c *gin.Context) {
 	c.JSON(http.StatusOK, results)
 }
 
+// @Tags Game
+// @Summary Get a TrioMid by ID
+// @Description Get a TrioMid with the given game ID, match ID, and TrioMid ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param matchID path string true "Match ID"
+// @Param trioMidID path string true "TrioMid ID"
+// @Success 200 {object} dto.TrioMidResponseDto "Trio mid found successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Game or Trio mid not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID}/trio-mids/{trioMidID} [get]
 func GetTrioMidByID(c *gin.Context) {
 	matchID := c.Param("matchID")
 	gameID := c.Param("gameID")
@@ -1404,29 +1514,7 @@ func GetTrioMidByID(c *gin.Context) {
 		return
 	}
 
-	type TeamResponse struct {
-		TeamID uint   `json:"team_id"`
-		Name   string `json:"name"`
-		Image  string `json:"image"`
-	}
-
-	type HeroResponse struct {
-		HeroID uint   `json:"hero_id"`
-		Name   string `json:"name"`
-		Image  string `json:"image"`
-	}
-
-	type TrioMidResponse struct {
-		TrioMidID   uint         `json:"trio_mid_id"`
-		GameID      uint         `json:"game_id"`
-		TeamID      uint         `json:"team_id"`
-		Team        TeamResponse `json:"team"`
-		HeroID      uint         `json:"hero_id"`
-		Hero        HeroResponse `json:"hero"`
-		EarlyResult string       `json:"early_result"`
-	}
-
-	var result TrioMidResponse
+	var result dto.TrioMidResponseDto
 
 	query := `
 		SELECT 

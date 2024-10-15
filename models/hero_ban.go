@@ -6,5 +6,4 @@ type HeroBan struct {
 	HeroID            uint `json:"hero_id"`
 	FirstPhase        int  `json:"first_phase"`
 	SecondPhase       int  `json:"second_phase"`
-	Total             int  `json:"total"`
 }

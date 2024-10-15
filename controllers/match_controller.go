@@ -2,12 +2,23 @@ package controllers
 
 import (
 	"ml-master-data/config"
+	"ml-master-data/dto"
 	"ml-master-data/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
+// CreateTournamentMatch godoc
+// @Summary Create a match for a tournament
+// @Description Create a match for a tournament and save its data
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param tournamentID path string true "Tournament ID"
+// @Param dto body dto.MatchRequestDto true "Match request"
+// @Success 201 {object} models.Match
+// @Router /tournaments/{tournamentID}/matches [post]
 func CreateTournamentMatch(c *gin.Context) {
 	tournamentID := c.Param("tournamentID")
 	if tournamentID == "" {
@@ -21,15 +32,7 @@ func CreateTournamentMatch(c *gin.Context) {
 		return
 	}
 
-	input := struct {
-		Week       int  `json:"week" binding:"required"`
-		Day        int  `json:"day" binding:"required"`
-		Date       int  `json:"date" binding:"required"`
-		TeamAID    uint `json:"team_a_id" binding:"required"`
-		TeamBID    uint `json:"team_b_id" binding:"required"`
-		TeamAScore int  `json:"team_a_score" binding:"required"`
-		TeamBScore int  `json:"team_b_score" binding:"required"`
-	}{}
+	input := dto.MatchRequestDto{}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -104,7 +107,19 @@ func CreateTournamentMatch(c *gin.Context) {
 	c.JSON(http.StatusCreated, match)
 }
 
-// UpdateMatch untuk memperbarui informasi pertandingan
+// @Summary Update a match
+// @Description Update a match with the given match ID with the given information
+// @Accept  json
+// @Security Bearer
+// @Tags Match
+// @Produce  json
+// @Param matchID path string true "Match ID"
+// @Param match body dto.MatchRequestDto true "Match data"
+// @Success 200 {object} models.Match "Match updated successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID} [put]
 func UpdateMatch(c *gin.Context) {
 	matchID := c.Param("matchID")
 	if matchID == "" {
@@ -118,16 +133,7 @@ func UpdateMatch(c *gin.Context) {
 		return
 	}
 
-	input := struct {
-		Week       int  `json:"week"`
-		Day        int  `json:"day"`
-		Date       int  `json:"date"`
-		TeamAID    uint `json:"team_a_id"`
-		TeamBID    uint `json:"team_b_id"`
-		TeamAScore int  `json:"team_a_score"`
-		TeamBScore int  `json:"team_b_score"`
-	}{}
-
+	input := dto.MatchRequestDto{}
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -176,7 +182,17 @@ func UpdateMatch(c *gin.Context) {
 	c.JSON(http.StatusOK, match)
 }
 
-// GetMatchByID untuk mendapatkan informasi pertandingan berdasarkan ID
+// @Summary Get a match by ID
+// @Description Get a match by ID
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Success 200 {object} dto.MatchResponseDto
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID} [get]
 func GetMatchByID(c *gin.Context) {
 	matchID := c.Param("matchID")
 	if matchID == "" {
@@ -184,26 +200,7 @@ func GetMatchByID(c *gin.Context) {
 		return
 	}
 
-	type Team struct {
-		TeamID uint   `json:"team_id"`
-		Name   string `json:"name"`
-		Image  string `json:"image"`
-	}
-
-	type Match struct {
-		MatchID    uint `json:"match_id"`
-		Week       int  `json:"week"`
-		Day        int  `json:"day"`
-		Date       int  `json:"date"`
-		TeamAID    uint `json:"team_a_id"`
-		TeamA      Team `gorm:"embedded;embeddedPrefix:team_a_" json:"team_a"`
-		TeamBID    uint `json:"team_b_id"`
-		TeamB      Team `gorm:"embedded;embeddedPrefix:team_b_" json:"team_b"`
-		TeamAScore int  `json:"team_a_score"`
-		TeamBScore int  `json:"team_b_score"`
-	}
-
-	var match Match
+	var match dto.MatchResponseDto
 
 	query := `
 		SELECT 
@@ -225,7 +222,17 @@ func GetMatchByID(c *gin.Context) {
 	c.JSON(http.StatusOK, match)
 }
 
-// GetAllMatches untuk mendapatkan semua pertandingan
+// @Summary Get all matches for a tournament
+// @Description Get all matches for a tournament with the given tournament ID
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param tournamentID path string true "Tournament ID"
+// @Success 200 {array} dto.MatchResponseDto
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Tournament not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /tournaments/{tournamentID}/matches [get]
 func GetMatchesByTournamentID(c *gin.Context) {
 
 	tournamentID := c.Param("tournamentID")
@@ -241,26 +248,7 @@ func GetMatchesByTournamentID(c *gin.Context) {
 		return
 	}
 
-	type Team struct {
-		TeamID uint   `json:"team_id"`
-		Name   string `json:"name"`
-		Image  string `json:"image"`
-	}
-
-	type Match struct {
-		MatchID    uint `json:"match_id"`
-		Week       int  `json:"week"`
-		Day        int  `json:"day"`
-		Date       int  `json:"date"`
-		TeamAID    uint `json:"team_a_id"`
-		TeamA      Team `gorm:"embedded;embeddedPrefix:team_a_" json:"team_a"`
-		TeamBID    uint `json:"team_b_id"`
-		TeamB      Team `gorm:"embedded;embeddedPrefix:team_b_" json:"team_b"`
-		TeamAScore int  `json:"team_a_score"`
-		TeamBScore int  `json:"team_b_score"`
-	}
-
-	var matches []Match
+	var matches []dto.MatchResponseDto
 
 	query := `
 		SELECT 
@@ -282,6 +270,19 @@ func GetMatchesByTournamentID(c *gin.Context) {
 	c.JSON(http.StatusOK, matches)
 }
 
+// @Summary Add a player to a match
+// @Description Add a player to a match by specifying the match ID, team ID, and player ID
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param dto body dto.PlayerMatchRequestDto true "Player match request"
+// @Success 201 {string} string "Player match added successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/players [post]
 func AddPlayerMatch(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -297,9 +298,7 @@ func AddPlayerMatch(c *gin.Context) {
 		return
 	}
 
-	input := struct {
-		PlayerID uint `json:"player_id" binding:"required"`
-	}{}
+	input := dto.PlayerMatchRequestDto{}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -327,6 +326,20 @@ func AddPlayerMatch(c *gin.Context) {
 
 }
 
+// @Summary Remove a player match
+// @Description Remove a player match with the given match ID, team ID and player ID
+// @Accept  json
+// @Security Bearer
+// @Tags Match
+// @Produce  json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param playerID path string true "Player ID"
+// @Success 200 {string} string "Player match removed successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/players/{playerID} [delete]
 func RemovePlayerMatch(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -357,6 +370,19 @@ func RemovePlayerMatch(c *gin.Context) {
 
 }
 
+// @Summary Get all players for a match and team
+// @Description Get all players for a match and team with the given match ID and team ID
+// @Accept  json
+// @Security Bearer
+// @Tags Match
+// @Produce  json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Success 200 {array} dto.PlayerMatchResponseDto
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/players [get]
 func GetAllPlayersMatch(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -372,20 +398,7 @@ func GetAllPlayersMatch(c *gin.Context) {
 		return
 	}
 
-	type PlayerMatch struct {
-		PlayerMatchID     uint `json:"player_match_id"`
-		MatchTeamDetailID uint `json:"match_team_detail_id"`
-		PlayerID          uint `json:"player_id"`
-		Player            struct {
-			PlayerID uint   `json:"player_id"`
-			TeamID   uint   `json:"team_id"`
-			Name     string `json:"name"`
-			Role     string `json:"role"`
-			Image    string `json:"image"`
-		} `json:"player"`
-	}
-
-	var players []PlayerMatch
+	var players []dto.PlayerMatchResponseDto
 
 	query := `
 		SELECT 
@@ -408,6 +421,20 @@ func GetAllPlayersMatch(c *gin.Context) {
 
 }
 
+// @Summary Add a coach match
+// @Description Add a coach match with the given match ID, team ID and coach ID
+// @Accept  json
+// @Security Bearer
+// @Tags Match
+// @Produce  json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param coachID body int true "Coach ID"
+// @Success 201 {string} string "Coach match added successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/coaches [post]
 func AddCoachMatch(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -422,9 +449,7 @@ func AddCoachMatch(c *gin.Context) {
 		return
 	}
 
-	input := struct {
-		CoachID uint `json:"coach_id" binding:"required"`
-	}{}
+	input := dto.CoachMatchRequestDto{}
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -450,6 +475,20 @@ func AddCoachMatch(c *gin.Context) {
 
 }
 
+// @Summary Remove a coach match
+// @Description Remove a coach match with the given match ID, team ID, and coach ID
+// @Accept  json
+// @Security Bearer
+// @Tags Match
+// @Produce  json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param coachID path string true "Coach ID"
+// @Success 200 {string} string "Coach match removed successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or coach not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/coaches/{coachID} [delete]
 func RemoveCoachMatch(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -481,6 +520,19 @@ func RemoveCoachMatch(c *gin.Context) {
 
 }
 
+// @Summary Get all coaches match
+// @Description Get all coaches match with the given match ID and team ID
+// @Accept  json
+// @Security Bearer
+// @Tags Match
+// @Produce  json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Success 200 {array} dto.CoachMatchResponseDto "Coaches match found"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/coaches [get]
 func GetAllCoachesMatch(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -496,20 +548,7 @@ func GetAllCoachesMatch(c *gin.Context) {
 		return
 	}
 
-	type CoachMatchResponse struct {
-		CoachMatchID      uint `json:"coach_match_id"`
-		MatchTeamDetailID uint `json:"match_team_detail_id"`
-		CoachID           uint `json:"coach_id"`
-		Coach             struct {
-			CoachID uint   `json:"coach_id"`
-			TeamID  uint   `json:"team_id"`
-			Name    string `json:"name"`
-			Role    string `json:"role"`
-			Image   string `json:"image"`
-		} `json:"coach"`
-	}
-
-	var coaches []CoachMatchResponse
+	var coaches []dto.CoachMatchResponseDto
 
 	query := `
 		SELECT 
@@ -530,6 +569,21 @@ func GetAllCoachesMatch(c *gin.Context) {
 	c.JSON(http.StatusOK, coaches)
 }
 
+// @Summary Add hero pick
+// @Description Add hero pick to match
+// @ID add-hero-pick
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param heroPick body dto.HeroPickRequestDto true "Hero pick"
+// @Success 200 {string} string "Hero pick added successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/hero-picks [post]
 func AddHeroPick(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -545,15 +599,7 @@ func AddHeroPick(c *gin.Context) {
 		return
 	}
 
-	var input struct {
-		HeroID       uint `json:"hero_id" binding:"required"`
-		FirstPhase   int  `json:"first_phase" binding:"required"`
-		SecondPhase  int  `json:"second_phase" binding:"required"`
-		HeroPickGame []struct {
-			GameNumber int  `json:"game_number" binding:"required"`
-			IsPicked   bool `json:"is_picked" binding:"required"`
-		}
-	}
+	input := dto.HeroPickRequestDto{}
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -597,6 +643,21 @@ func AddHeroPick(c *gin.Context) {
 
 }
 
+// @Summary Update hero pick
+// @Description Update hero pick in match
+// @Accept  json
+// @Security Bearer
+// @Tags Match
+// @Produce  json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param heroPickID path string true "Hero pick ID"
+// @Param heroPick body dto.HeroPickRequestDto true "Hero pick"
+// @Success 200 {string} string "Hero pick updated successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/hero-picks/{heroPickID} [put]
 func UpdateHeroPick(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -619,15 +680,7 @@ func UpdateHeroPick(c *gin.Context) {
 		return
 	}
 
-	var input struct {
-		HeroID       uint `json:"hero_id" binding:"required"`
-		FirstPhase   int  `json:"first_phase" binding:"required"`
-		SecondPhase  int  `json:"second_phase" binding:"required"`
-		HeroPickGame []struct {
-			GameNumber int  `json:"game_number" binding:"required"`
-			IsPicked   bool `json:"is_picked" binding:"required"`
-		}
-	}
+	input := dto.HeroPickRequestDto{}
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -686,6 +739,20 @@ func UpdateHeroPick(c *gin.Context) {
 
 }
 
+// @Summary Remove hero pick
+// @Description Remove hero pick from match
+// @ID remove-hero-pick
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param heroPickID path string true "Hero pick ID"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match, team, or hero pick not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/hero-picks/{heroPickID} [delete]
 func RemoveHeroPick(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -744,6 +811,20 @@ func RemoveHeroPick(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Hero pick removed successfully"})
 
 }
+
+// @Summary Get all hero picks
+// @Description Get all hero picks in a match with the given team ID
+// @ID get-all-hero-picks
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Success 200 {array} dto.HeroPickResponseDto
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Hero picks not found"
+// @Router /matches/{matchID}/teams/{teamID}/hero-picks [get]
 func GetAllHeroPicks(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -753,21 +834,7 @@ func GetAllHeroPicks(c *gin.Context) {
 		return
 	}
 
-	type HeroPickResponse struct {
-		HeroPickID        uint `json:"hero_pick_id"`
-		MatchTeamDetailID uint `json:"match_team_detail_id"`
-		HeroID            uint `json:"hero_id"`
-		Hero              struct {
-			HeroID uint   `json:"hero_id"`
-			Name   string `json:"name"`
-			Image  string `json:"image"`
-		}
-		FirstPhase  int `json:"first_phase"`
-		SecondPhase int `json:"second_phase"`
-		Total       int `json:"total"`
-	}
-
-	var picks []HeroPickResponse
+	var picks []dto.HeroPickResponseDto
 	query := `
 		SELECT 
 			hp.hero_pick_id, hp.match_team_detail_id, hp.hero_id, 
@@ -787,6 +854,21 @@ func GetAllHeroPicks(c *gin.Context) {
 	c.JSON(http.StatusOK, picks)
 }
 
+// @Summary Add hero ban
+// @Description Add hero ban to match
+// @ID add-hero-ban
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param heroBan body dto.HeroBanRequestDto true "Hero ban"
+// @Success 200 {string} string "Hero ban added successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/hero-bans [post]
 func AddHeroBan(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -796,41 +878,84 @@ func AddHeroBan(c *gin.Context) {
 		return
 	}
 
+	// Validasi keberadaan match dan team
 	var matchTeamDetail models.MatchTeamDetail
 	if err := config.DB.Where("match_id = ? AND team_id = ?", matchID, teamID).First(&matchTeamDetail).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Match or team not found"})
 		return
 	}
 
-	var input struct {
-		HeroID      uint `json:"hero_id" binding:"required"`
-		FirstPhase  int  `json:"first_phase" binding:"required"`
-		SecondPhase int  `json:"second_phase" binding:"required"`
-		Total       int  `json:"total" binding:"required"`
-	}
-
+	// Binding input JSON
+	input := dto.HeroBanRequestDto{}
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	// Memulai transaksi
+	tx := config.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+			return
+		}
+	}()
 
 	heroBan := models.HeroBan{
 		MatchTeamDetailID: matchTeamDetail.MatchTeamDetailID,
 		HeroID:            input.HeroID,
 		FirstPhase:        input.FirstPhase,
 		SecondPhase:       input.SecondPhase,
-		Total:             input.Total,
 	}
-
-	if err := config.DB.Create(&heroBan).Error; err != nil {
+	if err := tx.Create(&heroBan).Error; err != nil {
+		tx.Rollback()
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Hero ban added successfully"})
+	// Membuat HeroBan dan menyimpannya
+	for _, ban := range input.HeroBanGame {
+		heroBanGame := models.HeroBanGame{
+			HeroBanID:  heroBan.HeroBanID,
+			GameNumber: ban.GameNumber,
+			IsBanned:   ban.IsBanned,
+		}
 
+		if err := tx.Create(&heroBanGame).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+	}
+
+	// Commit jika semua operasi sukses
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to commit transaction"})
+		return
+	}
+
+	// Respon sukses
+	c.JSON(http.StatusCreated, gin.H{"message": "Hero ban added successfully"})
 }
 
+// @Summary Update hero ban
+// @Description Update hero ban in match
+// @ID update-hero-ban
+// @Accept  json
+// @Security Bearer
+// @Tags Match
+// @Produce  json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param HeroBanID path string true "Hero ban ID"
+// @Param heroBan body dto.HeroBanRequestDto true "Hero ban"
+// @Success 200 {string} string "Hero ban updated successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/hero-bans/{HeroBanID} [put]
 func UpdateHeroBan(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -853,15 +978,7 @@ func UpdateHeroBan(c *gin.Context) {
 		return
 	}
 
-	var input struct {
-		HeroID      uint `json:"hero_id" binding:"required"`
-		FirstPhase  int  `json:"first_phase" binding:"required"`
-		SecondPhase int  `json:"second_phase" binding:"required"`
-		HeroBanGame []struct {
-			GameNumber int  `json:"game_number" binding:"required"`
-			IsBanned   bool `json:"is_banned" binding:"required"`
-		}
-	}
+	input := dto.HeroBanRequestDto{}
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -919,6 +1036,21 @@ func UpdateHeroBan(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Hero ban updated successfully"})
 
 }
+
+// @Summary Remove hero ban
+// @Description Remove hero ban from match
+// @ID remove-hero-ban
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param HeroBanID path string true "HeroBan ID"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/hero-bans/{HeroBanID} [delete]
 func RemoveHeroBan(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -976,6 +1108,21 @@ func RemoveHeroBan(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Hero ban removed successfully"})
 }
+
+// @Summary Get all hero bans
+// @Description Get all hero bans of a match by team
+// @ID get-all-hero-bans
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Success 200 {array} dto.HeroBanResponseDto "Hero bans"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/hero-bans [get]
 func GetAllHeroBans(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -985,21 +1132,7 @@ func GetAllHeroBans(c *gin.Context) {
 		return
 	}
 
-	type HeroBanResponse struct {
-		HeroBanID         uint `json:"hero_ban_id"`
-		MatchTeamDetailID uint `json:"match_team_detail_id"`
-		HeroID            uint `json:"hero_id"`
-		Hero              struct {
-			HeroID uint   `json:"hero_id"`
-			Name   string `json:"name"`
-			Image  string `json:"image"`
-		}
-		FirstPhase  int `json:"first_phase"`
-		SecondPhase int `json:"second_phase"`
-		Total       int `json:"total"`
-	}
-
-	var bans []HeroBanResponse
+	var bans []dto.HeroBanResponseDto
 	query := `
 		SELECT 
 			hb.hero_ban_id, hb.match_team_detail_id, hb.hero_id, 
@@ -1019,6 +1152,21 @@ func GetAllHeroBans(c *gin.Context) {
 	c.JSON(http.StatusOK, bans)
 }
 
+// @Summary Add priority pick
+// @Description Add priority pick to match
+// @ID add-priority-pick
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param priorityPick body dto.PriorityPickRequestDto true "Priority pick"
+// @Success 201 {string} string "Priority pick added successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/priority-picks [post]
 func AddPriorityPick(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -1038,12 +1186,7 @@ func AddPriorityPick(c *gin.Context) {
 	}
 
 	// Struct untuk menerima input JSON
-	input := struct {
-		HeroID   uint    `json:"hero_id" binding:"required"`
-		Total    int     `json:"total" binding:"required"`
-		Role     string  `json:"role" binding:"required,oneof=Gold Exp Roam Mid Jung"`
-		PickRate float64 `json:"pick_rate" binding:"required"`
-	}{}
+	input := dto.PriorityPickRequestDto{}
 
 	// Bind input JSON ke struct
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -1076,6 +1219,21 @@ func AddPriorityPick(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Priority pick added successfully"})
 }
 
+// @Summary Update priority pick
+// @Description Update priority pick in match
+// @Accept  json
+// @Security Bearer
+// @Tags Match
+// @Produce  json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param priorityPickID path string true "Priority pick ID"
+// @Param priorityPick body dto.PriorityPickRequestDto true "Priority pick"
+// @Success 200 {string} string "Priority pick updated successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/priority-picks/{priorityPickID} [put]
 func UpdatePriorityPick(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -1103,12 +1261,7 @@ func UpdatePriorityPick(c *gin.Context) {
 		return
 	}
 	// Struct untuk menerima input JSON
-	input := struct {
-		HeroID   uint    `json:"hero_id" binding:"required"`
-		Total    int     `json:"total" binding:"required"`
-		Role     string  `json:"role" binding:"required,oneof=Gold Exp Roam Mid Jung"`
-		PickRate float64 `json:"pick_rate" binding:"required"`
-	}{}
+	input := dto.PriorityPickRequestDto{}
 
 	// Bind input JSON ke struct
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -1138,6 +1291,20 @@ func UpdatePriorityPick(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Priority pick updated successfully"})
 }
 
+// @Summary Get all priority picks
+// @Description Get all priority picks of a match by team
+// @ID get-all-priority-picks
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Success 200 {array} dto.PriorityPickResponseDto "Priority pick list"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/priority-picks [get]
 func GetAllPriorityPicks(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -1156,21 +1323,7 @@ func GetAllPriorityPicks(c *gin.Context) {
 		return
 	}
 
-	type PriorityPickResponse struct {
-		PriorityPickID    uint `json:"priority_pick_id"`
-		MatchTeamDetailID uint `json:"match_team_detail_id"`
-		HeroID            uint `json:"hero_id"`
-		Hero              struct {
-			HeroID uint   `json:"hero_id"`
-			Name   string `json:"name"`
-			Image  string `json:"image"`
-		}
-		Total    int     `json:"total"`
-		Role     string  `json:"role"`
-		PickRate float64 `json:"pick_rate"`
-	}
-
-	var priorityPicks []PriorityPickResponse
+	var priorityPicks []dto.PriorityPickResponseDto
 
 	// Query dengan WHERE untuk filter MatchTeamDetailID
 	query := `
@@ -1191,6 +1344,20 @@ func GetAllPriorityPicks(c *gin.Context) {
 	c.JSON(http.StatusOK, priorityPicks)
 }
 
+// @Summary Get priority pick by ID
+// @Description Get a priority pick by its ID
+// @ID get-priority-pick-by-id
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param priorityPickID path string true "Priority pick ID"
+// @Success 200 {object} dto.PriorityPickResponseDto
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Priority pick not found"
+// @Router /matches/{matchID}/teams/{teamID}/priority-picks/{priorityPickID} [get]
 func GetPriorityPickByID(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -1202,21 +1369,7 @@ func GetPriorityPickByID(c *gin.Context) {
 		return
 	}
 
-	type PriorityPickResponse struct {
-		PriorityPickID    uint `json:"priority_pick_id"`
-		MatchTeamDetailID uint `json:"match_team_detail_id"`
-		HeroID            uint `json:"hero_id"`
-		Hero              struct {
-			HeroID uint   `json:"hero_id"`
-			Name   string `json:"name"`
-			Image  string `json:"image"`
-		}
-		Total    int     `json:"total"`
-		Role     string  `json:"role"`
-		PickRate float64 `json:"pick_rate"`
-	}
-
-	var priorityPick PriorityPickResponse
+	var priorityPick dto.PriorityPickResponseDto
 
 	query := `
 		SELECT 
@@ -1237,6 +1390,21 @@ func GetPriorityPickByID(c *gin.Context) {
 	c.JSON(http.StatusOK, priorityPick)
 }
 
+// @Summary Delete priority pick
+// @Description Delete a priority pick by its ID
+// @ID delete-priority-pick
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param priorityPickID path string true "Priority Pick ID"
+// @Success 200 {string} string "Priority pick deleted successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Priority pick not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/priority-picks/{priorityPickID} [delete]
 func RemovePriorityPick(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -1273,6 +1441,21 @@ func RemovePriorityPick(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Priority pick deleted successfully"})
 }
 
+// @Summary Add flex pick
+// @Description Add flex pick to match
+// @ID add-flex-pick
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param flexPick body dto.FlexPickRequestDto true "Flex pick"
+// @Success 201 {string} string "Flex pick added successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/flex-picks [post]
 func AddFlexPick(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -1292,12 +1475,7 @@ func AddFlexPick(c *gin.Context) {
 	}
 
 	// Struct untuk menerima input JSON
-	input := struct {
-		HeroID   uint    `json:"hero_id" binding:"required"`
-		Total    int     `json:"total" binding:"required"`
-		Role     string  `json:"role" binding:"required,oneof=Roam/Exp Jung/Gold Jung/Mid Jung/Exp"`
-		PickRate float64 `json:"pick_rate" binding:"required"`
-	}{}
+	input := dto.FlexPickRequestDto{}
 
 	// Bind input JSON ke struct
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -1330,6 +1508,19 @@ func AddFlexPick(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Flex pick added successfully"})
 }
 
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param flexPickID path string true "Flex Pick ID"
+// @Param flexPick body dto.FlexPickRequestDto true "Flex pick"
+// @Success 200 {string} string "Flex pick updated successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match, team, or flex pick not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/flex-picks/{flexPickID} [put]
 func UpdateFlexPick(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -1358,12 +1549,7 @@ func UpdateFlexPick(c *gin.Context) {
 	}
 
 	// Struct untuk menerima input JSON
-	input := struct {
-		HeroID   uint    `json:"hero_id" binding:"required"`
-		Total    int     `json:"total" binding:"required"`
-		Role     string  `json:"role" binding:"required,oneof=Roam/Exp Jung/Gold Jung/Mid Jung/Exp"`
-		PickRate float64 `json:"pick_rate" binding:"required"`
-	}{}
+	input := dto.FlexPickRequestDto{}
 
 	// Bind input JSON ke struct
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -1393,6 +1579,19 @@ func UpdateFlexPick(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Flex pick updated successfully"})
 }
 
+// @Summary Get all flex picks
+// @Description Get all flex picks of a match by team
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Success 200 {array} dto.FlexPickResponseDto "Flex pick list"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/flex-picks [get]
 func GetAllFlexPicks(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -1411,21 +1610,7 @@ func GetAllFlexPicks(c *gin.Context) {
 		return
 	}
 
-	type FlexPickResponse struct {
-		FlexPickID        uint `json:"flex_pick_id"`
-		MatchTeamDetailID uint `json:"match_team_detail_id"`
-		HeroID            uint `json:"hero_id"`
-		Hero              struct {
-			HeroID uint   `json:"hero_id"`
-			Name   string `json:"name"`
-			Image  string `json:"image"`
-		}
-		Total    int     `json:"total"`
-		Role     string  `json:"role"`
-		PickRate float64 `json:"pick_rate"`
-	}
-
-	var flexPicks []FlexPickResponse
+	var flexPicks []dto.FlexPickResponseDto
 
 	// Query dengan WHERE untuk filter MatchTeamDetailID
 	query := `
@@ -1446,6 +1631,20 @@ func GetAllFlexPicks(c *gin.Context) {
 	c.JSON(http.StatusOK, flexPicks)
 }
 
+// @Summary Get flex pick by ID
+// @Description Get a flex pick by its ID
+// @ID get-flex-pick-by-id
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param flexPickID path string true "Flex pick ID"
+// @Success 200 {object} dto.FlexPickResponseDto
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Flex pick not found"
+// @Router /matches/{matchID}/teams/{teamID}/flex-picks/{flexPickID} [get]
 func GetFlexPickByID(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -1457,21 +1656,7 @@ func GetFlexPickByID(c *gin.Context) {
 		return
 	}
 
-	type FlexPickResponse struct {
-		FlexPickID        uint `json:"flex_pick_id"`
-		MatchTeamDetailID uint `json:"match_team_detail_id"`
-		HeroID            uint `json:"hero_id"`
-		Hero              struct {
-			HeroID uint   `json:"hero_id"`
-			Name   string `json:"name"`
-			Image  string `json:"image"`
-		}
-		Total    int     `json:"total"`
-		Role     string  `json:"role"`
-		PickRate float64 `json:"pick_rate"`
-	}
-
-	var flexPick FlexPickResponse
+	var flexPick dto.FlexPickResponseDto
 
 	query := `
 		SELECT 
@@ -1492,6 +1677,21 @@ func GetFlexPickByID(c *gin.Context) {
 	c.JSON(http.StatusOK, flexPick)
 }
 
+// @Summary Delete flex pick
+// @Description Delete flex pick by ID
+// @ID delete-flex-pick
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param flexPickID path string true "Flex pick ID"
+// @Success 200 {string} string "Flex pick deleted successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match, team, or flex pick not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/flex-picks/{flexPickID} [delete]
 func DeleteFlexPick(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -1528,6 +1728,21 @@ func DeleteFlexPick(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Flex pick deleted successfully"})
 }
 
+// @Summary Add priority ban
+// @Description Add priority ban to match
+// @ID add-priority-ban
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param priorityBan body dto.PriorityBanRequestDto true "Priority ban"
+// @Success 201 {string} string "Priority ban added successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/priority-bans [post]
 func AddPriorityBan(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -1547,12 +1762,7 @@ func AddPriorityBan(c *gin.Context) {
 	}
 
 	// Struct untuk menerima input JSON
-	input := struct {
-		HeroID  uint    `json:"hero_id" binding:"required"`
-		Total   int     `json:"total" binding:"required"`
-		Role    string  `json:"role" binding:"required,oneof=Gold Exp Roam Mid Jung"`
-		BanRate float64 `json:"ban_rate" binding:"required"`
-	}{}
+	input := dto.PriorityBanRequestDto{}
 
 	// Bind input JSON ke struct
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -1585,6 +1795,22 @@ func AddPriorityBan(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Priority ban added successfully"})
 }
 
+// @Summary Update priority ban
+// @Description Update priority ban in match
+// @ID update-priority-ban
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param priorityBanID path string true "Priority Ban ID"
+// @Param priorityBan body dto.PriorityBanRequestDto true "Priority Ban"
+// @Success 200 {string} string "Priority ban updated successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match, team, or priority ban not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/priority-bans/{priorityBanID} [put]
 func UpdatePriorityBan(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -1613,12 +1839,7 @@ func UpdatePriorityBan(c *gin.Context) {
 	}
 
 	// Struct untuk menerima input JSON
-	input := struct {
-		HeroID  uint    `json:"hero_id" binding:"required"`
-		Total   int     `json:"total" binding:"required"`
-		Role    string  `json:"role" binding:"required,oneof=Gold Exp Roam Mid Jung"`
-		BanRate float64 `json:"ban_rate" binding:"required"`
-	}{}
+	input := dto.PriorityBanRequestDto{}
 
 	// Bind input JSON ke struct
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -1648,6 +1869,20 @@ func UpdatePriorityBan(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Priority ban updated successfully"})
 }
 
+// @Summary Get all priority bans
+// @Description Get all priority bans in a match with specific team
+// @ID get-all-priority-bans
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Success 200 {array} dto.PriorityBanResponseDto "Priority bans"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/priority-bans [get]
 func GetAllPriorityBans(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -1666,21 +1901,7 @@ func GetAllPriorityBans(c *gin.Context) {
 		return
 	}
 
-	type PriorityBanResponse struct {
-		PriorityBanID     uint `json:"priority_ban_id"`
-		MatchTeamDetailID uint `json:"match_team_detail_id"`
-		HeroID            uint `json:"hero_id"`
-		Hero              struct {
-			HeroID uint   `json:"hero_id"`
-			Name   string `json:"name"`
-			Image  string `json:"image"`
-		}
-		Total   int     `json:"total"`
-		Role    string  `json:"role"`
-		BanRate float64 `json:"ban_rate"`
-	}
-
-	var priorityBans []PriorityBanResponse
+	var priorityBans []dto.PriorityBanResponseDto
 
 	// Query dengan WHERE untuk filter MatchTeamDetailID
 	query := `
@@ -1701,6 +1922,21 @@ func GetAllPriorityBans(c *gin.Context) {
 	c.JSON(http.StatusOK, priorityBans)
 }
 
+// @Summary Get priority ban by ID
+// @Description Get priority ban by ID in a match
+// @ID get-priority-ban-by-id
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param priorityBanID path string true "Priority Ban ID"
+// @Success 200 {object} dto.PriorityBanResponseDto "Priority Ban"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Priority ban not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/priority-bans/{priorityBanID} [get]
 func GetPriorityBanByID(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -1712,21 +1948,7 @@ func GetPriorityBanByID(c *gin.Context) {
 		return
 	}
 
-	type PriorityBanResponse struct {
-		PriorityBanID     uint `json:"priority_ban_id"`
-		MatchTeamDetailID uint `json:"match_team_detail_id"`
-		HeroID            uint `json:"hero_id"`
-		Hero              struct {
-			HeroID uint   `json:"hero_id"`
-			Name   string `json:"name"`
-			Image  string `json:"image"`
-		}
-		Total   int     `json:"total"`
-		Role    string  `json:"role"`
-		BanRate float64 `json:"ban_rate"`
-	}
-
-	var priorityBan PriorityBanResponse
+	var priorityBan dto.PriorityBanResponseDto
 
 	query := `
 		SELECT 
@@ -1747,6 +1969,21 @@ func GetPriorityBanByID(c *gin.Context) {
 	c.JSON(http.StatusOK, priorityBan)
 }
 
+// @Summary Delete priority ban
+// @Description Delete priority ban in match
+// @ID delete-priority-ban
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param priorityBanID path string true "Priority Ban ID"
+// @Success 200 {string} string "Priority ban deleted successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match, team, or priority ban not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/priority-bans/{priorityBanID} [delete]
 func DeletePriorityBan(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")

@@ -6,10 +6,20 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+
+	_ "ml-master-data/docs"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func SetupRouter() *gin.Engine {
+
 	r := gin.Default()
+
+	// swagger
+	url := ginSwagger.URL("http://localhost:8080/swagger/doc.json")
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 
 	// CORS middleware
 	config := cors.DefaultConfig()
@@ -18,7 +28,7 @@ func SetupRouter() *gin.Engine {
 	r.Use(cors.New(config))
 
 	// Public routes
-	r.POST("/login", controllers.Login)
+	r.POST("/api/login", controllers.Login)
 
 	// Protected routes
 	protected := r.Group("/api")

@@ -13,6 +13,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// GetAllHeroes godoc
+// @Summary Get all heroes
+// @Description Get all heroes data
+// @Tags Hero
+// @Produce json
+// @Security Bearer
+// @Success 200 {array} models.Hero
+// @Router /heroes [get]
 func GetAllHeroes(c *gin.Context) {
 	var heroes []models.Hero
 
@@ -24,7 +32,18 @@ func GetAllHeroes(c *gin.Context) {
 	c.JSON(http.StatusOK, heroes)
 }
 
+// CreateHero godoc
+// @Summary Create a hero
+// @Description Create a hero and save its image
+// @Tags Hero
+// @Produce json
+// @Security Bearer
+// @Param name formData string true "Hero name"
+// @Param hero_image formData file true "Hero image"
+// @Success 201 {object} models.Hero
+// @Router /heroes [post]
 func CreateHero(c *gin.Context) {
+
 	// Mengambil nama hero dari FormValue
 	name := c.PostForm("name")
 	if name == "" {
@@ -83,6 +102,15 @@ func CreateHero(c *gin.Context) {
 	c.JSON(http.StatusCreated, hero)
 }
 
+// GetHeroByID godoc
+// @Summary Get a hero by ID
+// @Description Get a hero data by ID
+// @Tags Hero
+// @Produce json
+// @Security Bearer
+// @Param heroID path string true "Hero ID"
+// @Success 200 {object} models.Hero
+// @Router /heroes/{heroID} [get]
 func GetHeroByID(c *gin.Context) {
 	heroID := c.Param("heroID")
 
@@ -95,6 +123,17 @@ func GetHeroByID(c *gin.Context) {
 	c.JSON(http.StatusOK, hero)
 }
 
+// UpdateHero godoc
+// @Summary Update a hero
+// @Description Update a hero and save its image
+// @Tags Hero
+// @Produce json
+// @Security Bearer
+// @Param heroID path string true "Hero ID"
+// @Param name formData string false "Hero name"
+// @Param hero_image formData file false "Hero image"
+// @Success 200 {object} models.Hero
+// @Router /heroes/{heroID} [put]
 func UpdateHero(c *gin.Context) {
 	heroID := c.Param("heroID")
 	if heroID == "" {

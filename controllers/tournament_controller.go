@@ -4,12 +4,21 @@ import (
 	"net/http"
 
 	"ml-master-data/config" // Ganti dengan path yang sesuai untuk package database Anda
+	"ml-master-data/dto"
 	"ml-master-data/models"
 
 	"github.com/gin-gonic/gin"
 )
 
-// GetAllTournaments retrieves all tournaments from the database
+// GetAllTournaments gets all tournaments
+// @Summary Get all tournaments
+// @Description Get all tournaments
+// @Tags Tournament
+// @Security Bearer
+// @Produce json
+// @Success 200 {array} models.Tournament
+// @Failure 500 {string} string "Internal server error"
+// @Router /tournaments [get]
 func GetAllTournaments(c *gin.Context) {
 	var tournaments []models.Tournament
 
@@ -21,6 +30,17 @@ func GetAllTournaments(c *gin.Context) {
 	c.JSON(http.StatusOK, tournaments)
 }
 
+// GetTournamentByID gets a tournament by ID
+// @Summary Get a tournament by ID
+// @Description Get a tournament by ID
+// @Tags Tournament
+// @Security Bearer
+// @Produce json
+// @Param tournamentID path string true "Tournament ID"
+// @Success 200 {object} models.Tournament
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Tournament not found"
+// @Router /tournaments/{tournamentID} [get]
 func GetTournamentByID(c *gin.Context) {
 	tournamentID := c.Param("tournamentID")
 	if tournamentID == "" {
@@ -39,10 +59,19 @@ func GetTournamentByID(c *gin.Context) {
 }
 
 // CreateTournament creates a new tournament
+// @Summary Create a new tournament
+// @Description Create a new tournament with the given name
+// @Tags Tournament
+// @Security Bearer
+// @Produce json
+// @Param dto body dto.TournamentRequestDto true "Tournament request"
+// @Success 201 {object} models.Tournament
+// @Failure 400 {string} string "Invalid input"
+// @Failure 500 {string} string "Internal server error"
+// @Router /tournaments [post]
 func CreateTournament(c *gin.Context) {
-	input := struct {
-		Name string `json:"name" binding:"required"`
-	}{}
+
+	input := dto.TournamentRequestDto{}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -61,7 +90,19 @@ func CreateTournament(c *gin.Context) {
 	c.JSON(http.StatusCreated, tournament)
 }
 
-// UpdateTournament updates an existing tournament
+// UpdateTournament updates a tournament
+// @Summary Update a tournament
+// @Description Update a tournament with the given name
+// @Tags Tournament
+// @Security Bearer
+// @Produce json
+// @Param tournamentID path string true "Tournament ID"
+// @Param dto body dto.TournamentRequestDto true "Tournament request"
+// @Success 200 {object} models.Tournament
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Tournament not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /tournaments/{tournamentID} [put]
 func UpdateTournament(c *gin.Context) {
 	tournamentID := c.Param("tournamentID")
 	if tournamentID == "" {
@@ -76,9 +117,7 @@ func UpdateTournament(c *gin.Context) {
 		return
 	}
 
-	input := struct {
-		Name string `json:"name"`
-	}{}
+	input := dto.TournamentRequestDto{}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -98,7 +137,17 @@ func UpdateTournament(c *gin.Context) {
 	c.JSON(http.StatusOK, tournament)
 }
 
-// DeleteTournament deletes a tournament
+// @Summary Delete a tournament
+// @Description Delete a tournament with the given tournament ID
+// @Tags Tournament
+// @Security Bearer
+// @Produce json
+// @Param tournamentID path string true "Tournament ID"
+// @Success 200 {string} string "Tournament deleted successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Tournament not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /tournaments/{tournamentID} [delete]
 func DeleteTournament(c *gin.Context) {
 	tournamentID := c.Param("tournamentID")
 	var tournament models.Tournament

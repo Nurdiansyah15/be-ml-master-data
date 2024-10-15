@@ -1,0 +1,4242 @@
+basePath: /api/
+definitions:
+  dto.CoachMatchResponseDto:
+    properties:
+      coach:
+        properties:
+          coach_id:
+            type: integer
+          image:
+            type: string
+          name:
+            type: string
+          role:
+            type: string
+          team_id:
+            type: integer
+        type: object
+      coach_id:
+        type: integer
+      coach_match_id:
+        type: integer
+      match_team_detail_id:
+        type: integer
+    type: object
+  dto.ExplanerRequestDto:
+    properties:
+      early_result:
+        type: string
+      hero_id:
+        type: integer
+      team_id:
+        type: integer
+    required:
+    - early_result
+    - hero_id
+    - team_id
+    type: object
+  dto.ExplanerResponseDto:
+    properties:
+      early_result:
+        type: string
+      explaner_id:
+        type: integer
+      game_id:
+        type: integer
+      hero:
+        properties:
+          hero_id:
+            type: integer
+          image:
+            type: string
+          name:
+            type: string
+        type: object
+      hero_id:
+        type: integer
+      team:
+        properties:
+          image:
+            type: string
+          name:
+            type: string
+          team_id:
+            type: integer
+        type: object
+      team_id:
+        type: integer
+    type: object
+  dto.FlexPickRequestDto:
+    properties:
+      hero_id:
+        type: integer
+      pick_rate:
+        type: number
+      role:
+        enum:
+        - Roam/Exp
+        - Jung/Gold
+        - Jung/Mid
+        - Jung/Exp
+        type: string
+      total:
+        type: integer
+    required:
+    - hero_id
+    - pick_rate
+    - role
+    - total
+    type: object
+  dto.FlexPickResponseDto:
+    properties:
+      flex_pick_id:
+        type: integer
+      hero:
+        properties:
+          hero_id:
+            type: integer
+          image:
+            type: string
+          name:
+            type: string
+        type: object
+      hero_id:
+        type: integer
+      match_team_detail_id:
+        type: integer
+      pick_rate:
+        type: number
+      role:
+        type: string
+      total:
+        type: integer
+    type: object
+  dto.GameRequestDto:
+    properties:
+      first_pick_team_id:
+        type: integer
+      full_draft_image:
+        type: string
+      game_number:
+        type: integer
+      second_pick_team_id:
+        type: integer
+      video_link:
+        type: string
+      winner_team_id:
+        type: integer
+    required:
+    - first_pick_team_id
+    - game_number
+    - second_pick_team_id
+    - winner_team_id
+    type: object
+  dto.GameResponseDto:
+    properties:
+      first_pick_team_id:
+        type: integer
+      firstTeam:
+        properties:
+          image:
+            type: string
+          name:
+            type: string
+          team_id:
+            type: integer
+        type: object
+      full_draft_image:
+        type: string
+      game_id:
+        type: integer
+      game_number:
+        type: integer
+      match_id:
+        type: integer
+      second_pick_team_id:
+        type: integer
+      secondTeam:
+        properties:
+          image:
+            type: string
+          name:
+            type: string
+          team_id:
+            type: integer
+        type: object
+      video_link:
+        type: string
+      winner_team_id:
+        type: integer
+      winnerTeam:
+        properties:
+          image:
+            type: string
+          name:
+            type: string
+          team_id:
+            type: integer
+        type: object
+    type: object
+  dto.GoldlanerRequestDto:
+    properties:
+      early_result:
+        type: string
+      hero_id:
+        type: integer
+      team_id:
+        type: integer
+    required:
+    - early_result
+    - hero_id
+    - team_id
+    type: object
+  dto.GoldlanerResponseDto:
+    properties:
+      early_result:
+        type: string
+      game_id:
+        type: integer
+      goldlaner_id:
+        type: integer
+      hero:
+        properties:
+          hero_id:
+            type: integer
+          image:
+            type: string
+          name:
+            type: string
+        type: object
+      hero_id:
+        type: integer
+      team:
+        properties:
+          image:
+            type: string
+          name:
+            type: string
+          team_id:
+            type: integer
+        type: object
+      team_id:
+        type: integer
+    type: object
+  dto.HeroBanRequestDto:
+    properties:
+      first_phase:
+        type: integer
+      hero_id:
+        type: integer
+      heroBanGame:
+        items:
+          properties:
+            game_number:
+              type: integer
+            is_banned:
+              type: boolean
+          required:
+          - game_number
+          - is_banned
+          type: object
+        type: array
+      second_phase:
+        type: integer
+    required:
+    - first_phase
+    - hero_id
+    - second_phase
+    type: object
+  dto.HeroBanResponseDto:
+    properties:
+      first_phase:
+        type: integer
+      hero:
+        properties:
+          hero_id:
+            type: integer
+          image:
+            type: string
+          name:
+            type: string
+        type: object
+      hero_ban_id:
+        type: integer
+      hero_id:
+        type: integer
+      match_team_detail_id:
+        type: integer
+      second_phase:
+        type: integer
+      total:
+        type: integer
+    type: object
+  dto.HeroPickRequestDto:
+    properties:
+      first_phase:
+        type: integer
+      hero_id:
+        type: integer
+      heroPickGame:
+        items:
+          properties:
+            game_number:
+              type: integer
+            is_picked:
+              type: boolean
+          required:
+          - game_number
+          - is_picked
+          type: object
+        type: array
+      second_phase:
+        type: integer
+    required:
+    - first_phase
+    - hero_id
+    - second_phase
+    type: object
+  dto.HeroPickResponseDto:
+    properties:
+      first_phase:
+        type: integer
+      hero:
+        properties:
+          hero_id:
+            type: integer
+          image:
+            type: string
+          name:
+            type: string
+        type: object
+      hero_id:
+        type: integer
+      hero_pick_id:
+        type: integer
+      match_team_detail_id:
+        type: integer
+      second_phase:
+        type: integer
+      total:
+        type: integer
+    type: object
+  dto.LoginDto:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  dto.LordResultRequestDto:
+    properties:
+      initiate:
+        type: string
+      phase:
+        type: string
+      result:
+        type: string
+      setup:
+        type: string
+      team_id:
+        type: integer
+    required:
+    - initiate
+    - phase
+    - result
+    - setup
+    - team_id
+    type: object
+  dto.LordResultResponseDto:
+    properties:
+      game_id:
+        type: integer
+      initiate:
+        type: string
+      lord_result_id:
+        type: integer
+      phase:
+        type: string
+      result:
+        type: string
+      setup:
+        type: string
+      team:
+        properties:
+          image:
+            type: string
+          name:
+            type: string
+          team_id:
+            type: integer
+        type: object
+      team_id:
+        type: integer
+    type: object
+  dto.MatchRequestDto:
+    properties:
+      date:
+        type: integer
+      day:
+        type: integer
+      team_a_id:
+        type: integer
+      team_a_score:
+        type: integer
+      team_b_id:
+        type: integer
+      team_b_score:
+        type: integer
+      week:
+        type: integer
+    required:
+    - date
+    - day
+    - team_a_id
+    - team_a_score
+    - team_b_id
+    - team_b_score
+    - week
+    type: object
+  dto.MatchResponseDto:
+    properties:
+      date:
+        type: integer
+      day:
+        type: integer
+      match_id:
+        type: integer
+      team_a:
+        properties:
+          image:
+            type: string
+          name:
+            type: string
+          team_id:
+            type: integer
+        type: object
+      team_a_id:
+        type: integer
+      team_a_score:
+        type: integer
+      team_b:
+        properties:
+          image:
+            type: string
+          name:
+            type: string
+          team_id:
+            type: integer
+        type: object
+      team_b_id:
+        type: integer
+      team_b_score:
+        type: integer
+      week:
+        type: integer
+    type: object
+  dto.PlayerMatchRequestDto:
+    properties:
+      player_id:
+        type: integer
+    required:
+    - player_id
+    type: object
+  dto.PlayerMatchResponseDto:
+    properties:
+      match_team_detail_id:
+        type: integer
+      player:
+        properties:
+          image:
+            type: string
+          name:
+            type: string
+          player_id:
+            type: integer
+          role:
+            type: string
+          team_id:
+            type: integer
+        type: object
+      player_id:
+        type: integer
+      player_match_id:
+        type: integer
+    type: object
+  dto.PriorityBanRequestDto:
+    properties:
+      ban_rate:
+        type: number
+      hero_id:
+        type: integer
+      role:
+        enum:
+        - Gold
+        - Exp
+        - Roam
+        - Mid
+        - Jung
+        type: string
+      total:
+        type: integer
+    required:
+    - ban_rate
+    - hero_id
+    - role
+    - total
+    type: object
+  dto.PriorityBanResponseDto:
+    properties:
+      ban_rate:
+        type: number
+      hero:
+        properties:
+          hero_id:
+            type: integer
+          image:
+            type: string
+          name:
+            type: string
+        type: object
+      hero_id:
+        type: integer
+      match_team_detail_id:
+        type: integer
+      priority_ban_id:
+        type: integer
+      role:
+        type: string
+      total:
+        type: integer
+    type: object
+  dto.PriorityPickRequestDto:
+    properties:
+      hero_id:
+        type: integer
+      pick_rate:
+        type: number
+      role:
+        enum:
+        - Gold
+        - Exp
+        - Roam
+        - Mid
+        - Jung
+        type: string
+      total:
+        type: integer
+    required:
+    - hero_id
+    - pick_rate
+    - role
+    - total
+    type: object
+  dto.PriorityPickResponseDto:
+    properties:
+      hero:
+        properties:
+          hero_id:
+            type: integer
+          image:
+            type: string
+          name:
+            type: string
+        type: object
+      hero_id:
+        type: integer
+      match_team_detail_id:
+        type: integer
+      pick_rate:
+        type: number
+      priority_pick_id:
+        type: integer
+      role:
+        type: string
+      total:
+        type: integer
+    type: object
+  dto.TournamentRequestDto:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  dto.TrioMidRequestDto:
+    properties:
+      early_result:
+        type: string
+      hero_id:
+        type: integer
+      role:
+        type: string
+      team_id:
+        type: integer
+    required:
+    - early_result
+    - hero_id
+    - role
+    - team_id
+    type: object
+  dto.TrioMidResponseDto:
+    properties:
+      early_result:
+        type: string
+      game_id:
+        type: integer
+      hero:
+        properties:
+          hero_id:
+            type: integer
+          image:
+            type: string
+          name:
+            type: string
+        type: object
+      hero_id:
+        type: integer
+      team:
+        properties:
+          image:
+            type: string
+          name:
+            type: string
+          team_id:
+            type: integer
+        type: object
+      team_id:
+        type: integer
+      trio_mid_id:
+        type: integer
+    type: object
+  dto.TurtleResultRequestDto:
+    properties:
+      initiate:
+        type: string
+      phase:
+        type: string
+      result:
+        type: string
+      setup:
+        type: string
+      team_id:
+        type: integer
+    required:
+    - initiate
+    - phase
+    - result
+    - setup
+    - team_id
+    type: object
+  dto.TurtleResultResponseDto:
+    properties:
+      game_id:
+        type: integer
+      initiate:
+        type: string
+      phase:
+        type: string
+      result:
+        type: string
+      setup:
+        type: string
+      team:
+        properties:
+          image:
+            type: string
+          name:
+            type: string
+          team_id:
+            type: integer
+        type: object
+      team_id:
+        type: integer
+      turtle_result_id:
+        type: integer
+    type: object
+  models.Coach:
+    properties:
+      coach_id:
+        type: integer
+      image:
+        type: string
+      name:
+        type: string
+      role:
+        type: string
+      team_id:
+        type: integer
+    type: object
+  models.Explaner:
+    properties:
+      early_result:
+        type: string
+      explaner_id:
+        type: integer
+      game_id:
+        type: integer
+      hero_id:
+        type: integer
+      team_id:
+        type: integer
+    type: object
+  models.Game:
+    properties:
+      first_pick_team_id:
+        type: integer
+      full_draft_image:
+        type: string
+      game_id:
+        type: integer
+      game_number:
+        type: integer
+      match_id:
+        type: integer
+      second_pick_team_id:
+        type: integer
+      video_link:
+        type: string
+      winner_team_id:
+        type: integer
+    type: object
+  models.Goldlaner:
+    properties:
+      early_result:
+        type: string
+      game_id:
+        type: integer
+      goldlaner_id:
+        type: integer
+      hero_id:
+        type: integer
+      team_id:
+        type: integer
+    type: object
+  models.Hero:
+    properties:
+      hero_id:
+        type: integer
+      image:
+        type: string
+      name:
+        type: string
+    type: object
+  models.LordResult:
+    properties:
+      game_id:
+        type: integer
+      initiate:
+        type: string
+      lord_result_id:
+        type: integer
+      phase:
+        type: string
+      result:
+        type: string
+      setup:
+        type: string
+      team_id:
+        type: integer
+    type: object
+  models.Match:
+    properties:
+      date:
+        type: integer
+      day:
+        type: integer
+      match_id:
+        type: integer
+      team_a_id:
+        type: integer
+      team_a_score:
+        type: integer
+      team_b_id:
+        type: integer
+      team_b_score:
+        type: integer
+      tournament_id:
+        type: integer
+      week:
+        type: integer
+    type: object
+  models.Player:
+    properties:
+      image:
+        type: string
+      name:
+        type: string
+      player_id:
+        type: integer
+      role:
+        type: string
+      team_id:
+        type: integer
+    type: object
+  models.Team:
+    properties:
+      image:
+        type: string
+      name:
+        type: string
+      team_id:
+        type: integer
+    type: object
+  models.Tournament:
+    properties:
+      name:
+        type: string
+      tournament_id:
+        type: integer
+    type: object
+  models.TrioMid:
+    properties:
+      early_result:
+        type: string
+      game_id:
+        type: integer
+      hero_id:
+        type: integer
+      role:
+        type: string
+      team_id:
+        type: integer
+      trio_mid_id:
+        type: integer
+    type: object
+  models.TurtleResult:
+    properties:
+      game_id:
+        type: integer
+      initiate:
+        type: string
+      phase:
+        type: string
+      result:
+        type: string
+      setup:
+        type: string
+      team_id:
+        type: integer
+      turtle_result_id:
+        type: integer
+    type: object
+  models.User:
+    properties:
+      user_id:
+        type: integer
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API for ML Master Data
+  title: ML Master Data API
+  version: "1.0"
+paths:
+  /coaches/{coachID}:
+    get:
+      consumes:
+      - application/json
+      description: Get a coach by ID with the given coach ID
+      parameters:
+      - description: Coach ID
+        in: path
+        name: coachID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Coach'
+        "400":
+          description: Coach ID is required
+          schema:
+            type: string
+        "404":
+          description: Coach not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get a coach by ID
+      tags:
+      - Team
+    put:
+      description: Update a coach in a team and save its image
+      parameters:
+      - description: Coach ID
+        in: path
+        name: coachID
+        required: true
+        type: string
+      - description: Coach name
+        in: formData
+        name: name
+        type: string
+      - description: Coach role
+        in: formData
+        name: role
+        type: string
+      - description: Coach image
+        in: formData
+        name: image
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Coach'
+        "400":
+          description: Coach ID is required" or "File size must not exceed 500 KB"
+            or "Invalid file type
+          schema:
+            type: string
+        "404":
+          description: Coach not found
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update a coach in a team
+      tags:
+      - Team
+  /heroes:
+    get:
+      description: Get all heroes data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Hero'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get all heroes
+      tags:
+      - Hero
+    post:
+      description: Create a hero and save its image
+      parameters:
+      - description: Hero name
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Hero image
+        in: formData
+        name: hero_image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Hero'
+      security:
+      - Bearer: []
+      summary: Create a hero
+      tags:
+      - Hero
+  /heroes/{heroID}:
+    get:
+      description: Get a hero data by ID
+      parameters:
+      - description: Hero ID
+        in: path
+        name: heroID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Hero'
+      security:
+      - Bearer: []
+      summary: Get a hero by ID
+      tags:
+      - Hero
+    put:
+      description: Update a hero and save its image
+      parameters:
+      - description: Hero ID
+        in: path
+        name: heroID
+        required: true
+        type: string
+      - description: Hero name
+        in: formData
+        name: name
+        type: string
+      - description: Hero image
+        in: formData
+        name: hero_image
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Hero'
+      security:
+      - Bearer: []
+      summary: Update a hero
+      tags:
+      - Hero
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Login to get JWT token
+      parameters:
+      - description: Login
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "401":
+          description: Invalid credentials
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Login
+      tags:
+      - Auth
+  /matches/{matchID}:
+    get:
+      description: Get a match by ID
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.MatchResponseDto'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get a match by ID
+      tags:
+      - Match
+    put:
+      consumes:
+      - application/json
+      description: Update a match with the given match ID with the given information
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Match data
+        in: body
+        name: match
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MatchRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Match updated successfully
+          schema:
+            $ref: '#/definitions/models.Match'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update a match
+      tags:
+      - Match
+  /matches/{matchID}/games:
+    get:
+      consumes:
+      - application/json
+      description: Get all games for a match with the given match ID
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.GameResponseDto'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all games for a match
+      tags:
+      - Game
+    post:
+      consumes:
+      - application/json
+      description: Create a new game with the given match ID and additional information
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Game data
+        in: body
+        name: game
+        required: true
+        schema:
+          $ref: '#/definitions/dto.GameRequestDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Game created successfully
+          schema:
+            $ref: '#/definitions/models.Game'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Create a new game
+      tags:
+      - Game
+  /matches/{matchID}/games/{gameID}:
+    get:
+      consumes:
+      - application/json
+      description: Get a game by ID
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GameResponseDto'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get a game by ID
+      tags:
+      - Game
+    put:
+      consumes:
+      - application/json
+      description: Update a game with the given game ID and match ID with the given
+        information
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Game data
+        in: body
+        name: game
+        required: true
+        schema:
+          $ref: '#/definitions/dto.GameRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Game updated successfully
+          schema:
+            $ref: '#/definitions/models.Game'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update a game
+      tags:
+      - Game
+  /matches/{matchID}/games/{gameID}/explaners:
+    get:
+      consumes:
+      - application/json
+      description: Get all Explaners for a game with the given game ID and match ID
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.ExplanerResponseDto'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all Explaners for a game
+      tags:
+      - Game
+    post:
+      consumes:
+      - application/json
+      description: Add an explaner for a game with the given game ID and match ID
+        with the given information
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Explaner data
+        in: body
+        name: explaner
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ExplanerRequestDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Explaner added successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or game not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Add an explaner
+      tags:
+      - Game
+  /matches/{matchID}/games/{gameID}/explaners/{explanerID}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an Explaner with the given game ID, match ID, and Explaner
+        ID
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Explaner ID
+        in: path
+        name: explanerID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Explaner deleted successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game or Explaner not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Delete an Explaner
+      tags:
+      - Game
+    get:
+      consumes:
+      - application/json
+      description: Get an explaner by ID for a game with the given game ID and match
+        ID
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Explaner ID
+        in: path
+        name: explanerID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ExplanerResponseDto'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match, game, or Explaner not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get an explaner by ID
+      tags:
+      - Game
+    put:
+      consumes:
+      - application/json
+      description: Update an Explaner with the given game ID, match ID, and Explaner
+        ID with the given information
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Explaner ID
+        in: path
+        name: explanerID
+        required: true
+        type: string
+      - description: Explaner data
+        in: body
+        name: explaner
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ExplanerRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Explaner updated successfully
+          schema:
+            $ref: '#/definitions/models.Explaner'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game or Explaner not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update an Explaner
+      tags:
+      - Game
+  /matches/{matchID}/games/{gameID}/goldlaners:
+    get:
+      consumes:
+      - application/json
+      description: Get all Goldlaners for a game with the given game ID and match
+        ID
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.GoldlanerResponseDto'
+            type: array
+        "404":
+          description: Match or game not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all Goldlaners for a game
+      tags:
+      - Game
+    post:
+      consumes:
+      - application/json
+      description: Add a goldlaner for a game with the given game ID and match ID
+        with the given information
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Goldlaner data
+        in: body
+        name: goldlaner
+        required: true
+        schema:
+          $ref: '#/definitions/dto.GoldlanerRequestDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Goldlaner added successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or game not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Add a goldlaner
+      tags:
+      - Game
+  /matches/{matchID}/games/{gameID}/goldlaners/{goldlanerID}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a Goldlaner with the given game ID, match ID, and Goldlaner
+        ID
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Goldlaner ID
+        in: path
+        name: goldlanerID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Goldlaner deleted successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game, Match, or Goldlaner not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Delete a Goldlaner
+      tags:
+      - Game
+    get:
+      consumes:
+      - application/json
+      description: Get a Goldlaner by the given game ID, match ID, and Goldlaner ID
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Goldlaner ID
+        in: path
+        name: goldlanerID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GoldlanerResponseDto'
+        "404":
+          description: Match or game or Goldlaner not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get a Goldlaner by ID
+      tags:
+      - Game
+    put:
+      consumes:
+      - application/json
+      description: Update a Goldlaner with the given game ID, match ID, and Goldlaner
+        ID with the given information
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Goldlaner ID
+        in: path
+        name: goldlanerID
+        required: true
+        type: string
+      - description: Goldlaner data
+        in: body
+        name: goldlaner
+        required: true
+        schema:
+          $ref: '#/definitions/dto.GoldlanerRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Goldlaner updated successfully
+          schema:
+            $ref: '#/definitions/models.Goldlaner'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game, Match, or Goldlaner not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update a Goldlaner
+      tags:
+      - Game
+  /matches/{matchID}/games/{gameID}/lord-results:
+    get:
+      consumes:
+      - application/json
+      description: Get all lord results for a game with the given game ID and match
+        ID
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.LordResultResponseDto'
+            type: array
+        "404":
+          description: Match or game not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all lord results for a game
+      tags:
+      - Game
+    post:
+      consumes:
+      - application/json
+      description: Add a lord result for a game with the given game ID and match ID
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Lord result data
+        in: body
+        name: lordResult
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LordResultRequestDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Lord result added successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or game not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Add a lord result
+      tags:
+      - Game
+  /matches/{matchID}/games/{gameID}/lord-results/{lordResultID}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a LordResult with the given game ID, match ID, and Lord
+        Result ID
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Lord Result ID
+        in: path
+        name: lordResultID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lord result deleted successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game or Lord result not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Delete a LordResult
+      tags:
+      - Game
+    get:
+      consumes:
+      - application/json
+      description: Get a LordResult by the given game ID, match ID, and Lord Result
+        ID
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Lord Result ID
+        in: path
+        name: lordResultID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.LordResultResponseDto'
+        "404":
+          description: Match or game or Lord result not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get a LordResult by ID
+      tags:
+      - Game
+    put:
+      consumes:
+      - application/json
+      description: Update a LordResult with the given game ID, match ID, and Lord
+        Result ID with the given information
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Lord Result ID
+        in: path
+        name: lordResultID
+        required: true
+        type: string
+      - description: Lord result data
+        in: body
+        name: lordResult
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LordResultRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lord result updated successfully
+          schema:
+            $ref: '#/definitions/models.LordResult'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game or Lord result not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update a LordResult
+      tags:
+      - Game
+  /matches/{matchID}/games/{gameID}/trio-mids:
+    get:
+      consumes:
+      - application/json
+      description: Get all TrioMids for a game with the given game ID
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TrioMidResponseDto'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all TrioMids for a game
+      tags:
+      - Game
+    post:
+      consumes:
+      - application/json
+      description: Add a TrioMid for a game with the given game ID and match ID with
+        the given information
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: TrioMid data
+        in: body
+        name: trioMid
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TrioMidRequestDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: TrioMid added successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or game not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Add a TrioMid
+      tags:
+      - Game
+  /matches/{matchID}/games/{gameID}/trio-mids/{trioMidID}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a TrioMid with the given game ID, match ID, and TrioMid
+        ID
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: TrioMid ID
+        in: path
+        name: trioMidID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: TrioMid deleted successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match, game, or TrioMid not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Delete a TrioMid
+      tags:
+      - Game
+    get:
+      consumes:
+      - application/json
+      description: Get a TrioMid with the given game ID, match ID, and TrioMid ID
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: TrioMid ID
+        in: path
+        name: trioMidID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Trio mid found successfully
+          schema:
+            $ref: '#/definitions/dto.TrioMidResponseDto'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game or Trio mid not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get a TrioMid by ID
+      tags:
+      - Game
+    put:
+      consumes:
+      - application/json
+      description: Update a TrioMid with the given game ID, match ID, and TrioMid
+        ID with the given information
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: TrioMid ID
+        in: path
+        name: trioMidID
+        required: true
+        type: string
+      - description: Trio mid data
+        in: body
+        name: trioMid
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TrioMidRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Trio mid updated successfully
+          schema:
+            $ref: '#/definitions/models.TrioMid'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game or Trio mid not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update a TrioMid
+      tags:
+      - Game
+  /matches/{matchID}/games/{gameID}/turtle-results:
+    post:
+      consumes:
+      - application/json
+      description: Add a turtle result for a game with the given game ID and match
+        ID
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Turtle result data
+        in: body
+        name: turtleResult
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TurtleResultRequestDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Turtle result added successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or game not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Add a turtle result
+      tags:
+      - Game
+  /matches/{matchID}/games/{gameID}/turtle-results/{turtleResultID}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a TurtleResult with the given game ID, match ID, and Turtle
+        Result ID
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Turtle Result ID
+        in: path
+        name: turtleResultID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Turtle result deleted successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game or Turtle result not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Delete a TurtleResult
+      tags:
+      - Game
+    get:
+      consumes:
+      - application/json
+      description: Get a TurtleResult by ID for a game with the given game ID and
+        match ID
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Turtle result ID
+        in: path
+        name: turtleResultID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TurtleResultResponseDto'
+        "404":
+          description: Match, Game, or Turtle result not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get a TurtleResult by ID
+      tags:
+      - Game
+    put:
+      consumes:
+      - application/json
+      description: Update a turtle result with the given game ID, match ID, and turtle
+        result ID with the given information
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Turtle Result ID
+        in: path
+        name: turtleResultID
+        required: true
+        type: string
+      - description: Turtle result data
+        in: body
+        name: turtleResult
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TurtleResultRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Turtle result updated successfully
+          schema:
+            $ref: '#/definitions/models.TurtleResult'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game or Turtle result not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update a turtle result
+      tags:
+      - Game
+  /matches/{matchID}/teams/{teamID}/coaches:
+    get:
+      consumes:
+      - application/json
+      description: Get all coaches match with the given match ID and team ID
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Coaches match found
+          schema:
+            items:
+              $ref: '#/definitions/dto.CoachMatchResponseDto'
+            type: array
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all coaches match
+      tags:
+      - Match
+    post:
+      consumes:
+      - application/json
+      description: Add a coach match with the given match ID, team ID and coach ID
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Coach ID
+        in: body
+        name: coachID
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Coach match added successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Add a coach match
+      tags:
+      - Match
+  /matches/{matchID}/teams/{teamID}/coaches/{coachID}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a coach match with the given match ID, team ID, and coach
+        ID
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Coach ID
+        in: path
+        name: coachID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Coach match removed successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or coach not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Remove a coach match
+      tags:
+      - Match
+  /matches/{matchID}/teams/{teamID}/flex-picks:
+    get:
+      consumes:
+      - application/json
+      description: Get all flex picks of a match by team
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Flex pick list
+          schema:
+            items:
+              $ref: '#/definitions/dto.FlexPickResponseDto'
+            type: array
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all flex picks
+      tags:
+      - Match
+    post:
+      consumes:
+      - application/json
+      description: Add flex pick to match
+      operationId: add-flex-pick
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Flex pick
+        in: body
+        name: flexPick
+        required: true
+        schema:
+          $ref: '#/definitions/dto.FlexPickRequestDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Flex pick added successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Add flex pick
+      tags:
+      - Match
+  /matches/{matchID}/teams/{teamID}/flex-picks/{flexPickID}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete flex pick by ID
+      operationId: delete-flex-pick
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Flex pick ID
+        in: path
+        name: flexPickID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Flex pick deleted successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match, team, or flex pick not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Delete flex pick
+      tags:
+      - Match
+    get:
+      consumes:
+      - application/json
+      description: Get a flex pick by its ID
+      operationId: get-flex-pick-by-id
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Flex pick ID
+        in: path
+        name: flexPickID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.FlexPickResponseDto'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Flex pick not found
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get flex pick by ID
+      tags:
+      - Match
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Flex Pick ID
+        in: path
+        name: flexPickID
+        required: true
+        type: string
+      - description: Flex pick
+        in: body
+        name: flexPick
+        required: true
+        schema:
+          $ref: '#/definitions/dto.FlexPickRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Flex pick updated successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match, team, or flex pick not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      tags:
+      - Match
+  /matches/{matchID}/teams/{teamID}/hero-bans:
+    get:
+      consumes:
+      - application/json
+      description: Get all hero bans of a match by team
+      operationId: get-all-hero-bans
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Hero bans
+          schema:
+            items:
+              $ref: '#/definitions/dto.HeroBanResponseDto'
+            type: array
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all hero bans
+      tags:
+      - Match
+    post:
+      consumes:
+      - application/json
+      description: Add hero ban to match
+      operationId: add-hero-ban
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Hero ban
+        in: body
+        name: heroBan
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HeroBanRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Hero ban added successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Add hero ban
+      tags:
+      - Match
+  /matches/{matchID}/teams/{teamID}/hero-bans/{HeroBanID}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove hero ban from match
+      operationId: remove-hero-ban
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: HeroBan ID
+        in: path
+        name: HeroBanID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Remove hero ban
+      tags:
+      - Match
+    put:
+      consumes:
+      - application/json
+      description: Update hero ban in match
+      operationId: update-hero-ban
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Hero ban ID
+        in: path
+        name: HeroBanID
+        required: true
+        type: string
+      - description: Hero ban
+        in: body
+        name: heroBan
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HeroBanRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Hero ban updated successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update hero ban
+      tags:
+      - Match
+  /matches/{matchID}/teams/{teamID}/hero-picks:
+    get:
+      consumes:
+      - application/json
+      description: Get all hero picks in a match with the given team ID
+      operationId: get-all-hero-picks
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.HeroPickResponseDto'
+            type: array
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Hero picks not found
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all hero picks
+      tags:
+      - Match
+    post:
+      consumes:
+      - application/json
+      description: Add hero pick to match
+      operationId: add-hero-pick
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Hero pick
+        in: body
+        name: heroPick
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HeroPickRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Hero pick added successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Add hero pick
+      tags:
+      - Match
+  /matches/{matchID}/teams/{teamID}/hero-picks/{heroPickID}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove hero pick from match
+      operationId: remove-hero-pick
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Hero pick ID
+        in: path
+        name: heroPickID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match, team, or hero pick not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Remove hero pick
+      tags:
+      - Match
+    put:
+      consumes:
+      - application/json
+      description: Update hero pick in match
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Hero pick ID
+        in: path
+        name: heroPickID
+        required: true
+        type: string
+      - description: Hero pick
+        in: body
+        name: heroPick
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HeroPickRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Hero pick updated successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update hero pick
+      tags:
+      - Match
+  /matches/{matchID}/teams/{teamID}/players:
+    get:
+      consumes:
+      - application/json
+      description: Get all players for a match and team with the given match ID and
+        team ID
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.PlayerMatchResponseDto'
+            type: array
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all players for a match and team
+      tags:
+      - Match
+    post:
+      description: Add a player to a match by specifying the match ID, team ID, and
+        player ID
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Player match request
+        in: body
+        name: dto
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PlayerMatchRequestDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Player match added successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Add a player to a match
+      tags:
+      - Match
+  /matches/{matchID}/teams/{teamID}/players/{playerID}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a player match with the given match ID, team ID and player
+        ID
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Player ID
+        in: path
+        name: playerID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Player match removed successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Remove a player match
+      tags:
+      - Match
+  /matches/{matchID}/teams/{teamID}/priority-bans:
+    get:
+      consumes:
+      - application/json
+      description: Get all priority bans in a match with specific team
+      operationId: get-all-priority-bans
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Priority bans
+          schema:
+            items:
+              $ref: '#/definitions/dto.PriorityBanResponseDto'
+            type: array
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all priority bans
+      tags:
+      - Match
+    post:
+      consumes:
+      - application/json
+      description: Add priority ban to match
+      operationId: add-priority-ban
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Priority ban
+        in: body
+        name: priorityBan
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PriorityBanRequestDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Priority ban added successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Add priority ban
+      tags:
+      - Match
+  /matches/{matchID}/teams/{teamID}/priority-bans/{priorityBanID}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete priority ban in match
+      operationId: delete-priority-ban
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Priority Ban ID
+        in: path
+        name: priorityBanID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Priority ban deleted successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match, team, or priority ban not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Delete priority ban
+      tags:
+      - Match
+    get:
+      consumes:
+      - application/json
+      description: Get priority ban by ID in a match
+      operationId: get-priority-ban-by-id
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Priority Ban ID
+        in: path
+        name: priorityBanID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Priority Ban
+          schema:
+            $ref: '#/definitions/dto.PriorityBanResponseDto'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Priority ban not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get priority ban by ID
+      tags:
+      - Match
+    put:
+      consumes:
+      - application/json
+      description: Update priority ban in match
+      operationId: update-priority-ban
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Priority Ban ID
+        in: path
+        name: priorityBanID
+        required: true
+        type: string
+      - description: Priority Ban
+        in: body
+        name: priorityBan
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PriorityBanRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Priority ban updated successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match, team, or priority ban not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update priority ban
+      tags:
+      - Match
+  /matches/{matchID}/teams/{teamID}/priority-picks:
+    get:
+      consumes:
+      - application/json
+      description: Get all priority picks of a match by team
+      operationId: get-all-priority-picks
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Priority pick list
+          schema:
+            items:
+              $ref: '#/definitions/dto.PriorityPickResponseDto'
+            type: array
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all priority picks
+      tags:
+      - Match
+    post:
+      consumes:
+      - application/json
+      description: Add priority pick to match
+      operationId: add-priority-pick
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Priority pick
+        in: body
+        name: priorityPick
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PriorityPickRequestDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Priority pick added successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Add priority pick
+      tags:
+      - Match
+  /matches/{matchID}/teams/{teamID}/priority-picks/{priorityPickID}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a priority pick by its ID
+      operationId: delete-priority-pick
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Priority Pick ID
+        in: path
+        name: priorityPickID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Priority pick deleted successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Priority pick not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Delete priority pick
+      tags:
+      - Match
+    get:
+      consumes:
+      - application/json
+      description: Get a priority pick by its ID
+      operationId: get-priority-pick-by-id
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Priority pick ID
+        in: path
+        name: priorityPickID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PriorityPickResponseDto'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Priority pick not found
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get priority pick by ID
+      tags:
+      - Match
+    put:
+      consumes:
+      - application/json
+      description: Update priority pick in match
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Priority pick ID
+        in: path
+        name: priorityPickID
+        required: true
+        type: string
+      - description: Priority pick
+        in: body
+        name: priorityPick
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PriorityPickRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Priority pick updated successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update priority pick
+      tags:
+      - Match
+  /me:
+    get:
+      description: Get user data from JWT token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User data
+          schema:
+            $ref: '#/definitions/models.User'
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get user data
+      tags:
+      - Auth
+  /players/{playerID}:
+    get:
+      consumes:
+      - application/json
+      description: Get a player by ID with the given player ID
+      parameters:
+      - description: Player ID
+        in: path
+        name: playerID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Player'
+        "400":
+          description: Player ID is required
+          schema:
+            type: string
+        "404":
+          description: Player not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get a player by ID
+      tags:
+      - Team
+  /players/{teamID}:
+    put:
+      description: Update a player in a team and save its image
+      parameters:
+      - description: Player ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Player name
+        in: formData
+        name: name
+        type: string
+      - description: Player role
+        in: formData
+        name: role
+        type: string
+      - description: Player image
+        in: formData
+        name: image
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Player'
+        "400":
+          description: Player ID is required" or "File size must not exceed 500 KB"
+            or "Invalid file type
+          schema:
+            type: string
+        "404":
+          description: Player not found
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update a player in a team
+      tags:
+      - Team
+  /teams:
+    get:
+      description: Get all teams
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Team'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all teams
+      tags:
+      - Team
+    post:
+      description: Create a team and save its logo
+      parameters:
+      - description: Team name
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Team logo
+        in: formData
+        name: logo
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Team'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Create a team
+      tags:
+      - Team
+  /teams/{teamID}:
+    get:
+      description: Get a team by ID
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Team'
+        "400":
+          description: Team ID is required
+          schema:
+            type: string
+        "404":
+          description: Team not found
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get a team by ID
+      tags:
+      - Team
+    put:
+      description: Update a team and save its logo
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Team name
+        in: formData
+        name: name
+        type: string
+      - description: Team logo
+        in: formData
+        name: logo
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Team'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update a team
+      tags:
+      - Team
+  /teams/{teamID}/coaches:
+    get:
+      consumes:
+      - application/json
+      description: Get all coaches in a team with the given team ID
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Coach'
+            type: array
+        "400":
+          description: Team ID is required
+          schema:
+            type: string
+        "404":
+          description: Team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all coaches in a team
+      tags:
+      - Team
+    post:
+      description: Create a coach in a team and save its image
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Coach name
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Coach role
+        in: formData
+        name: role
+        required: true
+        type: string
+      - description: Coach image
+        in: formData
+        name: image
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Coach'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Create a coach in a team
+      tags:
+      - Team
+  /teams/{teamID}/players:
+    get:
+      consumes:
+      - application/json
+      description: Get all players in a team with the given team ID
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Player'
+            type: array
+        "400":
+          description: Team ID is required
+          schema:
+            type: string
+        "404":
+          description: Team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all players in a team
+      tags:
+      - Team
+    post:
+      description: Create a player in a team by ID and save its image
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Player name
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Player role
+        in: formData
+        name: role
+        required: true
+        type: string
+      - description: Player image
+        in: formData
+        name: image
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Player'
+        "400":
+          description: Team ID is required" or "Name and Role are required" or "File
+            size must not exceed 500 KB" or "Invalid file type
+          schema:
+            type: string
+        "404":
+          description: Team not found
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Create a player in a team
+      tags:
+      - Team
+  /tournaments:
+    get:
+      description: Get all tournaments
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Tournament'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all tournaments
+      tags:
+      - Tournament
+    post:
+      description: Create a new tournament with the given name
+      parameters:
+      - description: Tournament request
+        in: body
+        name: dto
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TournamentRequestDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Tournament'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Create a new tournament
+      tags:
+      - Tournament
+  /tournaments/{tournamentID}:
+    delete:
+      description: Delete a tournament with the given tournament ID
+      parameters:
+      - description: Tournament ID
+        in: path
+        name: tournamentID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Tournament deleted successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Tournament not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Delete a tournament
+      tags:
+      - Tournament
+    get:
+      description: Get a tournament by ID
+      parameters:
+      - description: Tournament ID
+        in: path
+        name: tournamentID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Tournament'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Tournament not found
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get a tournament by ID
+      tags:
+      - Tournament
+    put:
+      description: Update a tournament with the given name
+      parameters:
+      - description: Tournament ID
+        in: path
+        name: tournamentID
+        required: true
+        type: string
+      - description: Tournament request
+        in: body
+        name: dto
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TournamentRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Tournament'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Tournament not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update a tournament
+      tags:
+      - Tournament
+  /tournaments/{tournamentID}/matches:
+    get:
+      description: Get all matches for a tournament with the given tournament ID
+      parameters:
+      - description: Tournament ID
+        in: path
+        name: tournamentID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.MatchResponseDto'
+            type: array
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Tournament not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all matches for a tournament
+      tags:
+      - Match
+    post:
+      description: Create a match for a tournament and save its data
+      parameters:
+      - description: Tournament ID
+        in: path
+        name: tournamentID
+        required: true
+        type: string
+      - description: Match request
+        in: body
+        name: dto
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MatchRequestDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Match'
+      security:
+      - Bearer: []
+      summary: Create a match for a tournament
+      tags:
+      - Match
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

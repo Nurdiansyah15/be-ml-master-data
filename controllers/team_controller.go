@@ -13,6 +13,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @Summary Get all teams
+// @Description Get all teams
+// @Produce json
+// @Tags Team
+// @Security Bearer
+// @Success 200 {array} models.Team
+// @Failure 500 {string} string "Internal server error"
+// @Router /teams [get]
 func GetAllTeams(c *gin.Context) {
 	var teams []models.Team
 
@@ -24,6 +32,17 @@ func GetAllTeams(c *gin.Context) {
 	c.JSON(http.StatusOK, teams)
 }
 
+// @Summary Create a team
+// @Description Create a team and save its logo
+// @Produce json
+// @Tags Team
+// @Security Bearer
+// @Param name formData string true "Team name"
+// @Param logo formData file true "Team logo"
+// @Success 201 {object} models.Team
+// @Failure 400 {string} string "Bad request"
+// @Failure 500 {string} string "Internal server error"
+// @Router /teams [post]
 func CreateTeam(c *gin.Context) {
 
 	name := c.Request.FormValue("name")
@@ -76,6 +95,18 @@ func CreateTeam(c *gin.Context) {
 	c.JSON(http.StatusCreated, team)
 }
 
+// @Summary Update a team
+// @Description Update a team and save its logo
+// @Produce json
+// @Tags Team
+// @Security Bearer
+// @Param teamID path string true "Team ID"
+// @Param name formData string false "Team name"
+// @Param logo formData file false "Team logo"
+// @Success 200 {object} models.Team
+// @Failure 400 {string} string "Bad request"
+// @Failure 500 {string} string "Internal server error"
+// @Router /teams/{teamID} [put]
 func UpdateTeam(c *gin.Context) {
 	// Ambil parameter teamID dari URL
 	teamID := c.Param("teamID")
@@ -153,6 +184,16 @@ func UpdateTeam(c *gin.Context) {
 	c.JSON(http.StatusOK, team)
 }
 
+// @Summary Get a team by ID
+// @Description Get a team by ID
+// @Produce json
+// @Tags Team
+// @Security Bearer
+// @Param teamID path string true "Team ID"
+// @Success 200 {object} models.Team
+// @Failure 400 {string} string "Team ID is required"
+// @Failure 404 {string} string "Team not found"
+// @Router /teams/{teamID} [get]
 func GetTeamByID(c *gin.Context) {
 	// Ambil parameter teamID dari URL
 	teamID := c.Param("teamID")
@@ -172,6 +213,19 @@ func GetTeamByID(c *gin.Context) {
 	c.JSON(http.StatusOK, team)
 }
 
+// @Summary Create a player in a team
+// @Description Create a player in a team by ID and save its image
+// @Produce json
+// @Tags Team
+// @Security Bearer
+// @Param teamID path string true "Team ID"
+// @Param name formData string true "Player name"
+// @Param role formData string true "Player role"
+// @Param image formData file false "Player image"
+// @Success 201 {object} models.Player
+// @Failure 400 {string} string "Team ID is required" or "Name and Role are required" or "File size must not exceed 500 KB" or "Invalid file type"
+// @Failure 404 {string} string "Team not found"
+// @Router /teams/{teamID}/players [post]
 func CreatePlayerInTeam(c *gin.Context) {
 	teamID := c.Param("teamID")
 	if teamID == "" {
@@ -244,6 +298,22 @@ func CreatePlayerInTeam(c *gin.Context) {
 	c.JSON(http.StatusCreated, player)
 }
 
+// CreateCoachInTeam godoc
+// @Summary Create a coach in a team
+// @Description Create a coach in a team and save its image
+// @Produce json
+// @Tags Team
+// @Security Bearer
+// @Param teamID path string true "Team ID"
+// @Param name formData string true "Coach name"
+// @Param role formData string true "Coach role"
+// @Param image formData file false "Coach image"
+// @Success 201 {object} models.Coach
+// @Failure 400 {string} string "Bad request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /teams/{teamID}/coaches [post]
 func CreateCoachInTeam(c *gin.Context) {
 	// Ambil parameter teamID dari URL
 	teamID := c.Param("teamID")
@@ -315,6 +385,19 @@ func CreateCoachInTeam(c *gin.Context) {
 	c.JSON(http.StatusCreated, coach)
 }
 
+// @Summary Update a player in a team
+// @Description Update a player in a team and save its image
+// @Produce json
+// @Tags Team
+// @Security Bearer
+// @Param teamID path string true "Player ID"
+// @Param name formData string false "Player name"
+// @Param role formData string false "Player role"
+// @Param image formData file false "Player image"
+// @Success 200 {object} models.Player
+// @Failure 400 {string} string "Player ID is required" or "File size must not exceed 500 KB" or "Invalid file type"
+// @Failure 404 {string} string "Player not found"
+// @Router /players/{teamID} [put]
 func UpdatePlayerInTeam(c *gin.Context) {
 	playerID := c.Param("playerID")
 	if playerID == "" {
@@ -389,6 +472,19 @@ func UpdatePlayerInTeam(c *gin.Context) {
 	c.JSON(http.StatusOK, player)
 }
 
+// @Summary Update a coach in a team
+// @Description Update a coach in a team and save its image
+// @Produce json
+// @Tags Team
+// @Security Bearer
+// @Param coachID path string true "Coach ID"
+// @Param name formData string false "Coach name"
+// @Param role formData string false "Coach role"
+// @Param image formData file false "Coach image"
+// @Success 200 {object} models.Coach
+// @Failure 400 {string} string "Coach ID is required" or "File size must not exceed 500 KB" or "Invalid file type"
+// @Failure 404 {string} string "Coach not found"
+// @Router /coaches/{coachID} [put]
 func UpdateCoachInTeam(c *gin.Context) {
 	// Ambil parameter coachID dari URL
 	coachID := c.Param("coachID")
@@ -465,6 +561,18 @@ func UpdateCoachInTeam(c *gin.Context) {
 	c.JSON(http.StatusOK, coach)
 }
 
+// @Summary Get all players in a team
+// @Description Get all players in a team with the given team ID
+// @Accept  json
+// @Produce  json
+// @Tags Team
+// @Security Bearer
+// @Param teamID path string true "Team ID"
+// @Success 200 {array} models.Player
+// @Failure 400 {string} string "Team ID is required"
+// @Failure 404 {string} string "Team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /teams/{teamID}/players [get]
 func GetAllPlayersInTeam(c *gin.Context) {
 	teamID := c.Param("teamID")
 	if teamID == "" {
@@ -487,6 +595,18 @@ func GetAllPlayersInTeam(c *gin.Context) {
 	c.JSON(http.StatusOK, players)
 }
 
+// @Summary Get a player by ID
+// @Description Get a player by ID with the given player ID
+// @Accept  json
+// @Produce  json
+// @Tags Team
+// @Security Bearer
+// @Param playerID path string true "Player ID"
+// @Success 200 {object} models.Player
+// @Failure 400 {string} string "Player ID is required"
+// @Failure 404 {string} string "Player not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /players/{playerID} [get]
 func GetPlayerByID(c *gin.Context) {
 	// Ambil parameter playerID dari URL
 	playerID := c.Param("playerID")
@@ -506,6 +626,18 @@ func GetPlayerByID(c *gin.Context) {
 	c.JSON(http.StatusOK, player)
 }
 
+// @Summary Get all coaches in a team
+// @Description Get all coaches in a team with the given team ID
+// @Accept  json
+// @Produce  json
+// @Tags Team
+// @Security Bearer
+// @Param teamID path string true "Team ID"
+// @Success 200 {array} models.Coach
+// @Failure 400 {string} string "Team ID is required"
+// @Failure 404 {string} string "Team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /teams/{teamID}/coaches [get]
 func GetAllCoachesInTeam(c *gin.Context) {
 	teamID := c.Param("teamID")
 	if teamID == "" {
@@ -528,6 +660,18 @@ func GetAllCoachesInTeam(c *gin.Context) {
 	c.JSON(http.StatusOK, coaches)
 }
 
+// @Summary Get a coach by ID
+// @Description Get a coach by ID with the given coach ID
+// @Accept  json
+// @Produce  json
+// @Tags Team
+// @Security Bearer
+// @Param coachID path string true "Coach ID"
+// @Success 200 {object} models.Coach
+// @Failure 400 {string} string "Coach ID is required"
+// @Failure 404 {string} string "Coach not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /coaches/{coachID} [get]
 func GetCoachByID(c *gin.Context) {
 	// Ambil parameter coachID dari URL
 	coachID := c.Param("coachID")
