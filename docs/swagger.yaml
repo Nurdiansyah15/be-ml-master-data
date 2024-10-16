@@ -2337,6 +2337,44 @@ paths:
       summary: Update a turtle result
       tags:
       - Game
+  /matches/{matchID}/teams:
+    get:
+      consumes:
+      - application/json
+      description: Get teams by match ID
+      operationId: get-teams-by-match-id
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Team list
+          schema:
+            items:
+              $ref: '#/definitions/models.Team'
+            type: array
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get teams by match ID
+      tags:
+      - Match
   /matches/{matchID}/teams/{teamID}/coaches:
     get:
       consumes:

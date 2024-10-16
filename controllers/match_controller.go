@@ -62,13 +62,13 @@ func CreateTournamentMatch(c *gin.Context) {
 
 	match := models.Match{
 		TournamentID: tournament.TournamentID,
-		Week:         input.Week,
-		Day:          input.Day,
-		Date:         input.Date,
-		TeamAID:      input.TeamAID,
-		TeamBID:      input.TeamBID,
-		TeamAScore:   input.TeamAScore,
-		TeamBScore:   input.TeamBScore,
+		Week:         *input.Week,
+		Day:          *input.Day,
+		Date:         *input.Date,
+		TeamAID:      *input.TeamAID,
+		TeamBID:      *input.TeamBID,
+		TeamAScore:   *input.TeamAScore,
+		TeamBScore:   *input.TeamBScore,
 	}
 
 	if err := tx.Create(&match).Error; err != nil {
@@ -141,38 +141,38 @@ func UpdateMatch(c *gin.Context) {
 	}
 
 	// Cek apakah Team A dan Team B valid
-	if input.TeamAID != 0 {
+	if input.TeamAID != nil {
 		var teamA models.Team
 		if err := config.DB.First(&teamA, input.TeamAID).Error; err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Team A not found"})
 			return
 		}
-		match.TeamAID = input.TeamAID
+		match.TeamAID = *input.TeamAID
 	}
 
-	if input.TeamBID != 0 {
+	if input.TeamBID != nil {
 		var teamB models.Team
 		if err := config.DB.First(&teamB, input.TeamBID).Error; err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Team B not found"})
 			return
 		}
-		match.TeamBID = input.TeamBID
+		match.TeamBID = *input.TeamBID
 	}
 
-	if input.Week != 0 {
-		match.Week = input.Week
+	if input.Week != nil {
+		match.Week = *input.Week
 	}
-	if input.Day != 0 {
-		match.Day = input.Day
+	if input.Day != nil {
+		match.Day = *input.Day
 	}
-	if input.Date != 0 {
-		match.Date = input.Date
+	if input.Date != nil {
+		match.Date = *input.Date
 	}
-	if input.TeamAScore >= 0 {
-		match.TeamAScore = input.TeamAScore
+	if input.TeamAScore != nil {
+		match.TeamAScore = *input.TeamAScore
 	}
-	if input.TeamBScore >= 0 {
-		match.TeamBScore = input.TeamBScore
+	if input.TeamBScore != nil {
+		match.TeamBScore = *input.TeamBScore
 	}
 
 	if err := config.DB.Save(&match).Error; err != nil {
@@ -201,13 +201,13 @@ func GetMatchByID(c *gin.Context) {
 		return
 	}
 
-	var match dto.MatchResponseDto
+	match := dto.MatchResponseDto{}
 
 	query := `
 		SELECT 
 			m.match_id, m.week, m.day, m.date, m.team_a_id, m.team_b_id, 
-			tA.team_id AS team_a_id, tA.name AS team_a_name, tA.image AS team_a_image,
-			tB.team_id AS team_b_id, tB.name AS team_b_name, tB.image AS team_b_image,
+			tA.team_id AS team_a_team_id, tA.name AS team_a_name, tA.image AS team_a_image,
+			tB.team_id AS team_b_team_id, tB.name AS team_b_name, tB.image AS team_b_image,
 			m.team_a_score, m.team_b_score
 		FROM matches m
 		JOIN teams tA ON m.team_a_id = tA.team_id
@@ -249,13 +249,13 @@ func GetMatchesByTournamentID(c *gin.Context) {
 		return
 	}
 
-	var matches []dto.MatchResponseDto
+	matches := []dto.MatchResponseDto{}
 
 	query := `
 		SELECT 
 			m.match_id, m.week, m.day, m.date, m.team_a_id, m.team_b_id, 
-			tA.team_id AS team_a_id, tA.name AS team_a_name, tA.image AS team_a_image,
-			tB.team_id AS team_b_id, tB.name AS team_b_name, tB.image AS team_b_image,
+			tA.team_id AS team_a_team_id, tA.name AS team_a_name, tA.image AS team_a_image,
+			tB.team_id AS team_b_team_id, tB.name AS team_b_name, tB.image AS team_b_image,
 			m.team_a_score, m.team_b_score
 		FROM matches m
 		JOIN teams tA ON m.team_a_id = tA.team_id
@@ -267,9 +267,6 @@ func GetMatchesByTournamentID(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	fmt.Println("matches", matches)
-
 	c.JSON(http.StatusOK, matches)
 }
 
@@ -315,6 +312,16 @@ func AddPlayerMatch(c *gin.Context) {
 		return
 	}
 
+	// Cek apakah pemain sudah ada dalam player_match
+	existingPlayerMatch := models.PlayerMatch{}
+	err := config.DB.Where("match_team_detail_id = ? AND player_id = ?", matchTeamDetail.MatchTeamDetailID, player.PlayerID).First(&existingPlayerMatch).Error
+
+	if err == nil {
+		// Jika tidak ada error, berarti pemain sudah ada dalam tabel player_match
+		c.JSON(http.StatusConflict, gin.H{"error": "Player is already added to the match"})
+		return
+	}
+
 	playerMatch := models.PlayerMatch{
 		MatchTeamDetailID: matchTeamDetail.MatchTeamDetailID,
 		PlayerID:          player.PlayerID,
@@ -326,7 +333,6 @@ func AddPlayerMatch(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "Player match added successfully"})
-
 }
 
 // @Summary Remove a player match
@@ -401,7 +407,7 @@ func GetAllPlayersMatch(c *gin.Context) {
 		return
 	}
 
-	var players []dto.PlayerMatchResponseDto
+	players := []dto.PlayerMatchResponseDto{}
 
 	query := `
 		SELECT 
@@ -461,6 +467,16 @@ func AddCoachMatch(c *gin.Context) {
 	var coach models.Coach
 	if err := config.DB.First(&coach, input.CoachID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Coach not found"})
+		return
+	}
+
+	// Cek apakah pemain sudah ada dalam player_match
+	existingCoachMatch := models.CoachMatch{}
+	err := config.DB.Where("match_team_detail_id = ? AND coach_id = ?", matchTeamDetail.MatchTeamDetailID, coach.CoachID).First(&existingCoachMatch).Error
+
+	if err == nil {
+		// Jika tidak ada error, berarti pemain sudah ada dalam tabel player_match
+		c.JSON(http.StatusConflict, gin.H{"error": "Coach is already added to the match"})
 		return
 	}
 
@@ -551,7 +567,7 @@ func GetAllCoachesMatch(c *gin.Context) {
 		return
 	}
 
-	var coaches []dto.CoachMatchResponseDto
+	coaches := []dto.CoachMatchResponseDto{}
 
 	query := `
 		SELECT 
@@ -619,9 +635,9 @@ func AddHeroPick(c *gin.Context) {
 
 	heroPick := models.HeroPick{
 		MatchTeamDetailID: matchTeamDetail.MatchTeamDetailID,
-		HeroID:            input.HeroID,
-		FirstPhase:        input.FirstPhase,
-		SecondPhase:       input.SecondPhase,
+		HeroID:            *input.HeroID,
+		FirstPhase:        *input.FirstPhase,
+		SecondPhase:       *input.SecondPhase,
 	}
 	if err := tx.Create(&heroPick).Error; err != nil {
 		tx.Rollback()
@@ -632,8 +648,8 @@ func AddHeroPick(c *gin.Context) {
 	for _, game := range input.HeroPickGame {
 		heroPickGame := models.HeroPickGame{
 			HeroPickID: heroPick.HeroPickID,
-			GameNumber: game.GameNumber,
-			IsPicked:   game.IsPicked,
+			GameNumber: *game.GameNumber,
+			IsPicked:   *game.IsPicked,
 		}
 		if err := tx.Create(&heroPickGame).Error; err != nil {
 			tx.Rollback()
@@ -698,9 +714,9 @@ func UpdateHeroPick(c *gin.Context) {
 		}
 	}()
 
-	heroPick.HeroID = input.HeroID
-	heroPick.FirstPhase = input.FirstPhase
-	heroPick.SecondPhase = input.SecondPhase
+	heroPick.HeroID = *input.HeroID
+	heroPick.FirstPhase = *input.FirstPhase
+	heroPick.SecondPhase = *input.SecondPhase
 
 	if err := tx.Save(&heroPick).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -712,8 +728,8 @@ func UpdateHeroPick(c *gin.Context) {
 		if err := tx.Where("hero_pick_id = ? AND game_number = ?", heroPick.HeroPickID, game.GameNumber).First(&heroPickGame).Error; err != nil {
 			heroPickGame = models.HeroPickGame{
 				HeroPickID: heroPick.HeroPickID,
-				GameNumber: game.GameNumber,
-				IsPicked:   game.IsPicked,
+				GameNumber: *game.GameNumber,
+				IsPicked:   *game.IsPicked,
 			}
 			if err := tx.Create(&heroPickGame).Error; err != nil {
 				tx.Rollback()
@@ -722,8 +738,8 @@ func UpdateHeroPick(c *gin.Context) {
 			}
 		} else {
 			heroPickGame.HeroPickID = heroPick.HeroPickID
-			heroPickGame.GameNumber = game.GameNumber
-			heroPickGame.IsPicked = game.IsPicked
+			heroPickGame.GameNumber = *game.GameNumber
+			heroPickGame.IsPicked = *game.IsPicked
 			if err := tx.Save(&heroPickGame).Error; err != nil {
 				tx.Rollback()
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -837,7 +853,7 @@ func GetAllHeroPicks(c *gin.Context) {
 		return
 	}
 
-	var picks []dto.HeroPickResponseDto
+	var picks = []dto.HeroPickResponseDto{}
 	query := `
 		SELECT 
 			hp.hero_pick_id, hp.match_team_detail_id, hp.hero_id, 
@@ -907,9 +923,9 @@ func AddHeroBan(c *gin.Context) {
 
 	heroBan := models.HeroBan{
 		MatchTeamDetailID: matchTeamDetail.MatchTeamDetailID,
-		HeroID:            input.HeroID,
-		FirstPhase:        input.FirstPhase,
-		SecondPhase:       input.SecondPhase,
+		HeroID:            *input.HeroID,
+		FirstPhase:        *input.FirstPhase,
+		SecondPhase:       *input.SecondPhase,
 	}
 	if err := tx.Create(&heroBan).Error; err != nil {
 		tx.Rollback()
@@ -921,8 +937,8 @@ func AddHeroBan(c *gin.Context) {
 	for _, ban := range input.HeroBanGame {
 		heroBanGame := models.HeroBanGame{
 			HeroBanID:  heroBan.HeroBanID,
-			GameNumber: ban.GameNumber,
-			IsBanned:   ban.IsBanned,
+			GameNumber: *ban.GameNumber,
+			IsBanned:   *ban.IsBanned,
 		}
 
 		if err := tx.Create(&heroBanGame).Error; err != nil {
@@ -996,9 +1012,9 @@ func UpdateHeroBan(c *gin.Context) {
 		}
 	}()
 
-	heroBan.HeroID = input.HeroID
-	heroBan.FirstPhase = input.FirstPhase
-	heroBan.SecondPhase = input.SecondPhase
+	heroBan.HeroID = *input.HeroID
+	heroBan.FirstPhase = *input.FirstPhase
+	heroBan.SecondPhase = *input.SecondPhase
 
 	if err := tx.Save(&heroBan).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -1010,8 +1026,8 @@ func UpdateHeroBan(c *gin.Context) {
 		if err := tx.Where("hero_pick_id = ? AND game_number = ?", heroBan.HeroBanID, game.GameNumber).First(&heroBanGame).Error; err != nil {
 			heroBanGame = models.HeroBanGame{
 				HeroBanID:  heroBan.HeroBanID,
-				GameNumber: game.GameNumber,
-				IsBanned:   game.IsBanned,
+				GameNumber: *game.GameNumber,
+				IsBanned:   *game.IsBanned,
 			}
 			if err := tx.Create(&heroBanGame).Error; err != nil {
 				tx.Rollback()
@@ -1020,8 +1036,8 @@ func UpdateHeroBan(c *gin.Context) {
 			}
 		} else {
 			heroBanGame.HeroBanID = heroBan.HeroBanID
-			heroBanGame.GameNumber = game.GameNumber
-			heroBanGame.IsBanned = game.IsBanned
+			heroBanGame.GameNumber = *game.GameNumber
+			heroBanGame.IsBanned = *game.IsBanned
 			if err := tx.Save(&heroBanGame).Error; err != nil {
 				tx.Rollback()
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -1135,7 +1151,7 @@ func GetAllHeroBans(c *gin.Context) {
 		return
 	}
 
-	var bans []dto.HeroBanResponseDto
+	var bans = []dto.HeroBanResponseDto{}
 	query := `
 		SELECT 
 			hb.hero_ban_id, hb.match_team_detail_id, hb.hero_id, 
@@ -1207,10 +1223,10 @@ func AddPriorityPick(c *gin.Context) {
 	// Buat PriorityPick baru
 	priorityPick := models.PriorityPick{
 		MatchTeamDetailID: matchTeamDetail.MatchTeamDetailID,
-		HeroID:            input.HeroID,
-		Total:             input.Total,
-		Role:              input.Role,
-		PickRate:          input.PickRate,
+		HeroID:            *input.HeroID,
+		Total:             *input.Total,
+		Role:              *input.Role,
+		PickRate:          *input.PickRate,
 	}
 
 	// Simpan ke database
@@ -1280,10 +1296,10 @@ func UpdatePriorityPick(c *gin.Context) {
 	}
 
 	// Perbarui data PriorityPick
-	priorityPick.HeroID = input.HeroID
-	priorityPick.Total = input.Total
-	priorityPick.Role = input.Role
-	priorityPick.PickRate = input.PickRate
+	priorityPick.HeroID = *input.HeroID
+	priorityPick.Total = *input.Total
+	priorityPick.Role = *input.Role
+	priorityPick.PickRate = *input.PickRate
 
 	// Simpan perubahan ke database
 	if err := config.DB.Save(&priorityPick).Error; err != nil {
@@ -1326,7 +1342,7 @@ func GetAllPriorityPicks(c *gin.Context) {
 		return
 	}
 
-	var priorityPicks []dto.PriorityPickResponseDto
+	var priorityPicks = []dto.PriorityPickResponseDto{}
 
 	// Query dengan WHERE untuk filter MatchTeamDetailID
 	query := `
@@ -1372,7 +1388,7 @@ func GetPriorityPickByID(c *gin.Context) {
 		return
 	}
 
-	var priorityPick dto.PriorityPickResponseDto
+	var priorityPick = dto.PriorityPickResponseDto{}
 
 	query := `
 		SELECT 
@@ -1496,10 +1512,10 @@ func AddFlexPick(c *gin.Context) {
 	// Buat FlexPick baru
 	flexPick := models.FlexPick{
 		MatchTeamDetailID: matchTeamDetail.MatchTeamDetailID,
-		HeroID:            input.HeroID,
-		Total:             input.Total,
-		Role:              input.Role,
-		PickRate:          input.PickRate,
+		HeroID:            *input.HeroID,
+		Total:             *input.Total,
+		Role:              *input.Role,
+		PickRate:          *input.PickRate,
 	}
 
 	// Simpan ke database
@@ -1568,10 +1584,10 @@ func UpdateFlexPick(c *gin.Context) {
 	}
 
 	// Perbarui data FlexPick
-	flexPick.HeroID = input.HeroID
-	flexPick.Total = input.Total
-	flexPick.Role = input.Role
-	flexPick.PickRate = input.PickRate
+	flexPick.HeroID = *input.HeroID
+	flexPick.Total = *input.Total
+	flexPick.Role = *input.Role
+	flexPick.PickRate = *input.PickRate
 
 	// Simpan perubahan ke database
 	if err := config.DB.Save(&flexPick).Error; err != nil {
@@ -1613,7 +1629,7 @@ func GetAllFlexPicks(c *gin.Context) {
 		return
 	}
 
-	var flexPicks []dto.FlexPickResponseDto
+	var flexPicks = []dto.FlexPickResponseDto{}
 
 	// Query dengan WHERE untuk filter MatchTeamDetailID
 	query := `
@@ -1659,7 +1675,7 @@ func GetFlexPickByID(c *gin.Context) {
 		return
 	}
 
-	var flexPick dto.FlexPickResponseDto
+	var flexPick = dto.FlexPickResponseDto{}
 
 	query := `
 		SELECT 
@@ -1783,10 +1799,10 @@ func AddPriorityBan(c *gin.Context) {
 	// Buat PriorityBan baru
 	priorityBan := models.PriorityBan{
 		MatchTeamDetailID: matchTeamDetail.MatchTeamDetailID,
-		HeroID:            input.HeroID,
-		Total:             input.Total,
-		Role:              input.Role,
-		BanRate:           input.BanRate,
+		HeroID:            *input.HeroID,
+		Total:             *input.Total,
+		Role:              *input.Role,
+		BanRate:           *input.BanRate,
 	}
 
 	// Simpan ke database
@@ -1858,10 +1874,10 @@ func UpdatePriorityBan(c *gin.Context) {
 	}
 
 	// Perbarui data PriorityBan
-	priorityBan.HeroID = input.HeroID
-	priorityBan.Total = input.Total
-	priorityBan.Role = input.Role
-	priorityBan.BanRate = input.BanRate
+	priorityBan.HeroID = *input.HeroID
+	priorityBan.Total = *input.Total
+	priorityBan.Role = *input.Role
+	priorityBan.BanRate = *input.BanRate
 
 	// Simpan perubahan ke database
 	if err := config.DB.Save(&priorityBan).Error; err != nil {
@@ -1904,7 +1920,7 @@ func GetAllPriorityBans(c *gin.Context) {
 		return
 	}
 
-	var priorityBans []dto.PriorityBanResponseDto
+	var priorityBans = []dto.PriorityBanResponseDto{}
 
 	// Query dengan WHERE untuk filter MatchTeamDetailID
 	query := `
@@ -1951,7 +1967,7 @@ func GetPriorityBanByID(c *gin.Context) {
 		return
 	}
 
-	var priorityBan dto.PriorityBanResponseDto
+	var priorityBan = dto.PriorityBanResponseDto{}
 
 	query := `
 		SELECT 
@@ -2021,4 +2037,41 @@ func DeletePriorityBan(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Priority ban deleted successfully"})
+}
+
+// @Summary Get teams by match ID
+// @Description Get teams by match ID
+// @ID get-teams-by-match-id
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Success 200 {array} models.Team "Team list"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams [get]
+func GetTeamsByMatchID(c *gin.Context) {
+	matchID := c.Param("matchID")
+	if matchID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID is required"})
+		return
+	}
+
+	match := models.Match{}
+	if err := config.DB.Where("match_id = ?", matchID).First(&match).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+		return
+	}
+
+	fmt.Println(match)
+
+	var teams []models.Team
+	if err := config.DB.Where("team_id = ? OR team_id = ?", match.TeamAID, match.TeamBID).Find(&teams).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve teams"})
+		return
+	}
+
+	c.JSON(http.StatusOK, teams)
 }

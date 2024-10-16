@@ -146,21 +146,22 @@ func GetAllGames(c *gin.Context) {
 		return
 	}
 
-	if err := config.DB.Where("match_id = ?", matchID).Find(&models.Game{}).Error; err != nil {
+	var match models.Match
+	if err := config.DB.Where("match_id = ?", matchID).Find(&match).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	var games []dto.GameResponseDto
+	var games = []dto.GameResponseDto{}
 
 	query := `
 		SELECT 
 			g.game_id, g.match_id, g.first_pick_team_id, 
-			t1.team_id AS first_team_id, t1.name AS first_team_name, t1.image AS first_team_image,
+			t1.team_id AS first_team_team_id, t1.name AS first_team_name, t1.image AS first_team_image,
 			g.second_pick_team_id, 
-			t2.team_id AS second_team_id, t2.name AS second_team_name, t2.image AS second_team_image,
+			t2.team_id AS second_team_team_id, t2.name AS second_team_name, t2.image AS second_team_image,
 			g.winner_team_id, 
-			t3.team_id AS winner_team_id, t3.name AS winner_team_name, t3.image AS winner_team_image,
+			t3.team_id AS winner_team_team_id, t3.name AS winner_team_name, t3.image AS winner_team_image,
 			g.game_number, g.video_link, g.full_draft_image
 		FROM games g
 		JOIN teams t1 ON g.first_pick_team_id = t1.team_id
@@ -169,7 +170,7 @@ func GetAllGames(c *gin.Context) {
 		WHERE g.match_id = ?
 	`
 
-	if err := config.DB.Raw(query, matchID).Scan(&games).Error; err != nil {
+	if err := config.DB.Raw(query, match.MatchID).Scan(&games).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
