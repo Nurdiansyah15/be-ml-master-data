@@ -135,7 +135,7 @@ definitions:
     properties:
       first_pick_team_id:
         type: integer
-      firstTeam:
+      first_team:
         properties:
           image:
             type: string
@@ -154,7 +154,7 @@ definitions:
         type: integer
       second_pick_team_id:
         type: integer
-      secondTeam:
+      second_team:
         properties:
           image:
             type: string
@@ -165,9 +165,7 @@ definitions:
         type: object
       video_link:
         type: string
-      winner_team_id:
-        type: integer
-      winnerTeam:
+      winner_team:
         properties:
           image:
             type: string
@@ -176,6 +174,8 @@ definitions:
           team_id:
             type: integer
         type: object
+      winner_team_id:
+        type: integer
     type: object
   dto.GoldlanerRequestDto:
     properties:
@@ -2820,6 +2820,46 @@ paths:
       summary: Add hero ban
       tags:
       - Match
+  /matches/{matchID}/teams/{teamID}/hero-bans-first-phase-more-than-zero:
+    get:
+      consumes:
+      - application/json
+      description: Get all hero bans with first phase more than zero of a match by
+        team
+      operationId: get-all-hero-bans-with-first-phase-more-than-zero
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.HeroBanResponseDto'
+            type: array
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Hero bans not found
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all hero bans with first phase more than zero
+      tags:
+      - Match
   /matches/{matchID}/teams/{teamID}/hero-bans/{HeroBanID}:
     delete:
       consumes:
@@ -2996,6 +3036,46 @@ paths:
       security:
       - Bearer: []
       summary: Add hero pick
+      tags:
+      - Match
+  /matches/{matchID}/teams/{teamID}/hero-picks-first-phase-more-than-zero:
+    get:
+      consumes:
+      - application/json
+      description: Get all hero picks with first phase more than zero of a match by
+        team
+      operationId: get-all-hero-picks-with-first-phase-more-than-zero
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.HeroPickResponseDto'
+            type: array
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Hero picks not found
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all hero picks with first phase more than zero
       tags:
       - Match
   /matches/{matchID}/teams/{teamID}/hero-picks/{heroPickID}:

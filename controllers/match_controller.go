@@ -885,7 +885,7 @@ func GetAllHeroPicks(c *gin.Context) {
 // @Success 200 {array} dto.HeroPickResponseDto
 // @Failure 400 {string} string "Invalid input"
 // @Failure 404 {string} string "Hero picks not found"
-// @Router /matches/{matchID}/teams/{teamID}/hero-picks/first-phase-more-than-zero [get]
+// @Router /matches/{matchID}/teams/{teamID}/hero-picks-first-phase-more-than-zero [get]
 func GetAllHeroPicksWithFirstPhaseMoreThanZero(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -1225,7 +1225,7 @@ func GetAllHeroBans(c *gin.Context) {
 // @Success 200 {array} dto.HeroBanResponseDto
 // @Failure 400 {string} string "Invalid input"
 // @Failure 404 {string} string "Hero bans not found"
-// @Router /matches/{matchID}/teams/{teamID}/hero-bans/first-phase-more-than-zero [get]
+// @Router /matches/{matchID}/teams/{teamID}/hero-bans-first-phase-more-than-zero [get]
 func GetAllHeroBansWithFirstPhaseMoreThanZero(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")

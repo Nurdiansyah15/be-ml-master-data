@@ -3034,6 +3034,66 @@ const docTemplate = `{
                 }
             }
         },
+        "/matches/{matchID}/teams/{teamID}/hero-bans-first-phase-more-than-zero": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get all hero bans with first phase more than zero of a match by team",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Match"
+                ],
+                "summary": "Get all hero bans with first phase more than zero",
+                "operationId": "get-all-hero-bans-with-first-phase-more-than-zero",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Match ID",
+                        "name": "matchID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Team ID",
+                        "name": "teamID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.HeroBanResponseDto"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Hero bans not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/matches/{matchID}/teams/{teamID}/hero-bans/{HeroBanID}": {
             "put": {
                 "security": [
@@ -3298,6 +3358,66 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/matches/{matchID}/teams/{teamID}/hero-picks-first-phase-more-than-zero": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get all hero picks with first phase more than zero of a match by team",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Match"
+                ],
+                "summary": "Get all hero picks with first phase more than zero",
+                "operationId": "get-all-hero-picks-with-first-phase-more-than-zero",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Match ID",
+                        "name": "matchID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Team ID",
+                        "name": "teamID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.HeroPickResponseDto"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Hero picks not found",
                         "schema": {
                             "type": "string"
                         }
@@ -5465,7 +5585,10 @@ const docTemplate = `{
         "dto.GameResponseDto": {
             "type": "object",
             "properties": {
-                "firstTeam": {
+                "first_pick_team_id": {
+                    "type": "integer"
+                },
+                "first_team": {
                     "type": "object",
                     "properties": {
                         "image": {
@@ -5478,9 +5601,6 @@ const docTemplate = `{
                             "type": "integer"
                         }
                     }
-                },
-                "first_pick_team_id": {
-                    "type": "integer"
                 },
                 "full_draft_image": {
                     "type": "string"
@@ -5494,7 +5614,10 @@ const docTemplate = `{
                 "match_id": {
                     "type": "integer"
                 },
-                "secondTeam": {
+                "second_pick_team_id": {
+                    "type": "integer"
+                },
+                "second_team": {
                     "type": "object",
                     "properties": {
                         "image": {
@@ -5508,13 +5631,10 @@ const docTemplate = `{
                         }
                     }
                 },
-                "second_pick_team_id": {
-                    "type": "integer"
-                },
                 "video_link": {
                     "type": "string"
                 },
-                "winnerTeam": {
+                "winner_team": {
                     "type": "object",
                     "properties": {
                         "image": {
