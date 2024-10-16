@@ -873,6 +873,48 @@ func GetAllHeroPicks(c *gin.Context) {
 	c.JSON(http.StatusOK, picks)
 }
 
+// @Summary Get all hero picks with first phase more than zero
+// @Description Get all hero picks with first phase more than zero of a match by team
+// @ID get-all-hero-picks-with-first-phase-more-than-zero
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Success 200 {array} dto.HeroPickResponseDto
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Hero picks not found"
+// @Router /matches/{matchID}/teams/{teamID}/hero-picks/first-phase-more-than-zero [get]
+func GetAllHeroPicksWithFirstPhaseMoreThanZero(c *gin.Context) {
+	matchID := c.Param("matchID")
+	teamID := c.Param("teamID")
+
+	if matchID == "" || teamID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID and Team ID are required"})
+		return
+	}
+
+	var picks = []dto.HeroPickResponseDto{}
+	query := `
+		SELECT 
+			hp.hero_pick_id, hp.match_team_detail_id, hp.hero_id, 
+			hp.first_phase, hp.second_phase, hp.total, 
+			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image
+		FROM hero_picks hp
+		JOIN heroes h ON hp.hero_id = h.hero_id
+		JOIN match_team_details mtd ON hp.match_team_detail_id = mtd.match_team_detail_id
+		WHERE mtd.match_id = ? AND mtd.team_id = ? AND hp.first_phase > 0
+	`
+
+	if err := config.DB.Raw(query, matchID, teamID).Scan(&picks).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Hero picks not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, picks)
+}
+
 // @Summary Add hero ban
 // @Description Add hero ban to match
 // @ID add-hero-ban
@@ -1161,6 +1203,48 @@ func GetAllHeroBans(c *gin.Context) {
 		JOIN heroes h ON hb.hero_id = h.hero_id
 		JOIN match_team_details mtd ON hb.match_team_detail_id = mtd.match_team_detail_id
 		WHERE mtd.match_id = ? AND mtd.team_id = ?
+	`
+
+	if err := config.DB.Raw(query, matchID, teamID).Scan(&bans).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Hero bans not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, bans)
+}
+
+// @Summary Get all hero bans with first phase more than zero
+// @Description Get all hero bans with first phase more than zero of a match by team
+// @ID get-all-hero-bans-with-first-phase-more-than-zero
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Success 200 {array} dto.HeroBanResponseDto
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Hero bans not found"
+// @Router /matches/{matchID}/teams/{teamID}/hero-bans/first-phase-more-than-zero [get]
+func GetAllHeroBansWithFirstPhaseMoreThanZero(c *gin.Context) {
+	matchID := c.Param("matchID")
+	teamID := c.Param("teamID")
+
+	if matchID == "" || teamID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID and Team ID are required"})
+		return
+	}
+
+	var bans = []dto.HeroBanResponseDto{}
+	query := `
+		SELECT 
+			hb.hero_ban_id, hb.match_team_detail_id, hb.hero_id, 
+			hb.first_phase, hb.second_phase, hb.total, 
+			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image
+		FROM hero_bans hb
+		JOIN heroes h ON hb.hero_id = h.hero_id
+		JOIN match_team_details mtd ON hb.match_team_detail_id = mtd.match_team_detail_id
+		WHERE mtd.match_id = ? AND mtd.team_id = ? AND hb.first_phase > 0
 	`
 
 	if err := config.DB.Raw(query, matchID, teamID).Scan(&bans).Error; err != nil {

@@ -25,6 +25,7 @@ func SetupRouter() *gin.Engine {
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
 	config.AllowHeaders = append(config.AllowHeaders, "Authorization")
+	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}
 	r.Use(cors.New(config))
 
 	// Public routes
@@ -66,10 +67,14 @@ func SetupRouter() *gin.Engine {
 		protected.PUT("matches/:matchID/teams/:teamID/hero-picks/:heroPickID", controllers.UpdateHeroPick)
 		protected.GET("matches/:matchID/teams/:teamID/hero-picks", controllers.GetAllHeroPicks)
 
+		protected.GET("matches/:matchID/teams/:teamID/hero-picks-first-phase-more-than-zero", controllers.GetAllHeroPicksWithFirstPhaseMoreThanZero)
+
 		protected.POST("matches/:matchID/teams/:teamID/hero-bans", controllers.AddHeroBan) //ok
 		protected.DELETE("matches/:matchID/teams/:teamID/hero-bans/:HeroBanID", controllers.RemoveHeroBan)
 		protected.PUT("matches/:matchID/teams/:teamID/hero-bans/:HeroBanID", controllers.UpdateHeroBan)
 		protected.GET("matches/:matchID/teams/:teamID/hero-bans", controllers.GetAllHeroBans)
+
+		protected.GET("matches/:matchID/teams/:teamID/hero-bans-first-phase-more-than-zero", controllers.GetAllHeroBansWithFirstPhaseMoreThanZero)
 
 		protected.POST("matches/:matchID/teams/:teamID/priority-picks", controllers.AddPriorityPick) //ok
 		protected.DELETE("matches/:matchID/teams/:teamID/priority-picks/:priorityPickID", controllers.RemovePriorityPick)
