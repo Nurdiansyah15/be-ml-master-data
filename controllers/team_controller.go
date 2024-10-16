@@ -38,7 +38,7 @@ func GetAllTeams(c *gin.Context) {
 // @Tags Team
 // @Security Bearer
 // @Param name formData string true "Team name"
-// @Param logo formData file true "Team logo"
+// @Param image formData file true "Team logo"
 // @Success 201 {object} models.Team
 // @Failure 400 {string} string "Bad request"
 // @Failure 500 {string} string "Internal server error"
@@ -51,7 +51,7 @@ func CreateTeam(c *gin.Context) {
 		return
 	}
 
-	file, err := c.FormFile("logo")
+	file, err := c.FormFile("image")
 	var logoPath string
 
 	if err != nil {
@@ -102,7 +102,7 @@ func CreateTeam(c *gin.Context) {
 // @Security Bearer
 // @Param teamID path string true "Team ID"
 // @Param name formData string false "Team name"
-// @Param logo formData file false "Team logo"
+// @Param image formData file false "Team logo"
 // @Success 200 {object} models.Team
 // @Failure 400 {string} string "Bad request"
 // @Failure 500 {string} string "Internal server error"
@@ -131,7 +131,7 @@ func UpdateTeam(c *gin.Context) {
 	}
 
 	// Tangani file logo baru jika ada
-	file, err := c.FormFile("logo")
+	file, err := c.FormFile("image")
 	if err == nil {
 
 		// Memeriksa ukuran file

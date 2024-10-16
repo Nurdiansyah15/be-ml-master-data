@@ -184,7 +184,7 @@ const docTemplate = `{
                     {
                         "type": "file",
                         "description": "Hero image",
-                        "name": "hero_image",
+                        "name": "image",
                         "in": "formData",
                         "required": true
                     }
@@ -263,7 +263,7 @@ const docTemplate = `{
                     {
                         "type": "file",
                         "description": "Hero image",
-                        "name": "hero_image",
+                        "name": "image",
                         "in": "formData"
                     }
                 ],
@@ -4489,7 +4489,7 @@ const docTemplate = `{
                     {
                         "type": "file",
                         "description": "Team logo",
-                        "name": "logo",
+                        "name": "image",
                         "in": "formData",
                         "required": true
                     }
@@ -4592,7 +4592,7 @@ const docTemplate = `{
                     {
                         "type": "file",
                         "description": "Team logo",
-                        "name": "logo",
+                        "name": "image",
                         "in": "formData"
                     }
                 ],

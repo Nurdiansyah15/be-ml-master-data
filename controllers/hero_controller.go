@@ -39,7 +39,7 @@ func GetAllHeroes(c *gin.Context) {
 // @Produce json
 // @Security Bearer
 // @Param name formData string true "Hero name"
-// @Param hero_image formData file true "Hero image"
+// @Param image formData file true "Hero image"
 // @Success 201 {object} models.Hero
 // @Router /heroes [post]
 func CreateHero(c *gin.Context) {
@@ -51,7 +51,7 @@ func CreateHero(c *gin.Context) {
 		return
 	}
 
-	file, err := c.FormFile("hero_image")
+	file, err := c.FormFile("image")
 	var heroImagePath string
 
 	// Menetapkan path default jika tidak ada gambar
@@ -131,7 +131,7 @@ func GetHeroByID(c *gin.Context) {
 // @Security Bearer
 // @Param heroID path string true "Hero ID"
 // @Param name formData string false "Hero name"
-// @Param hero_image formData file false "Hero image"
+// @Param image formData file false "Hero image"
 // @Success 200 {object} models.Hero
 // @Router /heroes/{heroID} [put]
 func UpdateHero(c *gin.Context) {
@@ -151,7 +151,7 @@ func UpdateHero(c *gin.Context) {
 	name := c.PostForm("name")
 
 	// Mengambil file gambar dari FormFile
-	file, err := c.FormFile("hero_image")
+	file, err := c.FormFile("image")
 
 	// Memperbarui nama jika ada
 	if name != "" {

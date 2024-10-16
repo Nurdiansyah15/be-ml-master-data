@@ -178,7 +178,7 @@
                     {
                         "type": "file",
                         "description": "Hero image",
-                        "name": "hero_image",
+                        "name": "image",
                         "in": "formData",
                         "required": true
                     }
@@ -257,7 +257,7 @@
                     {
                         "type": "file",
                         "description": "Hero image",
-                        "name": "hero_image",
+                        "name": "image",
                         "in": "formData"
                     }
                 ],
@@ -4483,7 +4483,7 @@
                     {
                         "type": "file",
                         "description": "Team logo",
-                        "name": "logo",
+                        "name": "image",
                         "in": "formData",
                         "required": true
                     }
@@ -4586,7 +4586,7 @@
                     {
                         "type": "file",
                         "description": "Team logo",
-                        "name": "logo",
+                        "name": "image",
                         "in": "formData"
                     }
                 ],

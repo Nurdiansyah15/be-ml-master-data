@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"ml-master-data/config"
 	"ml-master-data/dto"
 	"ml-master-data/models"
@@ -266,6 +267,8 @@ func GetMatchesByTournamentID(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
+	fmt.Println("matches", matches)
 
 	c.JSON(http.StatusOK, matches)
 }

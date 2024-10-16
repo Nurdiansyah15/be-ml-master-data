@@ -939,7 +939,7 @@ paths:
         type: string
       - description: Hero image
         in: formData
-        name: hero_image
+        name: image
         required: true
         type: file
       produces:
@@ -989,7 +989,7 @@ paths:
         type: string
       - description: Hero image
         in: formData
-        name: hero_image
+        name: image
         type: file
       produces:
       - application/json
@@ -3769,7 +3769,7 @@ paths:
         type: string
       - description: Team logo
         in: formData
-        name: logo
+        name: image
         required: true
         type: file
       produces:
@@ -3835,7 +3835,7 @@ paths:
         type: string
       - description: Team logo
         in: formData
-        name: logo
+        name: image
         type: file
       produces:
       - application/json
