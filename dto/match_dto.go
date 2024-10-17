@@ -69,10 +69,11 @@ type HeroPickRequestDto struct {
 	HeroID       *uint `json:"hero_id" binding:"required"`
 	FirstPhase   *int  `json:"first_phase" binding:"required"`
 	SecondPhase  *int  `json:"second_phase" binding:"required"`
+	Total        *int  `json:"total" binding:"required"`
 	HeroPickGame []struct {
 		GameNumber *int  `json:"game_number" binding:"required"`
 		IsPicked   *bool `json:"is_picked" binding:"required"`
-	}
+	} `json:"hero_pick_game"`
 }
 
 type HeroPickResponseDto struct {
@@ -83,20 +84,27 @@ type HeroPickResponseDto struct {
 		HeroID *uint   `json:"hero_id"`
 		Name   *string `json:"name"`
 		Image  *string `json:"image"`
-	}
-	FirstPhase  *int `json:"first_phase"`
-	SecondPhase *int `json:"second_phase"`
-	Total       *int `json:"total"`
+	} `gorm:"embedded;embeddedPrefix:hero_" json:"hero"`
+	FirstPhase   *int `json:"first_phase"`
+	SecondPhase  *int `json:"second_phase"`
+	Total        *int `json:"total"`
+	HeroPickGame []struct {
+		HeroPickGameID uint `json:"hero_pick_game_id"`
+		HeroPickID     uint `json:"hero_pick_id"`
+		GameNumber     int  `json:"game_number"`
+		IsPicked       bool `json:"is_picked"`
+	} `json:"hero_pick_game"`
 }
 
 type HeroBanRequestDto struct {
 	HeroID      *uint `json:"hero_id" binding:"required"`
 	FirstPhase  *int  `json:"first_phase" binding:"required"`
 	SecondPhase *int  `json:"second_phase" binding:"required"`
+	Total       *int  `json:"total" binding:"required"`
 	HeroBanGame []struct {
 		GameNumber *int  `json:"game_number" binding:"required"`
 		IsBanned   *bool `json:"is_banned" binding:"required"`
-	}
+	} `json:"hero_ban_game"`
 }
 
 type HeroBanResponseDto struct {
@@ -107,10 +115,16 @@ type HeroBanResponseDto struct {
 		HeroID *uint   `json:"hero_id"`
 		Name   *string `json:"name"`
 		Image  *string `json:"image"`
-	}
+	} `gorm:"embedded;embeddedPrefix:hero_" json:"hero"`
 	FirstPhase  *int `json:"first_phase"`
 	SecondPhase *int `json:"second_phase"`
 	Total       *int `json:"total"`
+	HeroBanGame []struct {
+		HeroBanGameID uint `json:"hero_ban_game_id"`
+		HeroBanID     uint `json:"hero_ban_id"`
+		GameNumber    int  `json:"game_number"`
+		IsBanned      bool `json:"is_banned"`
+	} `json:"hero_ban_game"`
 }
 
 type PriorityPickRequestDto struct {

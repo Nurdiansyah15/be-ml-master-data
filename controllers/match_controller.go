@@ -624,6 +624,15 @@ func AddHeroPick(c *gin.Context) {
 		return
 	}
 
+	// Cek apakah HeroPick dengan kombinasi matchID, teamID, dan heroID sudah ada
+	var existingHeroPick models.HeroPick
+	if err := config.DB.
+		Where("match_team_detail_id = ? AND hero_id = ?", matchTeamDetail.MatchTeamDetailID, *input.HeroID).
+		First(&existingHeroPick).Error; err == nil {
+		c.JSON(http.StatusConflict, gin.H{"error": "Hero pick for this match and team already exists"})
+		return
+	}
+
 	tx := config.DB.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -638,6 +647,7 @@ func AddHeroPick(c *gin.Context) {
 		HeroID:            *input.HeroID,
 		FirstPhase:        *input.FirstPhase,
 		SecondPhase:       *input.SecondPhase,
+		Total:             *input.Total,
 	}
 	if err := tx.Create(&heroPick).Error; err != nil {
 		tx.Rollback()
@@ -658,8 +668,13 @@ func AddHeroPick(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Hero pick added successfully"})
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
+	c.JSON(http.StatusCreated, gin.H{"message": "Hero pick added successfully"})
 }
 
 // @Summary Update hero pick
@@ -683,25 +698,38 @@ func UpdateHeroPick(c *gin.Context) {
 	heroPickID := c.Param("heroPickID")
 
 	if matchID == "" || teamID == "" || heroPickID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID, Team ID, and Hero ID are required"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID, Team ID, and Hero Pick ID are required"})
 		return
 	}
 
+	// Ambil detail match dan team
 	var matchTeamDetail models.MatchTeamDetail
 	if err := config.DB.Where("match_id = ? AND team_id = ?", matchID, teamID).First(&matchTeamDetail).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Match or team not found"})
 		return
 	}
 
+	// Ambil HeroPick berdasarkan match_team_detail_id dan hero_pick_id
 	var heroPick models.HeroPick
 	if err := config.DB.Where("match_team_detail_id = ? AND hero_pick_id = ?", matchTeamDetail.MatchTeamDetailID, heroPickID).First(&heroPick).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Hero pick not found"})
 		return
 	}
 
+	// Bind input JSON ke DTO
 	input := dto.HeroPickRequestDto{}
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Cek apakah kombinasi heroID, matchID, dan teamID sudah ada di HeroPick selain dari yang sedang di-update
+	var duplicateCheck models.HeroPick
+	if err := config.DB.
+		Where("match_team_detail_id = ? AND hero_id = ? AND hero_pick_id != ?",
+			matchTeamDetail.MatchTeamDetailID, *input.HeroID, heroPick.HeroPickID).
+		First(&duplicateCheck).Error; err == nil {
+		c.JSON(http.StatusConflict, gin.H{"error": "Duplicate hero pick detected"})
 		return
 	}
 
@@ -714,18 +742,23 @@ func UpdateHeroPick(c *gin.Context) {
 		}
 	}()
 
+	// Update heroPick dengan data baru
 	heroPick.HeroID = *input.HeroID
 	heroPick.FirstPhase = *input.FirstPhase
 	heroPick.SecondPhase = *input.SecondPhase
+	heroPick.Total = *input.Total
 
 	if err := tx.Save(&heroPick).Error; err != nil {
+		tx.Rollback()
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	// Update atau buat HeroPickGame baru
 	for _, game := range input.HeroPickGame {
 		var heroPickGame models.HeroPickGame
 		if err := tx.Where("hero_pick_id = ? AND game_number = ?", heroPick.HeroPickID, game.GameNumber).First(&heroPickGame).Error; err != nil {
+			// Buat entri baru jika tidak ada
 			heroPickGame = models.HeroPickGame{
 				HeroPickID: heroPick.HeroPickID,
 				GameNumber: *game.GameNumber,
@@ -737,8 +770,7 @@ func UpdateHeroPick(c *gin.Context) {
 				return
 			}
 		} else {
-			heroPickGame.HeroPickID = heroPick.HeroPickID
-			heroPickGame.GameNumber = *game.GameNumber
+			// Update entri jika sudah ada
 			heroPickGame.IsPicked = *game.IsPicked
 			if err := tx.Save(&heroPickGame).Error; err != nil {
 				tx.Rollback()
@@ -754,8 +786,7 @@ func UpdateHeroPick(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Hero pick updated successfully"})
-
+	c.JSON(http.StatusOK, gin.H{"message": "Hero pick updated successfully"})
 }
 
 // @Summary Remove hero pick
@@ -844,6 +875,48 @@ func RemoveHeroPick(c *gin.Context) {
 // @Failure 400 {string} string "Invalid input"
 // @Failure 404 {string} string "Hero picks not found"
 // @Router /matches/{matchID}/teams/{teamID}/hero-picks [get]
+// func GetAllHeroPicks(c *gin.Context) {
+// 	matchID := c.Param("matchID")
+// 	teamID := c.Param("teamID")
+
+// 	if matchID == "" || teamID == "" {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID and Team ID are required"})
+// 		return
+// 	}
+
+// 	var picks = []dto.HeroPickResponseDto{}
+// 	query := `
+// 		SELECT
+// 			hp.hero_pick_id, hp.match_team_detail_id, hp.hero_id,
+// 			hp.first_phase, hp.second_phase, hp.total,
+// 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image
+// 		FROM hero_picks hp
+// 		JOIN heroes h ON hp.hero_id = h.hero_id
+// 		JOIN match_team_details mtd ON hp.match_team_detail_id = mtd.match_team_detail_id
+// 		WHERE mtd.match_id = ? AND mtd.team_id = ?
+// 	`
+
+// 	if err := config.DB.Raw(query, matchID, teamID).Scan(&picks).Error; err != nil {
+// 		c.JSON(http.StatusNotFound, gin.H{"error": "Hero picks not found"})
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusOK, picks)
+// }
+
+// @Summary Get all hero picks
+// @Description Get all hero picks in a match with the given team ID, including nested game picks
+// @ID get-all-hero-picks
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Success 200 {array} dto.HeroPickResponseDto
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Hero picks not found"
+// @Router /matches/{matchID}/teams/{teamID}/hero-picks [get]
 func GetAllHeroPicks(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -853,24 +926,80 @@ func GetAllHeroPicks(c *gin.Context) {
 		return
 	}
 
-	var picks = []dto.HeroPickResponseDto{}
+	var heroPicks []struct {
+		HeroPickID        uint   `json:"hero_pick_id"`
+		MatchTeamDetailID uint   `json:"match_team_detail_id"`
+		HeroID            uint   `json:"hero_id"`
+		FirstPhase        int    `json:"first_phase"`
+		SecondPhase       int    `json:"second_phase"`
+		Total             int    `json:"total"`
+		HeroHeroID        uint   `json:"hero_hero_id"`
+		HeroName          string `json:"hero_name"`
+		HeroImage         string `json:"hero_image"`
+	}
+
+	// Query untuk mengambil hero picks
 	query := `
 		SELECT 
 			hp.hero_pick_id, hp.match_team_detail_id, hp.hero_id, 
 			hp.first_phase, hp.second_phase, hp.total, 
 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image
 		FROM hero_picks hp
-		JOIN heroes h ON hp.hero_id = h.hero_id
+		JOIN heros h ON hp.hero_id = h.hero_id
 		JOIN match_team_details mtd ON hp.match_team_detail_id = mtd.match_team_detail_id
 		WHERE mtd.match_id = ? AND mtd.team_id = ?
 	`
-
-	if err := config.DB.Raw(query, matchID, teamID).Scan(&picks).Error; err != nil {
+	if err := config.DB.Raw(query, matchID, teamID).Scan(&heroPicks).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Hero picks not found"})
 		return
 	}
 
-	c.JSON(http.StatusOK, picks)
+	// Inisialisasi untuk menyimpan hasil akhir dengan nested game picks
+	var response = []dto.HeroPickResponseDto{}
+
+	// Loop untuk setiap hero pick, kemudian ambil game picks terkait
+	for _, pick := range heroPicks {
+		var heroPickGames []struct {
+			HeroPickGameID uint `json:"hero_pick_game_id"`
+			HeroPickID     uint `json:"hero_pick_id"`
+			GameNumber     int  `json:"game_number"`
+			IsPicked       bool `json:"is_picked"`
+		}
+
+		// Query untuk mengambil game picks berdasarkan hero_pick_id
+		gamePickQuery := `
+			SELECT 
+				hpg.hero_pick_game_id, hpg.hero_pick_id, hpg.game_number, hpg.is_picked
+			FROM hero_pick_games hpg
+			WHERE hpg.hero_pick_id = ?
+		`
+		if err := config.DB.Raw(gamePickQuery, pick.HeroPickID).Scan(&heroPickGames).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch hero pick games"})
+			return
+		}
+
+		// Membentuk struktur nested object
+		response = append(response, dto.HeroPickResponseDto{
+			HeroPickID:        &pick.HeroPickID,
+			MatchTeamDetailID: &pick.MatchTeamDetailID,
+			HeroID:            &pick.HeroID,
+			Hero: &struct {
+				HeroID *uint   `json:"hero_id"`
+				Name   *string `json:"name"`
+				Image  *string `json:"image"`
+			}{
+				HeroID: &pick.HeroHeroID,
+				Name:   &pick.HeroName,
+				Image:  &pick.HeroImage,
+			},
+			FirstPhase:   &pick.FirstPhase,
+			SecondPhase:  &pick.SecondPhase,
+			Total:        &pick.Total,
+			HeroPickGame: heroPickGames,
+		})
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 // @Summary Get all hero picks with first phase more than zero
@@ -953,6 +1082,15 @@ func AddHeroBan(c *gin.Context) {
 		return
 	}
 
+	// Cek apakah HeroBan dengan kombinasi matchID, teamID, dan heroID sudah ada
+	var existingHeroBan models.HeroBan
+	if err := config.DB.
+		Where("match_team_detail_id = ? AND hero_id = ?", matchTeamDetail.MatchTeamDetailID, *input.HeroID).
+		First(&existingHeroBan).Error; err == nil {
+		c.JSON(http.StatusConflict, gin.H{"error": "Hero ban for this match and team already exists"})
+		return
+	}
+
 	// Memulai transaksi
 	tx := config.DB.Begin()
 	defer func() {
@@ -968,6 +1106,7 @@ func AddHeroBan(c *gin.Context) {
 		HeroID:            *input.HeroID,
 		FirstPhase:        *input.FirstPhase,
 		SecondPhase:       *input.SecondPhase,
+		Total:             *input.Total,
 	}
 	if err := tx.Create(&heroBan).Error; err != nil {
 		tx.Rollback()
@@ -1045,6 +1184,16 @@ func UpdateHeroBan(c *gin.Context) {
 		return
 	}
 
+	// Cek apakah kombinasi heroID, matchID, dan teamID sudah ada di HeroBan selain dari yang sedang di-update
+	var duplicateCheck models.HeroBan
+	if err := config.DB.
+		Where("match_team_detail_id = ? AND hero_id = ? AND hero_pick_id != ?",
+			matchTeamDetail.MatchTeamDetailID, *input.HeroID, heroBan.HeroBanID).
+		First(&duplicateCheck).Error; err == nil {
+		c.JSON(http.StatusConflict, gin.H{"error": "Duplicate hero pick detected"})
+		return
+	}
+
 	tx := config.DB.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -1057,6 +1206,7 @@ func UpdateHeroBan(c *gin.Context) {
 	heroBan.HeroID = *input.HeroID
 	heroBan.FirstPhase = *input.FirstPhase
 	heroBan.SecondPhase = *input.SecondPhase
+	heroBan.Total = *input.Total
 
 	if err := tx.Save(&heroBan).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -1065,7 +1215,7 @@ func UpdateHeroBan(c *gin.Context) {
 
 	for _, game := range input.HeroBanGame {
 		var heroBanGame models.HeroBanGame
-		if err := tx.Where("hero_pick_id = ? AND game_number = ?", heroBan.HeroBanID, game.GameNumber).First(&heroBanGame).Error; err != nil {
+		if err := tx.Where("hero_ban_id = ? AND game_number = ?", heroBan.HeroBanID, game.GameNumber).First(&heroBanGame).Error; err != nil {
 			heroBanGame = models.HeroBanGame{
 				HeroBanID:  heroBan.HeroBanID,
 				GameNumber: *game.GameNumber,
@@ -1077,8 +1227,6 @@ func UpdateHeroBan(c *gin.Context) {
 				return
 			}
 		} else {
-			heroBanGame.HeroBanID = heroBan.HeroBanID
-			heroBanGame.GameNumber = *game.GameNumber
 			heroBanGame.IsBanned = *game.IsBanned
 			if err := tx.Save(&heroBanGame).Error; err != nil {
 				tx.Rollback()
@@ -1184,6 +1332,50 @@ func RemoveHeroBan(c *gin.Context) {
 // @Failure 404 {string} string "Match or team not found"
 // @Failure 500 {string} string "Internal server error"
 // @Router /matches/{matchID}/teams/{teamID}/hero-bans [get]
+// func GetAllHeroBans(c *gin.Context) {
+// 	matchID := c.Param("matchID")
+// 	teamID := c.Param("teamID")
+
+// 	if matchID == "" || teamID == "" {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID and Team ID are required"})
+// 		return
+// 	}
+
+// 	var bans = []dto.HeroBanResponseDto{}
+// 	query := `
+// 		SELECT
+// 			hb.hero_ban_id, hb.match_team_detail_id, hb.hero_id,
+// 			hb.first_phase, hb.second_phase, hb.total,
+// 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image
+// 		FROM hero_bans hb
+// 		JOIN heroes h ON hb.hero_id = h.hero_id
+// 		JOIN match_team_details mtd ON hb.match_team_detail_id = mtd.match_team_detail_id
+// 		WHERE mtd.match_id = ? AND mtd.team_id = ?
+// 	`
+
+// 	if err := config.DB.Raw(query, matchID, teamID).Scan(&bans).Error; err != nil {
+// 		c.JSON(http.StatusNotFound, gin.H{"error": "Hero bans not found"})
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusOK, bans)
+// }
+
+// GetAllHeroBans retrieves all hero bans for a given match and team.
+// @Summary Get all hero bans
+// @Description Get all hero bans of a match by team
+// @ID get-all-hero-bans
+// @Accept json
+// @Security Bearer
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Success 200 {array} dto.HeroBanResponseDto "Hero bans"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/hero-bans [get]
 func GetAllHeroBans(c *gin.Context) {
 	matchID := c.Param("matchID")
 	teamID := c.Param("teamID")
@@ -1193,24 +1385,82 @@ func GetAllHeroBans(c *gin.Context) {
 		return
 	}
 
-	var bans = []dto.HeroBanResponseDto{}
+	// Query untuk mengambil hero bans
+	var heroBans []struct {
+		HeroBanID         uint   `json:"hero_ban_id"`
+		MatchTeamDetailID uint   `json:"match_team_detail_id"`
+		HeroID            uint   `json:"hero_id"`
+		FirstPhase        int    `json:"first_phase"`
+		SecondPhase       int    `json:"second_phase"`
+		Total             int    `json:"total"`
+		HeroHeroID        uint   `json:"hero_hero_id"`
+		HeroName          string `json:"hero_name"`
+		HeroImage         string `json:"hero_image"`
+	}
+
 	query := `
 		SELECT 
 			hb.hero_ban_id, hb.match_team_detail_id, hb.hero_id, 
 			hb.first_phase, hb.second_phase, hb.total, 
 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image
 		FROM hero_bans hb
-		JOIN heroes h ON hb.hero_id = h.hero_id
+		JOIN heros h ON hb.hero_id = h.hero_id
 		JOIN match_team_details mtd ON hb.match_team_detail_id = mtd.match_team_detail_id
 		WHERE mtd.match_id = ? AND mtd.team_id = ?
 	`
 
-	if err := config.DB.Raw(query, matchID, teamID).Scan(&bans).Error; err != nil {
+	if err := config.DB.Raw(query, matchID, teamID).Scan(&heroBans).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Hero bans not found"})
 		return
 	}
 
-	c.JSON(http.StatusOK, bans)
+	// Inisialisasi untuk menyimpan hasil akhir dengan nested game bans
+	var response = []dto.HeroBanResponseDto{}
+
+	// Loop untuk setiap hero ban dan ambil game bans terkait
+	for _, ban := range heroBans {
+		var heroBanGames []struct {
+			HeroBanGameID uint `json:"hero_ban_game_id"`
+			HeroBanID     uint `json:"hero_ban_id"`
+			GameNumber    int  `json:"game_number"`
+			IsBanned      bool `json:"is_banned"`
+		}
+
+		// Query untuk mengambil hero ban games berdasarkan hero_ban_id
+		gameBanQuery := `
+			SELECT 
+				hbg.hero_ban_game_id, hbg.hero_ban_id, hbg.game_number, hbg.is_banned
+			FROM hero_ban_games hbg
+			WHERE hbg.hero_ban_id = ?
+		`
+
+		if err := config.DB.Raw(gameBanQuery, ban.HeroBanID).Scan(&heroBanGames).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch hero ban games"})
+			return
+		}
+
+		// Bentuk struktur nested object
+		response = append(response, dto.HeroBanResponseDto{
+			HeroBanID:         &ban.HeroBanID,
+			MatchTeamDetailID: &ban.MatchTeamDetailID,
+			HeroID:            &ban.HeroID,
+			Hero: &struct {
+				HeroID *uint   `json:"hero_id"`
+				Name   *string `json:"name"`
+				Image  *string `json:"image"`
+			}{
+				HeroID: &ban.HeroHeroID,
+				Name:   &ban.HeroName,
+				Image:  &ban.HeroImage,
+			},
+			FirstPhase:  &ban.FirstPhase,
+			SecondPhase: &ban.SecondPhase,
+			Total:       &ban.Total,
+			HeroBanGame: heroBanGames,
+		})
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 // @Summary Get all hero bans with first phase more than zero

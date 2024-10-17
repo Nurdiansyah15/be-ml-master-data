@@ -3242,7 +3242,7 @@ const docTemplate = `{
                         "Bearer": []
                     }
                 ],
-                "description": "Get all hero picks in a match with the given team ID",
+                "description": "Get all hero picks in a match with the given team ID, including nested game picks",
                 "consumes": [
                     "application/json"
                 ],
@@ -5725,13 +5725,14 @@ const docTemplate = `{
             "required": [
                 "first_phase",
                 "hero_id",
-                "second_phase"
+                "second_phase",
+                "total"
             ],
             "properties": {
                 "first_phase": {
                     "type": "integer"
                 },
-                "heroBanGame": {
+                "hero_ban_game": {
                     "type": "array",
                     "items": {
                         "type": "object",
@@ -5754,6 +5755,9 @@ const docTemplate = `{
                 },
                 "second_phase": {
                     "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },
@@ -5774,6 +5778,26 @@ const docTemplate = `{
                         },
                         "name": {
                             "type": "string"
+                        }
+                    }
+                },
+                "hero_ban_game": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "game_number": {
+                                "type": "integer"
+                            },
+                            "hero_ban_game_id": {
+                                "type": "integer"
+                            },
+                            "hero_ban_id": {
+                                "type": "integer"
+                            },
+                            "is_banned": {
+                                "type": "boolean"
+                            }
                         }
                     }
                 },
@@ -5799,13 +5823,17 @@ const docTemplate = `{
             "required": [
                 "first_phase",
                 "hero_id",
-                "second_phase"
+                "second_phase",
+                "total"
             ],
             "properties": {
                 "first_phase": {
                     "type": "integer"
                 },
-                "heroPickGame": {
+                "hero_id": {
+                    "type": "integer"
+                },
+                "hero_pick_game": {
                     "type": "array",
                     "items": {
                         "type": "object",
@@ -5823,10 +5851,10 @@ const docTemplate = `{
                         }
                     }
                 },
-                "hero_id": {
+                "second_phase": {
                     "type": "integer"
                 },
-                "second_phase": {
+                "total": {
                     "type": "integer"
                 }
             }
@@ -5853,6 +5881,26 @@ const docTemplate = `{
                 },
                 "hero_id": {
                     "type": "integer"
+                },
+                "hero_pick_game": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "game_number": {
+                                "type": "integer"
+                            },
+                            "hero_pick_game_id": {
+                                "type": "integer"
+                            },
+                            "hero_pick_id": {
+                                "type": "integer"
+                            },
+                            "is_picked": {
+                                "type": "boolean"
+                            }
+                        }
+                    }
                 },
                 "hero_pick_id": {
                     "type": "integer"

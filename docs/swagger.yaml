@@ -225,9 +225,7 @@ definitions:
     properties:
       first_phase:
         type: integer
-      hero_id:
-        type: integer
-      heroBanGame:
+      hero_ban_game:
         items:
           properties:
             game_number:
@@ -239,12 +237,17 @@ definitions:
           - is_banned
           type: object
         type: array
+      hero_id:
+        type: integer
       second_phase:
+        type: integer
+      total:
         type: integer
     required:
     - first_phase
     - hero_id
     - second_phase
+    - total
     type: object
   dto.HeroBanResponseDto:
     properties:
@@ -259,6 +262,19 @@ definitions:
           name:
             type: string
         type: object
+      hero_ban_game:
+        items:
+          properties:
+            game_number:
+              type: integer
+            hero_ban_game_id:
+              type: integer
+            hero_ban_id:
+              type: integer
+            is_banned:
+              type: boolean
+          type: object
+        type: array
       hero_ban_id:
         type: integer
       hero_id:
@@ -276,7 +292,7 @@ definitions:
         type: integer
       hero_id:
         type: integer
-      heroPickGame:
+      hero_pick_game:
         items:
           properties:
             game_number:
@@ -290,10 +306,13 @@ definitions:
         type: array
       second_phase:
         type: integer
+      total:
+        type: integer
     required:
     - first_phase
     - hero_id
     - second_phase
+    - total
     type: object
   dto.HeroPickResponseDto:
     properties:
@@ -310,6 +329,19 @@ definitions:
         type: object
       hero_id:
         type: integer
+      hero_pick_game:
+        items:
+          properties:
+            game_number:
+              type: integer
+            hero_pick_game_id:
+              type: integer
+            hero_pick_id:
+              type: integer
+            is_picked:
+              type: boolean
+          type: object
+        type: array
       hero_pick_id:
         type: integer
       match_team_detail_id:
@@ -2957,7 +2989,8 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get all hero picks in a match with the given team ID
+      description: Get all hero picks in a match with the given team ID, including
+        nested game picks
       operationId: get-all-hero-picks
       parameters:
       - description: Match ID
