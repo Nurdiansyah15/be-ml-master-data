@@ -1127,74 +1127,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/games/{gameID}/teams/{teamID}/trio-mids/{trioMidID}": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "Get a TrioMid with the given game ID, match ID, and TrioMid ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Game"
-                ],
-                "summary": "Get a TrioMid by ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Game ID",
-                        "name": "gameID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Team ID",
-                        "name": "teamID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "TrioMid ID",
-                        "name": "trioMidID",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Trio mid found successfully",
-                        "schema": {
-                            "$ref": "#/definitions/dto.TrioMidResponseDto"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid input",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "404": {
-                        "description": "Game or Trio mid not found",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
+        "/games/{gameID}/teams/{teamID}/trio-mids/{trioMidHeroID}": {
             "put": {
                 "security": [
                     {
@@ -1230,7 +1163,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "TrioMid ID",
-                        "name": "trioMidID",
+                        "name": "trioMidHeroID",
                         "in": "path",
                         "required": true
                     },
@@ -1306,7 +1239,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "TrioMid ID",
-                        "name": "trioMidID",
+                        "name": "trioMidHeroID",
                         "in": "path",
                         "required": true
                     }
@@ -1326,6 +1259,75 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Match, game, or TrioMid not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/games/{gameID}/teams/{teamID}/trio-mids/{trioMidID}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get a TrioMid with the given game ID, match ID, and TrioMid ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Game"
+                ],
+                "summary": "Get a TrioMid by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Game ID",
+                        "name": "gameID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Team ID",
+                        "name": "teamID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "TrioMid ID",
+                        "name": "trioMidID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Trio mid found successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TrioMidResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Game or Trio mid not found",
                         "schema": {
                             "type": "string"
                         }
@@ -6537,6 +6539,7 @@ const docTemplate = `{
                     "type": "object",
                     "properties": {
                         "hero_id": {
+                            "description": "Tetap menggunakan hero_id",
                             "type": "integer"
                         },
                         "image": {
@@ -6546,9 +6549,6 @@ const docTemplate = `{
                             "type": "string"
                         }
                     }
-                },
-                "hero_id": {
-                    "type": "integer"
                 },
                 "role": {
                     "type": "string"
@@ -6563,11 +6563,12 @@ const docTemplate = `{
                             "type": "string"
                         },
                         "team_id": {
+                            "description": "Tetap menggunakan team_id",
                             "type": "integer"
                         }
                     }
                 },
-                "team_id": {
+                "trio_mid_hero_id": {
                     "type": "integer"
                 },
                 "trio_mid_id": {

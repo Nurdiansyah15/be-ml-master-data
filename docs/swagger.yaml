@@ -629,14 +629,13 @@ definitions:
       hero:
         properties:
           hero_id:
+            description: Tetap menggunakan hero_id
             type: integer
           image:
             type: string
           name:
             type: string
         type: object
-      hero_id:
-        type: integer
       role:
         type: string
       team:
@@ -646,9 +645,10 @@ definitions:
           name:
             type: string
           team_id:
+            description: Tetap menggunakan team_id
             type: integer
         type: object
-      team_id:
+      trio_mid_hero_id:
         type: integer
       trio_mid_id:
         type: integer
@@ -1610,7 +1610,7 @@ paths:
       summary: Add a TrioMid
       tags:
       - Game
-  /games/{gameID}/teams/{teamID}/trio-mids/{trioMidID}:
+  /games/{gameID}/teams/{teamID}/trio-mids/{trioMidHeroID}:
     delete:
       consumes:
       - application/json
@@ -1629,7 +1629,7 @@ paths:
         type: string
       - description: TrioMid ID
         in: path
-        name: trioMidID
+        name: trioMidHeroID
         required: true
         type: string
       produces:
@@ -1656,6 +1656,58 @@ paths:
       summary: Delete a TrioMid
       tags:
       - Game
+    put:
+      consumes:
+      - application/json
+      description: Update a TrioMid with the given game ID, match ID, and TrioMid
+        ID with the given information
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: TrioMid ID
+        in: path
+        name: trioMidHeroID
+        required: true
+        type: string
+      - description: Trio mid data
+        in: body
+        name: trioMid
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TrioMidRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Trio mid updated successfully
+          schema:
+            $ref: '#/definitions/models.TrioMid'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game or Trio mid not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update a TrioMid
+      tags:
+      - Game
+  /games/{gameID}/teams/{teamID}/trio-mids/{trioMidID}:
     get:
       consumes:
       - application/json
@@ -1698,57 +1750,6 @@ paths:
       security:
       - Bearer: []
       summary: Get a TrioMid by ID
-      tags:
-      - Game
-    put:
-      consumes:
-      - application/json
-      description: Update a TrioMid with the given game ID, match ID, and TrioMid
-        ID with the given information
-      parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: TrioMid ID
-        in: path
-        name: trioMidID
-        required: true
-        type: string
-      - description: Trio mid data
-        in: body
-        name: trioMid
-        required: true
-        schema:
-          $ref: '#/definitions/dto.TrioMidRequestDto'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Trio mid updated successfully
-          schema:
-            $ref: '#/definitions/models.TrioMid'
-        "400":
-          description: Invalid input
-          schema:
-            type: string
-        "404":
-          description: Game or Trio mid not found
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      security:
-      - Bearer: []
-      summary: Update a TrioMid
       tags:
       - Game
   /heroes:
