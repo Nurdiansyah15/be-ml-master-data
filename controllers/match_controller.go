@@ -891,7 +891,7 @@ func RemoveHeroPick(c *gin.Context) {
 // 			hp.first_phase, hp.second_phase, hp.total,
 // 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image
 // 		FROM hero_picks hp
-// 		JOIN heroes h ON hp.hero_id = h.hero_id
+// 		JOIN heros h ON hp.hero_id = h.hero_id
 // 		JOIN match_team_details mtd ON hp.match_team_detail_id = mtd.match_team_detail_id
 // 		WHERE mtd.match_id = ? AND mtd.team_id = ?
 // 	`
@@ -1031,7 +1031,7 @@ func GetAllHeroPicksWithFirstPhaseMoreThanZero(c *gin.Context) {
 			hp.first_phase, hp.second_phase, hp.total, 
 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image
 		FROM hero_picks hp
-		JOIN heroes h ON hp.hero_id = h.hero_id
+		JOIN heros h ON hp.hero_id = h.hero_id
 		JOIN match_team_details mtd ON hp.match_team_detail_id = mtd.match_team_detail_id
 		WHERE mtd.match_id = ? AND mtd.team_id = ? AND hp.first_phase > 0
 	`
@@ -1348,7 +1348,7 @@ func RemoveHeroBan(c *gin.Context) {
 // 			hb.first_phase, hb.second_phase, hb.total,
 // 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image
 // 		FROM hero_bans hb
-// 		JOIN heroes h ON hb.hero_id = h.hero_id
+// 		JOIN heros h ON hb.hero_id = h.hero_id
 // 		JOIN match_team_details mtd ON hb.match_team_detail_id = mtd.match_team_detail_id
 // 		WHERE mtd.match_id = ? AND mtd.team_id = ?
 // 	`
@@ -1492,7 +1492,7 @@ func GetAllHeroBansWithFirstPhaseMoreThanZero(c *gin.Context) {
 			hb.first_phase, hb.second_phase, hb.total, 
 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image
 		FROM hero_bans hb
-		JOIN heroes h ON hb.hero_id = h.hero_id
+		JOIN heros h ON hb.hero_id = h.hero_id
 		JOIN match_team_details mtd ON hb.match_team_detail_id = mtd.match_team_detail_id
 		WHERE mtd.match_id = ? AND mtd.team_id = ? AND hb.first_phase > 0
 	`
@@ -1685,7 +1685,7 @@ func GetAllPriorityPicks(c *gin.Context) {
 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image, 
 			pp.total, pp.role, pp.pick_rate
 		FROM priority_picks pp
-		JOIN heroes h ON pp.hero_id = h.hero_id
+		JOIN heros h ON pp.hero_id = h.hero_id
 		WHERE pp.match_team_detail_id = ?
 	`
 
@@ -1730,7 +1730,7 @@ func GetPriorityPickByID(c *gin.Context) {
 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image, 
 			pp.total, pp.role, pp.pick_rate
 		FROM priority_picks pp
-		JOIN heroes h ON pp.hero_id = h.hero_id
+		JOIN heros h ON pp.hero_id = h.hero_id
 		JOIN match_team_details mtd ON pp.match_team_detail_id = mtd.match_team_detail_id
 		WHERE mtd.match_id = ? AND mtd.team_id = ? AND pp.priority_pick_id = ?
 	`
@@ -1972,7 +1972,7 @@ func GetAllFlexPicks(c *gin.Context) {
 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image, 
 			fp.total, fp.role, fp.pick_rate
 		FROM flex_picks fp
-		JOIN heroes h ON fp.hero_id = h.hero_id
+		JOIN heros h ON fp.hero_id = h.hero_id
 		WHERE fp.match_team_detail_id = ?
 	`
 
@@ -2017,7 +2017,7 @@ func GetFlexPickByID(c *gin.Context) {
 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image, 
 			fp.total, fp.role, fp.pick_rate
 		FROM flex_picks fp
-		JOIN heroes h ON fp.hero_id = h.hero_id
+		JOIN heros h ON fp.hero_id = h.hero_id
 		JOIN match_team_details mtd ON fp.match_team_detail_id = mtd.match_team_detail_id
 		WHERE mtd.match_id = ? AND mtd.team_id = ? AND fp.flex_pick_id = ?
 	`
@@ -2263,7 +2263,7 @@ func GetAllPriorityBans(c *gin.Context) {
 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image, 
 			pb.total, pb.role, pb.ban_rate
 		FROM priority_bans pb
-		JOIN heroes h ON pb.hero_id = h.hero_id
+		JOIN heros h ON pb.hero_id = h.hero_id
 		WHERE pb.match_team_detail_id = ?
 	`
 
@@ -2309,7 +2309,7 @@ func GetPriorityBanByID(c *gin.Context) {
 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image, 
 			pb.total, pb.role, pb.ban_rate
 		FROM priority_bans pb
-		JOIN heroes h ON pb.hero_id = h.hero_id
+		JOIN heros h ON pb.hero_id = h.hero_id
 		JOIN match_team_details mtd ON pb.match_team_detail_id = mtd.match_team_detail_id
 		WHERE pb.priority_ban_id = ? AND mtd.match_id = ? AND mtd.team_id = ?
 	`

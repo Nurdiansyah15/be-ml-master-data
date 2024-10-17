@@ -111,23 +111,51 @@ func SetupRouter() *gin.Engine {
 		protected.GET("matches/:matchID/games/:gameID/turtle-result/:turtleResultID", controllers.GetTurtleResultByID)
 		protected.DELETE("matches/:matchID/games/:gameID/turtle-result/:turtleResultID", controllers.RemoveTurtleResult)
 
-		protected.POST("matches/:matchID/games/:gameID/explaner", controllers.AddExplaner)
-		protected.PUT("matches/:matchID/games/:gameID/explaner/:explanerID", controllers.UpdateExplaner)
-		protected.GET("matches/:matchID/games/:gameID/explaner", controllers.GetAllExplaners)
-		protected.GET("matches/:matchID/games/:gameID/explaner/:explanerID", controllers.GetExplanerByID)
-		protected.DELETE("matches/:matchID/games/:gameID/explaner/:explanerID", controllers.RemoveExplaner)
+		// protected.POST("matches/:matchID/games/:gameID/explaner", controllers.AddExplaner)
+		// protected.PUT("matches/:matchID/games/:gameID/explaner/:explanerID", controllers.UpdateExplaner)
+		// protected.GET("matches/:matchID/games/:gameID/explaner", controllers.GetAllExplaners)
+		// protected.GET("matches/:matchID/games/:gameID/explaner/:explanerID", controllers.GetExplanerByID)
+		// protected.DELETE("matches/:matchID/games/:gameID/explaner/:explanerID", controllers.RemoveExplaner)
 
-		protected.POST("matches/:matchID/games/:gameID/goldlaner", controllers.AddGoldlaner)
-		protected.PUT("matches/:matchID/games/:gameID/goldlaner/:goldlanerID", controllers.UpdateGoldlaner)
-		protected.GET("matches/:matchID/games/:gameID/goldlaner", controllers.GetAllGoldlaners)
-		protected.GET("matches/:matchID/games/:gameID/goldlaner/:goldlanerID", controllers.GetGoldlanerByID)
-		protected.DELETE("matches/:matchID/games/:gameID/goldlaner/:goldlanerID", controllers.RemoveGoldlaner)
+		// protected.POST("matches/:matchID/games/:gameID/goldlaner", controllers.AddGoldlaner)
+		// protected.PUT("matches/:matchID/games/:gameID/goldlaner/:goldlanerID", controllers.UpdateGoldlaner)
+		// protected.GET("matches/:matchID/games/:gameID/goldlaner", controllers.GetAllGoldlaners)
+		// protected.GET("matches/:matchID/games/:gameID/goldlaner/:goldlanerID", controllers.GetGoldlanerByID)
+		// protected.DELETE("matches/:matchID/games/:gameID/goldlaner/:goldlanerID", controllers.RemoveGoldlaner)
 
-		protected.POST("matches/:matchID/games/:gameID/trio_mid", controllers.AddTrioMid)
-		protected.PUT("matches/:matchID/games/:gameID/trio_mid/:trioMidID", controllers.UpdateTrioMid)
-		protected.GET("matches/:matchID/games/:gameID/trio_mid", controllers.GetAllTrioMids)
-		protected.GET("matches/:matchID/games/:gameID/trio_mid/:trioMidID", controllers.GetTrioMidByID)
-		protected.DELETE("matches/:matchID/games/:gameID/trio_mid/:trioMidID", controllers.RemoveTrioMid)
+		// protected.POST("matches/:matchID/games/:gameID/trio-mid", controllers.AddTrioMid)
+		// protected.PUT("matches/:matchID/games/:gameID/trio-mid/:trioMidID", controllers.UpdateTrioMid)
+		// protected.GET("matches/:matchID/games/:gameID/trio-mid", controllers.GetAllTrioMids)
+		// protected.GET("matches/:matchID/games/:gameID/trio-mid/:trioMidID", controllers.GetTrioMidByID)
+		// protected.DELETE("matches/:matchID/games/:gameID/trio-mid/:trioMidID", controllers.RemoveTrioMid)
+
+		// protected.PUT("matches/:matchID/games/:gameID/trio-mid-result", controllers.UpdateTrioMidResult)
+		// protected.GET("matches/:matchID/games/:gameID/trio-mid-result/:trioMidID", controllers.GetTrioMidResultByID)
+
+		// protected.GET("matches/:matchID/games/:gameID/game-results", controllers.GetAllGameResults)
+
+		protected.POST("games/:gameID/teams/:teamID/explaners", controllers.AddExplaner)
+		protected.PUT("games/:gameID/teams/:teamID/explaners/:explanerID", controllers.UpdateExplaner)
+		protected.GET("games/:gameID/teams/:teamID/explaners", controllers.GetAllExplaners)
+		protected.GET("games/:gameID/teams/:teamID/explaners/:explanerID", controllers.GetExplanerByID)
+		protected.DELETE("games/:gameID/teams/:teamID/explaners/:explanerID", controllers.RemoveExplaner)
+
+		protected.POST("games/:gameID/teams/:teamID/goldlaners", controllers.AddGoldlaner)
+		protected.PUT("games/:gameID/teams/:teamID/goldlaners/:goldlanerID", controllers.UpdateGoldlaner)
+		protected.GET("games/:gameID/teams/:teamID/goldlaners", controllers.GetAllGoldlaners)
+		protected.GET("games/:gameID/teams/:teamID/goldlaners/:goldlanerID", controllers.GetGoldlanerByID)
+		protected.DELETE("games/:gameID/teams/:teamID/goldlaners/:goldlanerID", controllers.RemoveGoldlaner)
+
+		protected.POST("games/:gameID/teams/:teamID/trio-mids", controllers.AddTrioMid)
+		protected.PUT("games/:gameID/teams/:teamID/trio-mids/:trioMidID", controllers.UpdateTrioMid)
+		protected.GET("games/:gameID/teams/:teamID/trio-mids", controllers.GetAllTrioMids)
+		protected.GET("games/:gameID/teams/:teamID/trio-mids/:trioMidID", controllers.GetTrioMidByID)
+		protected.DELETE("games/:gameID/teams/:teamID/trio-mids/:trioMidID", controllers.RemoveTrioMid)
+
+		protected.PUT("games/:gameID/teams/:teamID/trio-mid-results", controllers.UpdateTrioMidResult)
+		protected.GET("games/:gameID/teams/:teamID/trio-mid-results/:trioMidID", controllers.GetTrioMidResultByID)
+
+		protected.GET("games/:gameID/teams/:teamID/game-results", controllers.GetAllGameResults)
 
 		// protected.GET("matches/:matchID/teams", controllers.GetAllTeamsInMatch)
 

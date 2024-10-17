@@ -1,5 +1,25 @@
 basePath: /api/
 definitions:
+  controllers.GameResultDto:
+    properties:
+      draw:
+        type: integer
+      lose:
+        type: integer
+      result:
+        type: string
+      win:
+        type: integer
+    type: object
+  controllers.TrioMidResultDto:
+    properties:
+      early_result:
+        type: string
+      team_id:
+        type: integer
+    required:
+    - team_id
+    type: object
   dto.CoachMatchResponseDto:
     properties:
       coach:
@@ -28,12 +48,8 @@ definitions:
         type: string
       hero_id:
         type: integer
-      team_id:
-        type: integer
     required:
-    - early_result
     - hero_id
-    - team_id
     type: object
   dto.ExplanerResponseDto:
     properties:
@@ -183,12 +199,8 @@ definitions:
         type: string
       hero_id:
         type: integer
-      team_id:
-        type: integer
     required:
-    - early_result
     - hero_id
-    - team_id
     type: object
   dto.GoldlanerResponseDto:
     properties:
@@ -604,13 +616,9 @@ definitions:
         type: integer
       role:
         type: string
-      team_id:
-        type: integer
     required:
-    - early_result
     - hero_id
     - role
-    - team_id
     type: object
   dto.TrioMidResponseDto:
     properties:
@@ -828,10 +836,6 @@ definitions:
         type: string
       game_id:
         type: integer
-      hero_id:
-        type: integer
-      role:
-        type: string
       team_id:
         type: integer
       trio_mid_id:
@@ -944,6 +948,807 @@ paths:
       summary: Update a coach in a team
       tags:
       - Team
+  /games/{gameID}/teams/{teamID}/explaners:
+    get:
+      consumes:
+      - application/json
+      description: Get all Explaners for a game with the given game ID and match ID
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.ExplanerResponseDto'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all Explaners for a game
+      tags:
+      - Game
+    post:
+      consumes:
+      - application/json
+      description: Add an explaner for a game with the given game ID and match ID
+        with the given information
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Explaner data
+        in: body
+        name: explaner
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ExplanerRequestDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Explaner added successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or game not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Add an explaner
+      tags:
+      - Game
+  /games/{gameID}/teams/{teamID}/explaners/{explanerID}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an Explaner with the given game ID, match ID, and Explaner
+        ID
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Explaner ID
+        in: path
+        name: explanerID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Explaner deleted successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game or Explaner not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Delete an Explaner
+      tags:
+      - Game
+    get:
+      consumes:
+      - application/json
+      description: Get an explaner by ID for a game with the given game ID and match
+        ID
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Explaner ID
+        in: path
+        name: explanerID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ExplanerResponseDto'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match, game, or Explaner not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get an explaner by ID
+      tags:
+      - Game
+    put:
+      consumes:
+      - application/json
+      description: Update an Explaner with the given game ID, match ID, and Explaner
+        ID with the given information
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Explaner ID
+        in: path
+        name: explanerID
+        required: true
+        type: string
+      - description: Explaner data
+        in: body
+        name: explaner
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ExplanerRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Explaner updated successfully
+          schema:
+            $ref: '#/definitions/models.Explaner'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game or Explaner not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update an Explaner
+      tags:
+      - Game
+  /games/{gameID}/teams/{teamID}/game-results:
+    get:
+      consumes:
+      - application/json
+      description: Get all game results for a team in a game with the given game ID
+        and team ID
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: All game results found successfully
+          schema:
+            items:
+              $ref: '#/definitions/controllers.GameResultDto'
+            type: array
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game or team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all game results for a team in a game
+      tags:
+      - Game
+  /games/{gameID}/teams/{teamID}/goldlaners:
+    get:
+      consumes:
+      - application/json
+      description: Get all Goldlaners for a game with the given game ID and match
+        ID
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.GoldlanerResponseDto'
+            type: array
+        "404":
+          description: Match or game not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all Goldlaners for a game
+      tags:
+      - Game
+    post:
+      consumes:
+      - application/json
+      description: Add a goldlaner for a game with the given game ID and match ID
+        with the given information
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Goldlaner data
+        in: body
+        name: goldlaner
+        required: true
+        schema:
+          $ref: '#/definitions/dto.GoldlanerRequestDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Goldlaner added successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or game not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Add a goldlaner
+      tags:
+      - Game
+  /games/{gameID}/teams/{teamID}/goldlaners/{goldlanerID}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a Goldlaner with the given game ID, match ID, and Goldlaner
+        ID
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Goldlaner ID
+        in: path
+        name: goldlanerID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Goldlaner deleted successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game, Match, or Goldlaner not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Delete a Goldlaner
+      tags:
+      - Game
+    get:
+      consumes:
+      - application/json
+      description: Get a Goldlaner by the given game ID, match ID, and Goldlaner ID
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Goldlaner ID
+        in: path
+        name: goldlanerID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GoldlanerResponseDto'
+        "404":
+          description: Match or game or Goldlaner not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get a Goldlaner by ID
+      tags:
+      - Game
+    put:
+      consumes:
+      - application/json
+      description: Update a Goldlaner with the given game ID, match ID, and Goldlaner
+        ID with the given information
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Goldlaner ID
+        in: path
+        name: goldlanerID
+        required: true
+        type: string
+      - description: Goldlaner data
+        in: body
+        name: goldlaner
+        required: true
+        schema:
+          $ref: '#/definitions/dto.GoldlanerRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Goldlaner updated successfully
+          schema:
+            $ref: '#/definitions/models.Goldlaner'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game, Match, or Goldlaner not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update a Goldlaner
+      tags:
+      - Game
+  /games/{gameID}/teams/{teamID}/trio-mid-result:
+    put:
+      consumes:
+      - application/json
+      description: Update a TrioMid with the given team ID and game ID with the given
+        information
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Trio mid data
+        in: body
+        name: trioMid
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.TrioMidResultDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Trio mid result updated successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game or Trio mid not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update a TrioMid result
+      tags:
+      - Game
+  /games/{gameID}/teams/{teamID}/trio-mid-result/{trioMidID}:
+    get:
+      consumes:
+      - application/json
+      description: Get a TrioMid result with the given game ID, match ID, and TrioMid
+        ID
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: TrioMid ID
+        in: path
+        name: trioMidID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Trio mid result found successfully
+          schema:
+            $ref: '#/definitions/models.TrioMid'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game or Trio mid not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get a TrioMid result by ID
+      tags:
+      - Game
+  /games/{gameID}/teams/{teamID}/trio-mids:
+    get:
+      consumes:
+      - application/json
+      description: Get all TrioMids for a game with the given game ID
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TrioMidResponseDto'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get all TrioMids for a game
+      tags:
+      - Game
+    post:
+      consumes:
+      - application/json
+      description: Add a TrioMid for a game with the given game ID and match ID with
+        the given information
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: TrioMid data
+        in: body
+        name: trioMid
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TrioMidRequestDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: TrioMid added successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or game not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Add a TrioMid
+      tags:
+      - Game
+  /games/{gameID}/teams/{teamID}/trio-mids/{trioMidID}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a TrioMid with the given game ID, match ID, and TrioMid
+        ID
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: TrioMid ID
+        in: path
+        name: trioMidID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: TrioMid deleted successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match, game, or TrioMid not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Delete a TrioMid
+      tags:
+      - Game
+    get:
+      consumes:
+      - application/json
+      description: Get a TrioMid with the given game ID, match ID, and TrioMid ID
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: TrioMid ID
+        in: path
+        name: trioMidID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Trio mid found successfully
+          schema:
+            $ref: '#/definitions/dto.TrioMidResponseDto'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game or Trio mid not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get a TrioMid by ID
+      tags:
+      - Game
+    put:
+      consumes:
+      - application/json
+      description: Update a TrioMid with the given game ID, match ID, and TrioMid
+        ID with the given information
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: TrioMid ID
+        in: path
+        name: trioMidID
+        required: true
+        type: string
+      - description: Trio mid data
+        in: body
+        name: trioMid
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TrioMidRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Trio mid updated successfully
+          schema:
+            $ref: '#/definitions/models.TrioMid'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game or Trio mid not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update a TrioMid
+      tags:
+      - Game
   /heroes:
     get:
       description: Get all heroes data
@@ -1297,450 +2102,6 @@ paths:
       summary: Update a game
       tags:
       - Game
-  /matches/{matchID}/games/{gameID}/explaners:
-    get:
-      consumes:
-      - application/json
-      description: Get all Explaners for a game with the given game ID and match ID
-      parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/dto.ExplanerResponseDto'
-            type: array
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      security:
-      - Bearer: []
-      summary: Get all Explaners for a game
-      tags:
-      - Game
-    post:
-      consumes:
-      - application/json
-      description: Add an explaner for a game with the given game ID and match ID
-        with the given information
-      parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Explaner data
-        in: body
-        name: explaner
-        required: true
-        schema:
-          $ref: '#/definitions/dto.ExplanerRequestDto'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Explaner added successfully
-          schema:
-            type: string
-        "400":
-          description: Invalid input
-          schema:
-            type: string
-        "404":
-          description: Match or game not found
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      security:
-      - Bearer: []
-      summary: Add an explaner
-      tags:
-      - Game
-  /matches/{matchID}/games/{gameID}/explaners/{explanerID}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete an Explaner with the given game ID, match ID, and Explaner
-        ID
-      parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Explaner ID
-        in: path
-        name: explanerID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Explaner deleted successfully
-          schema:
-            type: string
-        "400":
-          description: Invalid input
-          schema:
-            type: string
-        "404":
-          description: Game or Explaner not found
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      security:
-      - Bearer: []
-      summary: Delete an Explaner
-      tags:
-      - Game
-    get:
-      consumes:
-      - application/json
-      description: Get an explaner by ID for a game with the given game ID and match
-        ID
-      parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Explaner ID
-        in: path
-        name: explanerID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.ExplanerResponseDto'
-        "400":
-          description: Invalid input
-          schema:
-            type: string
-        "404":
-          description: Match, game, or Explaner not found
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      security:
-      - Bearer: []
-      summary: Get an explaner by ID
-      tags:
-      - Game
-    put:
-      consumes:
-      - application/json
-      description: Update an Explaner with the given game ID, match ID, and Explaner
-        ID with the given information
-      parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Explaner ID
-        in: path
-        name: explanerID
-        required: true
-        type: string
-      - description: Explaner data
-        in: body
-        name: explaner
-        required: true
-        schema:
-          $ref: '#/definitions/dto.ExplanerRequestDto'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Explaner updated successfully
-          schema:
-            $ref: '#/definitions/models.Explaner'
-        "400":
-          description: Invalid input
-          schema:
-            type: string
-        "404":
-          description: Game or Explaner not found
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      security:
-      - Bearer: []
-      summary: Update an Explaner
-      tags:
-      - Game
-  /matches/{matchID}/games/{gameID}/goldlaners:
-    get:
-      consumes:
-      - application/json
-      description: Get all Goldlaners for a game with the given game ID and match
-        ID
-      parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/dto.GoldlanerResponseDto'
-            type: array
-        "404":
-          description: Match or game not found
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      security:
-      - Bearer: []
-      summary: Get all Goldlaners for a game
-      tags:
-      - Game
-    post:
-      consumes:
-      - application/json
-      description: Add a goldlaner for a game with the given game ID and match ID
-        with the given information
-      parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Goldlaner data
-        in: body
-        name: goldlaner
-        required: true
-        schema:
-          $ref: '#/definitions/dto.GoldlanerRequestDto'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Goldlaner added successfully
-          schema:
-            type: string
-        "400":
-          description: Invalid input
-          schema:
-            type: string
-        "404":
-          description: Match or game not found
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      security:
-      - Bearer: []
-      summary: Add a goldlaner
-      tags:
-      - Game
-  /matches/{matchID}/games/{gameID}/goldlaners/{goldlanerID}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete a Goldlaner with the given game ID, match ID, and Goldlaner
-        ID
-      parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Goldlaner ID
-        in: path
-        name: goldlanerID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Goldlaner deleted successfully
-          schema:
-            type: string
-        "400":
-          description: Invalid input
-          schema:
-            type: string
-        "404":
-          description: Game, Match, or Goldlaner not found
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      security:
-      - Bearer: []
-      summary: Delete a Goldlaner
-      tags:
-      - Game
-    get:
-      consumes:
-      - application/json
-      description: Get a Goldlaner by the given game ID, match ID, and Goldlaner ID
-      parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Goldlaner ID
-        in: path
-        name: goldlanerID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.GoldlanerResponseDto'
-        "404":
-          description: Match or game or Goldlaner not found
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      security:
-      - Bearer: []
-      summary: Get a Goldlaner by ID
-      tags:
-      - Game
-    put:
-      consumes:
-      - application/json
-      description: Update a Goldlaner with the given game ID, match ID, and Goldlaner
-        ID with the given information
-      parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Goldlaner ID
-        in: path
-        name: goldlanerID
-        required: true
-        type: string
-      - description: Goldlaner data
-        in: body
-        name: goldlaner
-        required: true
-        schema:
-          $ref: '#/definitions/dto.GoldlanerRequestDto'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Goldlaner updated successfully
-          schema:
-            $ref: '#/definitions/models.Goldlaner'
-        "400":
-          description: Invalid input
-          schema:
-            type: string
-        "404":
-          description: Game, Match, or Goldlaner not found
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      security:
-      - Bearer: []
-      summary: Update a Goldlaner
-      tags:
-      - Game
   /matches/{matchID}/games/{gameID}/lord-results:
     get:
       consumes:
@@ -1961,227 +2322,6 @@ paths:
       security:
       - Bearer: []
       summary: Update a LordResult
-      tags:
-      - Game
-  /matches/{matchID}/games/{gameID}/trio-mids:
-    get:
-      consumes:
-      - application/json
-      description: Get all TrioMids for a game with the given game ID
-      parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/dto.TrioMidResponseDto'
-            type: array
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      security:
-      - Bearer: []
-      summary: Get all TrioMids for a game
-      tags:
-      - Game
-    post:
-      consumes:
-      - application/json
-      description: Add a TrioMid for a game with the given game ID and match ID with
-        the given information
-      parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: TrioMid data
-        in: body
-        name: trioMid
-        required: true
-        schema:
-          $ref: '#/definitions/dto.TrioMidRequestDto'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: TrioMid added successfully
-          schema:
-            type: string
-        "400":
-          description: Invalid input
-          schema:
-            type: string
-        "404":
-          description: Match or game not found
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      security:
-      - Bearer: []
-      summary: Add a TrioMid
-      tags:
-      - Game
-  /matches/{matchID}/games/{gameID}/trio-mids/{trioMidID}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete a TrioMid with the given game ID, match ID, and TrioMid
-        ID
-      parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: TrioMid ID
-        in: path
-        name: trioMidID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: TrioMid deleted successfully
-          schema:
-            type: string
-        "400":
-          description: Invalid input
-          schema:
-            type: string
-        "404":
-          description: Match, game, or TrioMid not found
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      security:
-      - Bearer: []
-      summary: Delete a TrioMid
-      tags:
-      - Game
-    get:
-      consumes:
-      - application/json
-      description: Get a TrioMid with the given game ID, match ID, and TrioMid ID
-      parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: TrioMid ID
-        in: path
-        name: trioMidID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Trio mid found successfully
-          schema:
-            $ref: '#/definitions/dto.TrioMidResponseDto'
-        "400":
-          description: Invalid input
-          schema:
-            type: string
-        "404":
-          description: Game or Trio mid not found
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      security:
-      - Bearer: []
-      summary: Get a TrioMid by ID
-      tags:
-      - Game
-    put:
-      consumes:
-      - application/json
-      description: Update a TrioMid with the given game ID, match ID, and TrioMid
-        ID with the given information
-      parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: TrioMid ID
-        in: path
-        name: trioMidID
-        required: true
-        type: string
-      - description: Trio mid data
-        in: body
-        name: trioMid
-        required: true
-        schema:
-          $ref: '#/definitions/dto.TrioMidRequestDto'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Trio mid updated successfully
-          schema:
-            $ref: '#/definitions/models.TrioMid'
-        "400":
-          description: Invalid input
-          schema:
-            type: string
-        "404":
-          description: Game or Trio mid not found
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      security:
-      - Bearer: []
-      summary: Update a TrioMid
       tags:
       - Game
   /matches/{matchID}/games/{gameID}/turtle-results:

@@ -5,8 +5,10 @@ import (
 	"ml-master-data/dto"
 	"ml-master-data/models"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // @Tags Game
@@ -325,7 +327,7 @@ func UpdateLordResult(c *gin.Context) {
 
 	// Cek apakah LordResult tersedia
 	var lordResult models.LordResult
-	if err := config.DB.First(&lordResult, "id = ?", lordResultID).Error; err != nil {
+	if err := config.DB.First(&lordResult, "lord_result_id = ?", lordResultID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Lord result not found"})
 		return
 	}
@@ -381,19 +383,19 @@ func RemoveLordResult(c *gin.Context) {
 	}
 
 	// Validasi keberadaan Match dan Game
-	if err := config.DB.First(&models.Match{}, "id = ?", matchID).Error; err != nil {
+	if err := config.DB.First(&models.Match{}, "match_id = ?", matchID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
 		return
 	}
 
-	if err := config.DB.First(&models.Game{}, "id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
+	if err := config.DB.First(&models.Game{}, "game_id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
 		return
 	}
 
 	// Validasi keberadaan LordResult
 	var lordResult models.LordResult
-	if err := config.DB.First(&lordResult, "id = ? AND game_id = ?", lordResultID, gameID).Error; err != nil {
+	if err := config.DB.First(&lordResult, "lord_result_id = ? AND game_id = ?", lordResultID, gameID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Lord result not found"})
 		return
 	}
@@ -424,12 +426,12 @@ func GetAllLordResults(c *gin.Context) {
 	gameID := c.Param("gameID")
 
 	// Validasi keberadaan match dan game
-	if err := config.DB.First(&models.Match{}, "id = ?", matchID).Error; err != nil {
+	if err := config.DB.First(&models.Match{}, "match_id = ?", matchID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
 		return
 	}
 
-	if err := config.DB.First(&models.Game{}, "id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
+	if err := config.DB.First(&models.Game{}, "game_id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
 		return
 	}
@@ -473,12 +475,12 @@ func GetLordResultByID(c *gin.Context) {
 	lordResultID := c.Param("lordResultID")
 
 	// Validasi keberadaan match dan game
-	if err := config.DB.First(&models.Match{}, "id = ?", matchID).Error; err != nil {
+	if err := config.DB.First(&models.Match{}, "match_id = ?", matchID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
 		return
 	}
 
-	if err := config.DB.First(&models.Game{}, "id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
+	if err := config.DB.First(&models.Game{}, "game_id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
 		return
 	}
@@ -588,18 +590,18 @@ func UpdateTurtleResult(c *gin.Context) {
 		return
 	}
 
-	if err := config.DB.First(&models.Match{}, "id = ?", matchID).Error; err != nil {
+	if err := config.DB.First(&models.Match{}, "match_id = ?", matchID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
 		return
 	}
 
-	if err := config.DB.First(&models.Game{}, "id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
+	if err := config.DB.First(&models.Game{}, "game_id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
 		return
 	}
 
 	var turtleResult models.TurtleResult
-	if err := config.DB.First(&turtleResult, "id = ?", turtleResultID).Error; err != nil {
+	if err := config.DB.First(&turtleResult, "turtle_result_id = ?", turtleResultID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Turtle result not found"})
 		return
 	}
@@ -648,18 +650,18 @@ func RemoveTurtleResult(c *gin.Context) {
 		return
 	}
 
-	if err := config.DB.First(&models.Match{}, "id = ?", matchID).Error; err != nil {
+	if err := config.DB.First(&models.Match{}, "match_id = ?", matchID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
 		return
 	}
 
-	if err := config.DB.First(&models.Game{}, "id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
+	if err := config.DB.First(&models.Game{}, "game_id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
 		return
 	}
 
 	var turtleResult models.TurtleResult
-	if err := config.DB.First(&turtleResult, "id = ? AND game_id = ?", turtleResultID, gameID).Error; err != nil {
+	if err := config.DB.First(&turtleResult, "turtle_result_id = ? AND game_id = ?", turtleResultID, gameID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Turtle result not found"})
 		return
 	}
@@ -677,12 +679,12 @@ func GetAllTurtleResults(c *gin.Context) {
 	matchID := c.Param("matchID")
 	gameID := c.Param("gameID")
 
-	if err := config.DB.First(&models.Match{}, "id = ?", matchID).Error; err != nil {
+	if err := config.DB.First(&models.Match{}, "match_id = ?", matchID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
 		return
 	}
 
-	if err := config.DB.First(&models.Game{}, "id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
+	if err := config.DB.First(&models.Game{}, "game_id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
 		return
 	}
@@ -725,12 +727,12 @@ func GetTurtleResultByID(c *gin.Context) {
 	gameID := c.Param("gameID")
 	turtleResultID := c.Param("turtleResultID")
 
-	if err := config.DB.First(&models.Match{}, "id = ?", matchID).Error; err != nil {
+	if err := config.DB.First(&models.Match{}, "match_id = ?", matchID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
 		return
 	}
 
-	if err := config.DB.First(&models.Game{}, "id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
+	if err := config.DB.First(&models.Game{}, "game_id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
 		return
 	}
@@ -762,43 +764,61 @@ func GetTurtleResultByID(c *gin.Context) {
 // @Produce  json
 // @Security Bearer
 // @Param gameID path string true "Game ID"
-// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
 // @Param explaner body dto.ExplanerRequestDto true "Explaner data"
 // @Success 201 {string} string "Explaner added successfully"
 // @Failure 400 {string} string "Invalid input"
 // @Failure 404 {string} string "Match or game not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /matches/{matchID}/games/{gameID}/explaners [post]
+// @Router /games/{gameID}/teams/{teamID}/explaners [post]
 func AddExplaner(c *gin.Context) {
 	gameID := c.Param("gameID")
-	matchID := c.Param("matchID")
+	teamID := c.Param("teamID")
 
-	if gameID == "" || matchID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Game ID and Match ID are required"})
+	if teamID == "" || gameID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Game ID and Team ID are required"})
 		return
 	}
 
-	var match models.Match
-	if err := config.DB.First(&match, matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+	uintTeamID, err := strconv.ParseUint(teamID, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Team ID"})
 		return
 	}
 
-	var game models.Game
-	if err := config.DB.First(&game, gameID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
+	var game = models.Game{}
+	if err := config.DB.Where("game_id = ?", gameID).First(&game).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "game not found"})
 		return
 	}
 
-	var input dto.ExplanerRequestDto
+	match := models.Match{}
+	if err := config.DB.Where("match_id = ?", game.MatchID).First(&match).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "match not found"})
+		return
+	}
+
+	if match.TeamAID != uint(uintTeamID) && match.TeamBID != uint(uintTeamID) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID is not part of the match"})
+		return
+	}
+
+	var input = dto.ExplanerRequestDto{}
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	// cek heriID duplicated
+	var explanerExists models.Explaner
+	if err := config.DB.Where("game_id = ? AND team_id = ? AND hero_id = ?", game.GameID, teamID, input.HeroID).First(&explanerExists).Error; err == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Explaner already exists"})
+		return
+	}
+
 	explaner := models.Explaner{
 		GameID:      game.GameID,
-		TeamID:      input.TeamID,
+		TeamID:      uint(uintTeamID),
 		HeroID:      input.HeroID,
 		EarlyResult: input.EarlyResult,
 	}
@@ -818,36 +838,49 @@ func AddExplaner(c *gin.Context) {
 // @Produce  json
 // @Security Bearer
 // @Param gameID path string true "Game ID"
-// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
 // @Param explanerID path string true "Explaner ID"
 // @Param explaner body dto.ExplanerRequestDto true "Explaner data"
 // @Success 200 {object} models.Explaner "Explaner updated successfully"
 // @Failure 400 {string} string "Invalid input"
 // @Failure 404 {string} string "Game or Explaner not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /matches/{matchID}/games/{gameID}/explaners/{explanerID} [put]
+// @Router /games/{gameID}/teams/{teamID}/explaners/{explanerID} [put]
 func UpdateExplaner(c *gin.Context) {
 	gameID := c.Param("gameID")
-	matchID := c.Param("matchID")
+	teamID := c.Param("teamID")
 	explanerID := c.Param("explanerID")
 
-	if gameID == "" || matchID == "" || explanerID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Game ID, Match ID, and Explaner ID are required"})
+	if teamID == "" || gameID == "" || explanerID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Game ID, Team ID, and Explaner ID are required"})
 		return
 	}
 
-	if err := config.DB.First(&models.Match{}, "id = ?", matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+	uintTeamID, err := strconv.ParseUint(teamID, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Team ID"})
 		return
 	}
 
-	if err := config.DB.First(&models.Game{}, "id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
+	var game = models.Game{}
+	if err := config.DB.Where("game_id = ?", gameID).First(&game).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Match or game not found"})
+		return
+	}
+
+	match := models.Match{}
+	if err := config.DB.Where("match_id = ?", game.MatchID).First(&match).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "match not found"})
+		return
+	}
+
+	if match.TeamAID != uint(uintTeamID) && match.TeamBID != uint(uintTeamID) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID is not part of the match"})
 		return
 	}
 
 	var explaner models.Explaner
-	if err := config.DB.First(&explaner, "id = ?", explanerID).Error; err != nil {
+	if err := config.DB.First(&explaner, "explaner_id = ?", explanerID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Explaner not found"})
 		return
 	}
@@ -859,7 +892,14 @@ func UpdateExplaner(c *gin.Context) {
 		return
 	}
 
-	explaner.TeamID = input.TeamID
+	// cek hero are duplicated
+	var explanerExists models.Explaner
+	if err := config.DB.Where("game_id = ? AND team_id = ? AND hero_id = ? AND explaner_id != ?", game.GameID, teamID, input.HeroID, explanerID).First(&explanerExists).Error; err == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Explaner already exists"})
+		return
+	}
+
+	explaner.TeamID = uint(uintTeamID)
 	explaner.HeroID = input.HeroID
 	explaner.EarlyResult = input.EarlyResult
 
@@ -878,35 +918,31 @@ func UpdateExplaner(c *gin.Context) {
 // @Produce  json
 // @Security Bearer
 // @Param gameID path string true "Game ID"
-// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
 // @Param explanerID path string true "Explaner ID"
 // @Success 200 {string} string "Explaner deleted successfully"
 // @Failure 400 {string} string "Invalid input"
 // @Failure 404 {string} string "Game or Explaner not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /matches/{matchID}/games/{gameID}/explaners/{explanerID} [delete]
+// @Router /games/{gameID}/teams/{teamID}/explaners/{explanerID} [delete]
 func RemoveExplaner(c *gin.Context) {
-	matchID := c.Param("matchID")
+	teamID := c.Param("teamID")
 	gameID := c.Param("gameID")
 	explanerID := c.Param("explanerID")
 
-	if matchID == "" || gameID == "" || explanerID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID, Game ID, and Explaner ID are required"})
+	if teamID == "" || gameID == "" || explanerID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Game ID, Team ID, and Explaner ID are required"})
 		return
 	}
 
-	if err := config.DB.First(&models.Match{}, "id = ?", matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
-		return
-	}
-
-	if err := config.DB.First(&models.Game{}, "id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
+	var game = models.Game{}
+	if err := config.DB.Where("game_id = ?", gameID).First(&game).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Match or game not found"})
 		return
 	}
 
 	var explaner models.Explaner
-	if err := config.DB.First(&explaner, "id = ? AND game_id = ?", explanerID, gameID).Error; err != nil {
+	if err := config.DB.First(&explaner, "explaner_id = ? AND game_id = ?", explanerID, gameID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Explaner not found"})
 		return
 	}
@@ -925,22 +961,23 @@ func RemoveExplaner(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Security Bearer
-// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
 // @Param gameID path string true "Game ID"
 // @Success 200 {array} dto.ExplanerResponseDto
 // @Failure 500 {string} string "Internal server error"
-// @Router /matches/{matchID}/games/{gameID}/explaners [get]
+// @Router /games/{gameID}/teams/{teamID}/explaners [get]
 func GetAllExplaners(c *gin.Context) {
-	matchID := c.Param("matchID")
+	teamID := c.Param("teamID")
 	gameID := c.Param("gameID")
 
-	if err := config.DB.First(&models.Match{}, "id = ?", matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+	if teamID == "" || gameID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Game ID and Team ID are required"})
 		return
 	}
 
-	if err := config.DB.First(&models.Game{}, "id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
+	var game = models.Game{}
+	if err := config.DB.Where("game_id = ?", gameID).First(&game).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Match or game not found"})
 		return
 	}
 
@@ -949,11 +986,11 @@ func GetAllExplaners(c *gin.Context) {
 	query := `
 		SELECT 
 			e.explaner_id, e.game_id, e.team_id, e.hero_id, e.early_result,
-			t.team_id, t.name AS team_name, t.image AS team_image,
-			h.hero_id, h.name AS hero_name, h.image AS hero_image
+			t.team_id AS team_team_id, t.name AS team_name, t.image AS team_image,
+			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image
 		FROM explaners e
 		JOIN teams t ON e.team_id = t.team_id
-		JOIN heroes h ON e.hero_id = h.hero_id
+		JOIN heros h ON e.hero_id = h.hero_id
 		WHERE e.game_id = ?
 	`
 
@@ -971,26 +1008,33 @@ func GetAllExplaners(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Security Bearer
-// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
 // @Param gameID path string true "Game ID"
 // @Param explanerID path string true "Explaner ID"
 // @Success 200 {object} dto.ExplanerResponseDto
 // @Failure 400 {string} string "Invalid input"
 // @Failure 404 {string} string "Match, game, or Explaner not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /matches/{matchID}/games/{gameID}/explaners/{explanerID} [get]
+// @Router /games/{gameID}/teams/{teamID}/explaners/{explanerID} [get]
 func GetExplanerByID(c *gin.Context) {
-	matchID := c.Param("matchID")
+	teamID := c.Param("teamID")
 	gameID := c.Param("gameID")
 	explanerID := c.Param("explanerID")
 
-	if err := config.DB.First(&models.Match{}, "id = ?", matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+	if teamID == "" || gameID == "" || explanerID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID, Game ID, and Explaner ID are required"})
 		return
 	}
 
-	if err := config.DB.First(&models.Game{}, "id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
+	game := models.Game{}
+	if err := config.DB.Where("game_id = ?", gameID).First(&game).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Match or game not found"})
+		return
+	}
+
+	explaner := models.Explaner{}
+	if err := config.DB.First(&explaner, "explaner_id = ? AND game_id = ?", explanerID, gameID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Explaner not found"})
 		return
 	}
 
@@ -999,15 +1043,15 @@ func GetExplanerByID(c *gin.Context) {
 	query := `
 		SELECT 
 			e.explaner_id, e.game_id, e.team_id, e.hero_id, e.early_result,
-			t.team_id, t.name AS team_name, t.image AS team_image,
-			h.hero_id, h.name AS hero_name, h.image AS hero_image
+			t.team_id AS team_team_id, t.name AS team_name, t.image AS team_image,
+			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image
 		FROM explaners e
 		JOIN teams t ON e.team_id = t.team_id
-		JOIN heroes h ON e.hero_id = h.hero_id
-		WHERE e.explaner_id = ? AND e.game_id = ?
+		JOIN heros h ON e.hero_id = h.hero_id
+		WHERE e.game_id = ?
 	`
 
-	if err := config.DB.Raw(query, explanerID, gameID).Scan(&result).Error; err != nil {
+	if err := config.DB.Raw(query, explaner.ExplanerID, game.GameID).Scan(&result).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Explaner not found"})
 		return
 	}
@@ -1022,31 +1066,42 @@ func GetExplanerByID(c *gin.Context) {
 // @Produce  json
 // @Security Bearer
 // @Param gameID path string true "Game ID"
-// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
 // @Param goldlaner body dto.GoldlanerRequestDto true "Goldlaner data"
 // @Success 201 {string} string "Goldlaner added successfully"
 // @Failure 400 {string} string "Invalid input"
 // @Failure 404 {string} string "Match or game not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /matches/{matchID}/games/{gameID}/goldlaners [post]
+// @Router /games/{gameID}/teams/{teamID}/goldlaners [post]
 func AddGoldlaner(c *gin.Context) {
 	gameID := c.Param("gameID")
-	matchID := c.Param("matchID")
+	teamID := c.Param("teamID")
 
-	if gameID == "" || matchID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Game ID and Match ID are required"})
+	if gameID == "" || teamID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Game ID and Team ID are required"})
 		return
 	}
 
-	var match models.Match
-	if err := config.DB.First(&match, matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+	uintTeamID, err := strconv.ParseUint(teamID, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Team ID"})
 		return
 	}
 
 	var game models.Game
-	if err := config.DB.First(&game, gameID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
+	if err := config.DB.Where("game_id = ?", gameID).First(&game).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Match or game not found"})
+		return
+	}
+
+	match := models.Match{}
+	if err := config.DB.Where("match_id = ?", game.MatchID).First(&match).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "match not found"})
+		return
+	}
+
+	if match.TeamAID != uint(uintTeamID) && match.TeamBID != uint(uintTeamID) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID is not part of the match"})
 		return
 	}
 
@@ -1056,11 +1111,19 @@ func AddGoldlaner(c *gin.Context) {
 		return
 	}
 
-	var goldlaner models.Goldlaner
-	goldlaner.TeamID = input.TeamID
-	goldlaner.HeroID = input.HeroID
-	goldlaner.EarlyResult = input.EarlyResult
-	goldlaner.GameID = game.GameID
+	var goldlanerExists models.Goldlaner
+	if err := config.DB.Where("game_id = ? AND team_id = ? AND hero_id = ?", gameID, teamID, input.HeroID).
+		First(&goldlanerExists).Error; err == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Goldlaner already exists"})
+		return
+	}
+
+	goldlaner := models.Goldlaner{
+		GameID:      game.GameID,
+		TeamID:      uint(uintTeamID),
+		HeroID:      input.HeroID,
+		EarlyResult: input.EarlyResult,
+	}
 
 	if err := config.DB.Create(&goldlaner).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -1077,48 +1140,67 @@ func AddGoldlaner(c *gin.Context) {
 // @Produce  json
 // @Security Bearer
 // @Param gameID path string true "Game ID"
-// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
 // @Param goldlanerID path string true "Goldlaner ID"
 // @Param goldlaner body dto.GoldlanerRequestDto true "Goldlaner data"
 // @Success 200 {object} models.Goldlaner "Goldlaner updated successfully"
 // @Failure 400 {string} string "Invalid input"
 // @Failure 404 {string} string "Game, Match, or Goldlaner not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /matches/{matchID}/games/{gameID}/goldlaners/{goldlanerID} [put]
+// @Router /games/{gameID}/teams/{teamID}/goldlaners/{goldlanerID} [put]
 func UpdateGoldlaner(c *gin.Context) {
 	gameID := c.Param("gameID")
-	matchID := c.Param("matchID")
+	teamID := c.Param("teamID")
 	goldlanerID := c.Param("goldlanerID")
 
-	if gameID == "" || matchID == "" || goldlanerID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Game ID, Match ID, and Goldlaner ID are required"})
+	if gameID == "" || teamID == "" || goldlanerID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Game ID, Team ID, and Goldlaner ID are required"})
 		return
 	}
 
-	if err := config.DB.First(&models.Match{}, "id = ?", matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+	uintTeamID, err := strconv.ParseUint(teamID, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Team ID"})
 		return
 	}
 
-	if err := config.DB.First(&models.Game{}, "id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
+	var game models.Game
+	if err := config.DB.Where("game_id = ?", gameID).First(&game).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Match or game not found"})
+		return
+	}
+
+	match := models.Match{}
+	if err := config.DB.Where("match_id = ?", game.MatchID).First(&match).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "match not found"})
+		return
+	}
+
+	if match.TeamAID != uint(uintTeamID) && match.TeamBID != uint(uintTeamID) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID is not part of the match"})
 		return
 	}
 
 	var goldlaner models.Goldlaner
-	if err := config.DB.First(&goldlaner, "id = ?", goldlanerID).Error; err != nil {
+	if err := config.DB.First(&goldlaner, "goldlaner_id = ?", goldlanerID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Goldlaner not found"})
 		return
 	}
 
-	input := dto.GoldlanerRequestDto{}
-
+	var input dto.GoldlanerRequestDto
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	goldlaner.TeamID = input.TeamID
+	var goldlanerExists models.Goldlaner
+	if err := config.DB.Where("game_id = ? AND team_id = ? AND hero_id = ? AND goldlaner_id != ?", gameID, teamID, input.HeroID, goldlanerID).
+		First(&goldlanerExists).Error; err == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Goldlaner already exists"})
+		return
+	}
+
+	goldlaner.TeamID = uint(uintTeamID)
 	goldlaner.HeroID = input.HeroID
 	goldlaner.EarlyResult = input.EarlyResult
 
@@ -1137,35 +1219,31 @@ func UpdateGoldlaner(c *gin.Context) {
 // @Produce  json
 // @Security Bearer
 // @Param gameID path string true "Game ID"
-// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
 // @Param goldlanerID path string true "Goldlaner ID"
 // @Success 200 {string} string "Goldlaner deleted successfully"
 // @Failure 400 {string} string "Invalid input"
 // @Failure 404 {string} string "Game, Match, or Goldlaner not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /matches/{matchID}/games/{gameID}/goldlaners/{goldlanerID} [delete]
+// @Router /games/{gameID}/teams/{teamID}/goldlaners/{goldlanerID} [delete]
 func RemoveGoldlaner(c *gin.Context) {
-	matchID := c.Param("matchID")
+	teamID := c.Param("teamID")
 	gameID := c.Param("gameID")
 	goldlanerID := c.Param("goldlanerID")
 
-	if matchID == "" || gameID == "" || goldlanerID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID, Game ID, and Goldlaner ID are required"})
+	if teamID == "" || gameID == "" || goldlanerID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID, Game ID, and Goldlaner ID are required"})
 		return
 	}
 
-	if err := config.DB.First(&models.Match{}, "id = ?", matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
-		return
-	}
-
-	if err := config.DB.First(&models.Game{}, "id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
+	var game models.Game
+	if err := config.DB.Where("game_id = ?", gameID).First(&game).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Match or game not found"})
 		return
 	}
 
 	var goldlaner models.Goldlaner
-	if err := config.DB.First(&goldlaner, "id = ? AND game_id = ?", goldlanerID, gameID).Error; err != nil {
+	if err := config.DB.First(&goldlaner, "goldlaner_id = ? AND game_id = ?", goldlanerID, gameID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Goldlaner not found"})
 		return
 	}
@@ -1184,36 +1262,36 @@ func RemoveGoldlaner(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Security Bearer
-// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
 // @Param gameID path string true "Game ID"
 // @Success 200 {array} dto.GoldlanerResponseDto
 // @Failure 404 {string} string "Match or game not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /matches/{matchID}/games/{gameID}/goldlaners [get]
+// @Router /games/{gameID}/teams/{teamID}/goldlaners [get]
 func GetAllGoldlaners(c *gin.Context) {
-	matchID := c.Param("matchID")
+	teamID := c.Param("teamID")
 	gameID := c.Param("gameID")
 
-	if err := config.DB.First(&models.Match{}, "id = ?", matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+	if teamID == "" || gameID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID and Game ID are required"})
 		return
 	}
 
-	if err := config.DB.First(&models.Game{}, "id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
+	var game models.Game
+	if err := config.DB.Where("game_id = ?", gameID).First(&game).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Match or game not found"})
 		return
 	}
 
 	var results []dto.GoldlanerResponseDto
-
 	query := `
 		SELECT 
 			g.goldlaner_id, g.game_id, g.team_id, g.hero_id, g.early_result,
-			t.team_id, t.name AS team_name, t.image AS team_image,
-			h.hero_id, h.name AS hero_name, h.image AS hero_image
+			t.team_id AS team_team_id, t.name AS team_name, t.image AS team_image,
+			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image
 		FROM goldlaners g
 		JOIN teams t ON g.team_id = t.team_id
-		JOIN heroes h ON g.hero_id = h.hero_id
+		JOIN heros h ON g.hero_id = h.hero_id
 		WHERE g.game_id = ?
 	`
 
@@ -1231,25 +1309,26 @@ func GetAllGoldlaners(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Security Bearer
-// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
 // @Param gameID path string true "Game ID"
 // @Param goldlanerID path string true "Goldlaner ID"
 // @Success 200 {object} dto.GoldlanerResponseDto
 // @Failure 404 {string} string "Match or game or Goldlaner not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /matches/{matchID}/games/{gameID}/goldlaners/{goldlanerID} [get]
+// @Router /games/{gameID}/teams/{teamID}/goldlaners/{goldlanerID} [get]
 func GetGoldlanerByID(c *gin.Context) {
-	matchID := c.Param("matchID")
+	teamID := c.Param("teamID")
 	gameID := c.Param("gameID")
 	goldlanerID := c.Param("goldlanerID")
 
-	if err := config.DB.First(&models.Match{}, "id = ?", matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+	if teamID == "" || gameID == "" || goldlanerID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID, Game ID, and Goldlaner ID are required"})
 		return
 	}
 
-	if err := config.DB.First(&models.Game{}, "id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
+	game := models.Game{}
+	if err := config.DB.Where("game_id = ?", gameID).First(&game).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Match or game not found"})
 		return
 	}
 
@@ -1258,12 +1337,12 @@ func GetGoldlanerByID(c *gin.Context) {
 	query := `
 		SELECT 
 			g.goldlaner_id, g.game_id, g.team_id, g.hero_id, g.early_result,
-			t.team_id, t.name AS team_name, t.image AS team_image,
-			h.hero_id, h.name AS hero_name, h.image AS hero_image
+			t.team_id AS team_team_id, t.name AS team_name, t.image AS team_image,
+			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image
 		FROM goldlaners g
 		JOIN teams t ON g.team_id = t.team_id
-		JOIN heroes h ON g.hero_id = h.hero_id
-		WHERE g.goldlaner_id = ? AND g.game_id = ?
+		JOIN heros h ON g.hero_id = h.hero_id
+		WHERE g.game_id = ?
 	`
 
 	if err := config.DB.Raw(query, goldlanerID, gameID).Scan(&result).Error; err != nil {
@@ -1281,31 +1360,41 @@ func GetGoldlanerByID(c *gin.Context) {
 // @Produce  json
 // @Security Bearer
 // @Param gameID path string true "Game ID"
-// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
 // @Param trioMid body dto.TrioMidRequestDto true "TrioMid data"
 // @Success 201 {string} string "TrioMid added successfully"
 // @Failure 400 {string} string "Invalid input"
 // @Failure 404 {string} string "Match or game not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /matches/{matchID}/games/{gameID}/trio-mids [post]
+// @Router /games/{gameID}/teams/{teamID}/trio-mids [post]
 func AddTrioMid(c *gin.Context) {
-	gameID := c.Param("gameID")
-	matchID := c.Param("matchID")
+	gameID, teamID := c.Param("gameID"), c.Param("teamID")
 
-	if gameID == "" || matchID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Game ID and Match ID are required"})
+	if gameID == "" || teamID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID and Game ID are required"})
 		return
 	}
 
-	var match models.Match
-	if err := config.DB.First(&match, matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+	uintTeamID, err := strconv.ParseUint(teamID, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Team ID"})
 		return
 	}
 
 	var game models.Game
-	if err := config.DB.First(&game, gameID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
+	if err := config.DB.Where("game_id = ?", gameID).First(&game).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Match or game not found"})
+		return
+	}
+
+	match := models.Match{}
+	if err := config.DB.Where("match_id = ?", game.MatchID).First(&match).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "match not found"})
+		return
+	}
+
+	if match.TeamAID != uint(uintTeamID) && match.TeamBID != uint(uintTeamID) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID is not part of the match"})
 		return
 	}
 
@@ -1315,15 +1404,43 @@ func AddTrioMid(c *gin.Context) {
 		return
 	}
 
-	trioMid := models.TrioMid{
-		GameID:      game.GameID,
-		TeamID:      input.TeamID,
+	var trioMid models.TrioMid
+
+	// Cek apakah trioMid ada
+	if err := config.DB.Where("game_id = ? AND team_id = ?", gameID, teamID).First(&trioMid).Error; err != nil {
+		// Jika trioMid tidak ada, buat baru dengan EarlyResult kosong
+		if err == gorm.ErrRecordNotFound {
+			trioMid = models.TrioMid{
+				GameID:      game.GameID,
+				TeamID:      uint(uintTeamID),
+				EarlyResult: "", // Kosongkan EarlyResult
+			}
+			if err := config.DB.Create(&trioMid).Error; err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+	}
+
+	// Cek apakah TrioMidHero sudah ada
+	existingTrioMidHero := models.TrioMidHero{}
+	if err := config.DB.Where("trio_mid_id = ? AND hero_id = ?", trioMid.TrioMidID, input.HeroID).First(&existingTrioMidHero).Error; err == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "TrioMidHero already exists"})
+		return
+	}
+
+	// Buat TrioMidHero baru
+	trioMidHero := models.TrioMidHero{
+		TrioMidID:   trioMid.TrioMidID,
 		HeroID:      input.HeroID,
 		Role:        input.Role,
 		EarlyResult: input.EarlyResult,
 	}
 
-	if err := config.DB.Create(&trioMid).Error; err != nil {
+	if err := config.DB.Create(&trioMidHero).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -1338,58 +1455,73 @@ func AddTrioMid(c *gin.Context) {
 // @Produce  json
 // @Security Bearer
 // @Param gameID path string true "Game ID"
-// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
 // @Param trioMidID path string true "TrioMid ID"
 // @Param trioMid body dto.TrioMidRequestDto true "Trio mid data"
 // @Success 200 {object} models.TrioMid "Trio mid updated successfully"
 // @Failure 400 {string} string "Invalid input"
 // @Failure 404 {string} string "Game or Trio mid not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /matches/{matchID}/games/{gameID}/trio-mids/{trioMidID} [put]
+// @Router /games/{gameID}/teams/{teamID}/trio-mids/{trioMidID} [put]
 func UpdateTrioMid(c *gin.Context) {
-	gameID := c.Param("gameID")
-	matchID := c.Param("matchID")
-	trioMidID := c.Param("trioMidID")
+	gameID, teamID, trioMidID := c.Param("gameID"), c.Param("teamID"), c.Param("trioMidID")
 
-	if gameID == "" || matchID == "" || trioMidID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Game ID, Match ID, and TrioMid ID are required"})
+	// Validasi parameter
+	if gameID == "" || teamID == "" || trioMidID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Game ID, Team ID, and TrioMid ID are required"})
 		return
 	}
 
-	if err := config.DB.First(&models.Match{}, "id = ?", matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+	// Cek apakah game dan match ada
+	var game models.Game
+	if err := config.DB.Where("game_id = ?", gameID).First(&game).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Game or match not found"})
 		return
 	}
 
-	if err := config.DB.First(&models.Game{}, "id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
-		return
-	}
-
+	// Cek apakah TrioMid ada
 	var trioMid models.TrioMid
-	if err := config.DB.First(&trioMid, "id = ?", trioMidID).Error; err != nil {
+	if err := config.DB.Where("trio_mid_id = ? AND game_id = ?", trioMidID, gameID).First(&trioMid).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "TrioMid not found"})
 		return
 	}
 
-	input := dto.TrioMidRequestDto{}
-
+	// Bind input dari JSON request
+	var input dto.TrioMidRequestDto
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	trioMid.TeamID = input.TeamID
-	trioMid.HeroID = input.HeroID
-	trioMid.Role = input.Role
-	trioMid.EarlyResult = input.EarlyResult
+	// Update TrioMidHero jika sudah ada
+	existingHero := models.TrioMidHero{}
+	if err := config.DB.Where("trio_mid_id = ? AND hero_id = ?", trioMid.TrioMidID, input.HeroID).First(&existingHero).Error; err == nil {
+		existingHero.Role = input.Role
+		existingHero.EarlyResult = input.EarlyResult
 
-	if err := config.DB.Save(&trioMid).Error; err != nil {
+		if err := config.DB.Save(&existingHero).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "TrioMidHero updated successfully", "data": existingHero})
+		return
+	}
+
+	// Jika hero baru, buat TrioMidHero baru
+	newHero := models.TrioMidHero{
+		TrioMidID:   trioMid.TrioMidID,
+		HeroID:      input.HeroID,
+		Role:        input.Role,
+		EarlyResult: input.EarlyResult,
+	}
+
+	if err := config.DB.Create(&newHero).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, trioMid)
+	c.JSON(http.StatusCreated, gin.H{"message": "New TrioMidHero added successfully", "data": newHero})
 }
 
 // @Tags Game
@@ -1399,45 +1531,85 @@ func UpdateTrioMid(c *gin.Context) {
 // @Produce  json
 // @Security Bearer
 // @Param gameID path string true "Game ID"
-// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
 // @Param trioMidID path string true "TrioMid ID"
 // @Success 200 {string} string "TrioMid deleted successfully"
 // @Failure 400 {string} string "Invalid input"
 // @Failure 404 {string} string "Match, game, or TrioMid not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /matches/{matchID}/games/{gameID}/trio-mids/{trioMidID} [delete]
+// @Router /games/{gameID}/teams/{teamID}/trio-mids/{trioMidID} [delete]
 func RemoveTrioMid(c *gin.Context) {
-	matchID := c.Param("matchID")
-	gameID := c.Param("gameID")
-	trioMidID := c.Param("trioMidID")
+	teamID, gameID, trioMidID := c.Param("teamID"), c.Param("gameID"), c.Param("trioMidID")
 
-	if matchID == "" || gameID == "" || trioMidID == "" {
+	// Validasi parameter
+	if teamID == "" || gameID == "" || trioMidID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID, Game ID, and TrioMid ID are required"})
 		return
 	}
 
-	if err := config.DB.First(&models.Match{}, "id = ?", matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
-		return
-	}
+	// Mulai transaksi
+	tx := config.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback() // Rollback jika terjadi panic
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		}
+	}()
 
-	if err := config.DB.First(&models.Game{}, "id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
+	var game models.Game
+	if err := tx.First(&game, "game_id = ?", gameID).Error; err != nil {
+		tx.Rollback()
 		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
 		return
 	}
 
-	var trioMid models.TrioMid
-	if err := config.DB.First(&trioMid, "id = ? AND game_id = ?", trioMidID, gameID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "TrioMid not found"})
-		return
-	}
-
-	if err := config.DB.Delete(&trioMid).Error; err != nil {
+	// Cek jumlah TrioMidHero
+	var trioMidHeroCount int64
+	if err := tx.Model(&models.TrioMidHero{}).Where("trio_mid_id = ?", trioMidID).Count(&trioMidHeroCount).Error; err != nil {
+		tx.Rollback()
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "TrioMid deleted successfully"})
+	// Hapus TrioMidHero atau TrioMid sesuai dengan jumlahnya
+	if trioMidHeroCount > 1 {
+		// Hapus TrioMidHero
+		if err := tx.Where("trio_mid_id = ?", trioMidID).Delete(&models.TrioMidHero{}).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "TrioMidHero deleted successfully"})
+	} else {
+		// Hapus TrioMidHero
+		if err := tx.Where("trio_mid_id = ?", trioMidID).Delete(&models.TrioMidHero{}).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Hapus TrioMid
+		var trioMid models.TrioMid
+		if err := tx.First(&trioMid, "trio_mid_id = ? AND game_id = ?", trioMidID, gameID).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusNotFound, gin.H{"error": "TrioMid not found"})
+			return
+		}
+
+		if err := tx.Delete(&trioMid).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "TrioMid deleted successfully"})
+	}
+
+	// Commit transaksi
+	if err := tx.Commit().Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to commit transaction"})
+		return
+	}
 }
 
 // @Tags Game
@@ -1446,41 +1618,66 @@ func RemoveTrioMid(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Security Bearer
-// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
 // @Param gameID path string true "Game ID"
 // @Success 200 {array} dto.TrioMidResponseDto
 // @Failure 500 {string} string "Internal server error"
-// @Router /matches/{matchID}/games/{gameID}/trio-mids [get]
+// @Router /games/{gameID}/teams/{teamID}/trio-mids [get]
 func GetAllTrioMids(c *gin.Context) {
-	matchID := c.Param("matchID")
+	teamID := c.Param("teamID")
 	gameID := c.Param("gameID")
 
-	if err := config.DB.First(&models.Match{}, "id = ?", matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+	if teamID == "" || gameID == "" { // Validasi parameter
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID and Game ID are required"})
 		return
 	}
 
-	if err := config.DB.First(&models.Game{}, "id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
+	game := models.Game{}
+	if err := config.DB.First(&game, "game_id = ?", gameID).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	var results []dto.TrioMidResponseDto
 
+	// Query untuk mengambil TrioMidHero dengan JOIN
 	query := `
 		SELECT 
-			tm.trio_mid_id, tm.game_id, tm.team_id, tm.hero_id, tm.early_result,
-			t.team_id, t.name AS team_name, t.image AS team_image,
-			h.hero_id, h.name AS hero_name, h.image AS hero_image
+			tm.trio_mid_id, tm.game_id, tm.team_id, tm.early_result,
+			t.team_id AS team_id, t.name AS team_name, t.image AS team_image,
+			th.hero_id, th.name AS hero_name, th.image AS hero_image
 		FROM trio_mids tm
 		JOIN teams t ON tm.team_id = t.team_id
-		JOIN heroes h ON tm.hero_id = h.hero_id
+		JOIN trio_mid_heros tmh ON tm.trio_mid_id = tmh.trio_mid_id
+		JOIN heros th ON tmh.hero_id = th.hero_id
 		WHERE tm.game_id = ?
 	`
 
 	if err := config.DB.Raw(query, gameID).Scan(&results).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
+	}
+
+	// Struktur hasil
+	for i := range results {
+		results[i].Hero = struct {
+			HeroID uint   `json:"hero_id"`
+			Name   string `json:"name"`
+			Image  string `json:"image"`
+		}{
+			HeroID: results[i].HeroID,
+			Name:   results[i].Hero.Name,
+			Image:  results[i].Hero.Image,
+		}
+		results[i].Team = struct {
+			TeamID uint   `json:"team_id"`
+			Name   string `json:"name"`
+			Image  string `json:"image"`
+		}{
+			TeamID: results[i].TeamID,
+			Name:   results[i].Team.Name,
+			Image:  results[i].Team.Image,
+		}
 	}
 
 	c.JSON(http.StatusOK, results)
@@ -1493,38 +1690,41 @@ func GetAllTrioMids(c *gin.Context) {
 // @Produce  json
 // @Security Bearer
 // @Param gameID path string true "Game ID"
-// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
 // @Param trioMidID path string true "TrioMid ID"
 // @Success 200 {object} dto.TrioMidResponseDto "Trio mid found successfully"
 // @Failure 400 {string} string "Invalid input"
 // @Failure 404 {string} string "Game or Trio mid not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /matches/{matchID}/games/{gameID}/trio-mids/{trioMidID} [get]
+// @Router /games/{gameID}/teams/{teamID}/trio-mids/{trioMidID} [get]
 func GetTrioMidByID(c *gin.Context) {
-	matchID := c.Param("matchID")
+	teamID := c.Param("teamID")
 	gameID := c.Param("gameID")
 	trioMidID := c.Param("trioMidID")
 
-	if err := config.DB.First(&models.Match{}, "id = ?", matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+	if teamID == "" || gameID == "" { // Validasi parameter
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID and Game ID are required"})
 		return
 	}
 
-	if err := config.DB.First(&models.Game{}, "id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
+	game := models.Game{}
+	if err := config.DB.First(&game, "game_id = ?", gameID).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	var result dto.TrioMidResponseDto
 
+	// Query untuk mengambil TrioMidHero dengan JOIN
 	query := `
 		SELECT 
-			tm.trio_mid_id, tm.game_id, tm.team_id, tm.hero_id, tm.early_result,
-			t.team_id, t.name AS team_name, t.image AS team_image,
-			h.hero_id, h.name AS hero_name, h.image AS hero_image
+			tm.trio_mid_id, tm.game_id, tm.team_id, tm.early_result,
+			t.team_id AS team_id, t.name AS team_name, t.image AS team_image,
+			th.hero_id, th.name AS hero_name, th.image AS hero_image
 		FROM trio_mids tm
 		JOIN teams t ON tm.team_id = t.team_id
-		JOIN heroes h ON tm.hero_id = h.hero_id
+		JOIN trio_mid_heros tmh ON tm.trio_mid_id = tmh.trio_mid_id
+		JOIN heros th ON tmh.hero_id = th.hero_id
 		WHERE tm.trio_mid_id = ? AND tm.game_id = ?
 	`
 
@@ -1533,5 +1733,239 @@ func GetTrioMidByID(c *gin.Context) {
 		return
 	}
 
+	// Menyusun data untuk Hero dan Team
+	result.Hero = struct {
+		HeroID uint   `json:"hero_id"`
+		Name   string `json:"name"`
+		Image  string `json:"image"`
+	}{
+		HeroID: result.HeroID,
+		Name:   result.Hero.Name,
+		Image:  result.Hero.Image,
+	}
+
+	result.Team = struct {
+		TeamID uint   `json:"team_id"`
+		Name   string `json:"name"`
+		Image  string `json:"image"`
+	}{
+		TeamID: result.TeamID,
+		Name:   result.Team.Name,
+		Image:  result.Team.Image,
+	}
+
 	c.JSON(http.StatusOK, result)
+}
+
+type TrioMidResultDto struct {
+	TeamID      uint   `json:"team_id" binding:"required"`
+	EarlyResult string `gorm:"type:enum('win', 'draw', 'lose')" json:"early_result"`
+}
+
+// @Tags Game
+// @Summary Update a TrioMid result
+// @Description Update a TrioMid with the given team ID and game ID with the given information
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param teamID path string true "Team ID"
+// @Param trioMid body TrioMidResultDto true "Trio mid data"
+// @Success 200 {string} string "Trio mid result updated successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Game or Trio mid not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /games/{gameID}/teams/{teamID}/trio-mid-result [put]
+func UpdateTrioMidResult(c *gin.Context) {
+	teamID := c.Param("teamID")
+	gameID := c.Param("gameID")
+	if teamID == "" || gameID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID and Game ID are required"})
+		return
+	}
+
+	var result TrioMidResultDto
+	if err := c.BindJSON(&result); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if result.EarlyResult != "win" && result.EarlyResult != "draw" && result.EarlyResult != "lose" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid early result"})
+	}
+
+	trioMid := models.TrioMid{}
+	if err := config.DB.First(&trioMid, "game_id = ? AND team_id = ?", gameID, result.TeamID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "TrioMid not found"})
+		return
+	}
+
+	trioMid.EarlyResult = result.EarlyResult
+	if err := config.DB.Save(&trioMid).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "TrioMid result updated successfully"})
+}
+
+// @Tags Game
+// @Summary Get a TrioMid result by ID
+// @Description Get a TrioMid result with the given game ID, match ID, and TrioMid ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param teamID path string true "Team ID"
+// @Param gameID path string true "Game ID"
+// @Param trioMidID path string true "TrioMid ID"
+// @Success 200 {object} models.TrioMid "Trio mid result found successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Game or Trio mid not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /games/{gameID}/teams/{teamID}/trio-mid-result/{trioMidID} [get]
+func GetTrioMidResultByID(c *gin.Context) {
+	teamID := c.Param("teamID")
+	gameID := c.Param("gameID")
+	trioMidID := c.Param("trioMidID")
+
+	if teamID == "" || gameID == "" || trioMidID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID, Game ID, and TrioMid ID are required"})
+		return
+	}
+
+	trioMid := models.TrioMid{}
+
+	if err := config.DB.First(&trioMid, "game_id = ? AND trio_mid_id = ?", gameID, trioMidID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "TrioMid not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, trioMid)
+}
+
+type GameResultDto struct {
+	Win    int    `json:"win"`
+	Draw   int    `json:"draw"`
+	Lose   int    `json:"lose"`
+	Result string `json:"result"`
+}
+
+// @Tags Game
+// @Summary Get all game results for a team in a game
+// @Description Get all game results for a team in a game with the given game ID and team ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param teamID path string true "Team ID"
+// @Param gameID path string true "Game ID"
+// @Success 200 {array} GameResultDto "All game results found successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Game or team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /games/{gameID}/teams/{teamID}/game-results [get]
+func GetAllGameResults(c *gin.Context) {
+	teamID := c.Param("teamID")
+	gameID := c.Param("gameID")
+
+	if teamID == "" || gameID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID and Game ID are required"})
+		return
+	}
+
+	// Initialize counters for wins, draws, and losses
+	winCount := 0
+	drawCount := 0
+	loseCount := 0
+
+	// Query Explaners
+	var explaners []models.Explaner
+	if err := config.DB.Where("game_id = ? AND team_id = ?", gameID, teamID).Find(&explaners).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Count results for Explaners
+	for _, explaner := range explaners {
+		switch explaner.EarlyResult {
+		case "win":
+			winCount++
+		case "draw":
+			drawCount++
+		case "lose":
+			loseCount++
+		}
+	}
+
+	// Query Goldlaners
+	var goldlaners []models.Goldlaner
+	if err := config.DB.Where("game_id = ? AND team_id = ?", gameID, teamID).Find(&goldlaners).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Count results for Goldlaners
+	for _, goldlaner := range goldlaners {
+		switch goldlaner.EarlyResult {
+		case "win":
+			winCount++
+		case "draw":
+			drawCount++
+		case "lose":
+			loseCount++
+		}
+	}
+
+	// Query TrioMids
+	var trioMids []models.TrioMid
+	if err := config.DB.Where("game_id = ? AND team_id = ?", gameID, teamID).Find(&trioMids).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Count results for TrioMids
+	for _, trioMid := range trioMids {
+		switch trioMid.EarlyResult {
+		case "win":
+			winCount++
+		case "draw":
+			drawCount++
+		case "lose":
+			loseCount++
+		}
+	}
+
+	// Determine Result based on win, draw, and lose counts
+	var result string
+	switch {
+	case winCount == 3:
+		result = "Good Early"
+	case winCount == 2 && drawCount == 1:
+		result = "Good Early"
+	case winCount == 1 && drawCount == 2:
+		result = "Good Early"
+	case winCount == 2 && loseCount == 1:
+		result = "Ok Early"
+	case winCount == 1 && drawCount == 1 && loseCount == 1:
+		result = "Ok Early"
+	case winCount == 1 && loseCount == 2:
+		result = "Bad Early"
+	case drawCount == 2 && loseCount == 1:
+		result = "Bad Early"
+	case drawCount == 1 && loseCount == 2:
+		result = "Bad Early"
+	case loseCount == 3:
+		result = "Bad Early"
+	default:
+		result = "No Result"
+	}
+
+	// Prepare the response DTO
+	response := GameResultDto{
+		Win:    winCount,
+		Draw:   drawCount,
+		Lose:   loseCount,
+		Result: result,
+	}
+
+	c.JSON(http.StatusOK, response)
 }

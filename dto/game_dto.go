@@ -82,9 +82,8 @@ type TurtleResultResponseDto struct {
 }
 
 type ExplanerRequestDto struct {
-	TeamID      uint   `json:"team_id" binding:"required"`
 	HeroID      uint   `json:"hero_id" binding:"required"`
-	EarlyResult string `json:"early_result" binding:"required"`
+	EarlyResult string `gorm:"type:enum('win', 'draw', 'lose')" json:"early_result"`
 }
 
 type ExplanerResponseDto struct {
@@ -95,20 +94,19 @@ type ExplanerResponseDto struct {
 		TeamID uint   `json:"team_id"`
 		Name   string `json:"name"`
 		Image  string `json:"image"`
-	} `json:"team"`
+	} `gorm:"embedded;embeddedPrefix:team_" json:"team"`
 	HeroID uint `json:"hero_id"`
 	Hero   struct {
 		HeroID uint   `json:"hero_id"`
 		Name   string `json:"name"`
 		Image  string `json:"image"`
-	} `json:"hero"`
+	} `gorm:"embedded;embeddedPrefix:hero_" json:"hero"`
 	EarlyResult string `json:"early_result"`
 }
 
 type GoldlanerRequestDto struct {
-	TeamID      uint   `json:"team_id" binding:"required"`
 	HeroID      uint   `json:"hero_id" binding:"required"`
-	EarlyResult string `json:"early_result" binding:"required"`
+	EarlyResult string `gorm:"type:enum('win', 'draw', 'lose')" json:"early_result"`
 }
 
 type GoldlanerResponseDto struct {
@@ -119,21 +117,21 @@ type GoldlanerResponseDto struct {
 		TeamID uint   `json:"team_id"`
 		Name   string `json:"name"`
 		Image  string `json:"image"`
-	} `json:"team"`
+	} `gorm:"embedded;embeddedPrefix:team_" json:"team"`
 	HeroID uint `json:"hero_id"`
 	Hero   struct {
 		HeroID uint   `json:"hero_id"`
 		Name   string `json:"name"`
 		Image  string `json:"image"`
-	} `json:"hero"`
+	} `gorm:"embedded;embeddedPrefix:hero_" json:"hero"`
 	EarlyResult string `json:"early_result"`
 }
 
+// khusus
 type TrioMidRequestDto struct {
-	TeamID      uint   `json:"team_id" binding:"required"`
 	HeroID      uint   `json:"hero_id" binding:"required"`
 	Role        string `json:"role" binding:"required"`
-	EarlyResult string `json:"early_result" binding:"required"`
+	EarlyResult string `gorm:"type:enum('win', 'draw', 'lose')" json:"early_result"`
 }
 
 type TrioMidResponseDto struct {
@@ -144,12 +142,12 @@ type TrioMidResponseDto struct {
 		TeamID uint   `json:"team_id"`
 		Name   string `json:"name"`
 		Image  string `json:"image"`
-	} `json:"team"`
+	} `gorm:"embedded;embeddedPrefix:team_" json:"team"`
 	HeroID uint `json:"hero_id"`
 	Hero   struct {
 		HeroID uint   `json:"hero_id"`
 		Name   string `json:"name"`
 		Image  string `json:"image"`
-	} `json:"hero"`
+	} `gorm:"embedded;embeddedPrefix:hero_" json:"hero"`
 	EarlyResult string `json:"early_result"`
 }
