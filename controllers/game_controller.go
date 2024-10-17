@@ -991,10 +991,10 @@ func GetAllExplaners(c *gin.Context) {
 		FROM explaners e
 		JOIN teams t ON e.team_id = t.team_id
 		JOIN heros h ON e.hero_id = h.hero_id
-		WHERE e.game_id = ?
+		WHERE e.game_id = ? AND e.team_id = ?
 	`
 
-	if err := config.DB.Raw(query, gameID).Scan(&results).Error; err != nil {
+	if err := config.DB.Raw(query, gameID, teamID).Scan(&results).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -1048,10 +1048,10 @@ func GetExplanerByID(c *gin.Context) {
 		FROM explaners e
 		JOIN teams t ON e.team_id = t.team_id
 		JOIN heros h ON e.hero_id = h.hero_id
-		WHERE e.game_id = ?
+		WHERE e.game_id = ? AND e.team_id = ? AND e.explaner_id = ?
 	`
 
-	if err := config.DB.Raw(query, explaner.ExplanerID, game.GameID).Scan(&result).Error; err != nil {
+	if err := config.DB.Raw(query, gameID, teamID, explanerID).Scan(&result).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Explaner not found"})
 		return
 	}
@@ -1292,10 +1292,10 @@ func GetAllGoldlaners(c *gin.Context) {
 		FROM goldlaners g
 		JOIN teams t ON g.team_id = t.team_id
 		JOIN heros h ON g.hero_id = h.hero_id
-		WHERE g.game_id = ?
+		WHERE g.game_id = ? AND g.team_id = ?
 	`
 
-	if err := config.DB.Raw(query, gameID).Scan(&results).Error; err != nil {
+	if err := config.DB.Raw(query, gameID, teamID).Scan(&results).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -1342,10 +1342,10 @@ func GetGoldlanerByID(c *gin.Context) {
 		FROM goldlaners g
 		JOIN teams t ON g.team_id = t.team_id
 		JOIN heros h ON g.hero_id = h.hero_id
-		WHERE g.game_id = ?
+		WHERE g.game_id = ? AND g.team_id = ? AND g.goldlaner_id = ?
 	`
 
-	if err := config.DB.Raw(query, goldlanerID, gameID).Scan(&result).Error; err != nil {
+	if err := config.DB.Raw(query, gameID, teamID, goldlanerID).Scan(&result).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Goldlaner not found"})
 		return
 	}
@@ -1679,7 +1679,7 @@ func RemoveTrioMid(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "TrioMidHero deleted successfully"})
 		return
 	}
-	
+
 	// Hapus TrioMidHero
 	if err := config.DB.Where("trio_mid_hero_id = ?", trioMidHero.TrioMidHeroID).Delete(&models.TrioMidHero{}).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
