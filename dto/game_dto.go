@@ -135,19 +135,19 @@ type TrioMidRequestDto struct {
 }
 
 type TrioMidResponseDto struct {
-	TrioMidID uint `json:"trio_mid_id"`
-	GameID    uint `json:"game_id"`
-	TeamID    uint `json:"team_id"`
-	Team      struct {
-		TeamID uint   `json:"team_id"`
+	TrioMidHeroID uint `json:"trio_mid_hero_id"`
+	TrioMidID   uint   `json:"trio_mid_id"`
+	GameID      uint   `json:"game_id"`
+	Role        string `json:"role"`
+	EarlyResult string `json:"early_result"`
+	Team        struct {
+		TeamID uint   `json:"team_id"` // Tetap menggunakan team_id
 		Name   string `json:"name"`
 		Image  string `json:"image"`
 	} `gorm:"embedded;embeddedPrefix:team_" json:"team"`
-	HeroID uint `json:"hero_id"`
-	Hero   struct {
-		HeroID uint   `json:"hero_id"`
+	Hero struct {
+		HeroID uint   `json:"hero_id"` // Tetap menggunakan hero_id
 		Name   string `json:"name"`
 		Image  string `json:"image"`
 	} `gorm:"embedded;embeddedPrefix:hero_" json:"hero"`
-	EarlyResult string `json:"early_result"`
 }

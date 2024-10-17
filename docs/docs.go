@@ -6550,6 +6550,9 @@ const docTemplate = `{
                 "hero_id": {
                     "type": "integer"
                 },
+                "role": {
+                    "type": "string"
+                },
                 "team": {
                     "type": "object",
                     "properties": {

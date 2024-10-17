@@ -147,10 +147,10 @@ func SetupRouter() *gin.Engine {
 		protected.DELETE("games/:gameID/teams/:teamID/goldlaners/:goldlanerID", controllers.RemoveGoldlaner)
 
 		protected.POST("games/:gameID/teams/:teamID/trio-mids", controllers.AddTrioMid)
-		protected.PUT("games/:gameID/teams/:teamID/trio-mids/:trioMidID", controllers.UpdateTrioMid)
+		protected.PUT("games/:gameID/teams/:teamID/trio-mids/:trioMidHeroID", controllers.UpdateTrioMid)
 		protected.GET("games/:gameID/teams/:teamID/trio-mids", controllers.GetAllTrioMids)
-		protected.GET("games/:gameID/teams/:teamID/trio-mids/:trioMidID", controllers.GetTrioMidByID)
-		protected.DELETE("games/:gameID/teams/:teamID/trio-mids/:trioMidID", controllers.RemoveTrioMid)
+		protected.GET("games/:gameID/teams/:teamID/trio-mids/:trioMidHeroID", controllers.GetTrioMidByID)
+		protected.DELETE("games/:gameID/teams/:teamID/trio-mids/:trioMidHeroID", controllers.RemoveTrioMid)
 
 		protected.PUT("games/:gameID/teams/:teamID/trio-mid-results", controllers.UpdateTrioMidResult)
 		protected.GET("games/:gameID/teams/:teamID/trio-mid-results/:trioMidID", controllers.GetTrioMidResultByID)

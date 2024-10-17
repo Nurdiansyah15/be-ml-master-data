@@ -48,6 +48,7 @@ func ConnectDatabase() {
 		&models.FlexPick{},
 		&models.GameResult{},
 		&models.TrioMid{},
+		&models.TrioMidHero{},
 		&models.Goldlaner{},
 		&models.Explaner{},
 		&models.TurtleResult{},

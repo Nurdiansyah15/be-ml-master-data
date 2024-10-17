@@ -637,6 +637,8 @@ definitions:
         type: object
       hero_id:
         type: integer
+      role:
+        type: string
       team:
         properties:
           image:

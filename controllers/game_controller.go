@@ -1381,6 +1381,119 @@ func AddTrioMid(c *gin.Context) {
 		return
 	}
 
+	// Start a transaction
+	tx := config.DB.Begin()
+
+	var game models.Game
+	if err := tx.Where("game_id = ?", gameID).First(&game).Error; err != nil {
+		tx.Rollback() // Rollback if any error occurs
+		c.JSON(http.StatusNotFound, gin.H{"error": "Match or game not found"})
+		return
+	}
+
+	match := models.Match{}
+	if err := tx.Where("match_id = ?", game.MatchID).First(&match).Error; err != nil {
+		tx.Rollback() // Rollback if any error occurs
+		c.JSON(http.StatusNotFound, gin.H{"error": "match not found"})
+		return
+	}
+
+	if match.TeamAID != uint(uintTeamID) && match.TeamBID != uint(uintTeamID) {
+		tx.Rollback() // Rollback if any error occurs
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID is not part of the match"})
+		return
+	}
+
+	var input dto.TrioMidRequestDto
+	if err := c.ShouldBindJSON(&input); err != nil {
+		tx.Rollback() // Rollback if any error occurs
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var trioMid models.TrioMid
+
+	// Cek apakah trioMid ada
+	if err := tx.Where("game_id = ? AND team_id = ?", gameID, teamID).First(&trioMid).Error; err != nil {
+		// Jika trioMid tidak ada, buat baru dengan EarlyResult kosong
+		if err == gorm.ErrRecordNotFound {
+			trioMid = models.TrioMid{
+				GameID: game.GameID,
+				TeamID: uint(uintTeamID),
+			}
+			if err := tx.Create(&trioMid).Error; err != nil {
+				tx.Rollback() // Rollback if any error occurs
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+		} else {
+			tx.Rollback() // Rollback if any error occurs
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+	}
+
+	// Cek apakah TrioMidHero sudah ada
+	existingTrioMidHero := models.TrioMidHero{}
+	if err := tx.Where("trio_mid_id = ? AND hero_id = ?", trioMid.TrioMidID, input.HeroID).First(&existingTrioMidHero).Error; err == nil {
+		tx.Rollback() // Rollback if any error occurs
+		c.JSON(http.StatusBadRequest, gin.H{"error": "TrioMidHero already exists"})
+		return
+	}
+
+	// Buat TrioMidHero baru
+	trioMidHero := models.TrioMidHero{
+		TrioMidID:   trioMid.TrioMidID,
+		HeroID:      input.HeroID,
+		Role:        input.Role,
+		EarlyResult: input.EarlyResult,
+	}
+
+	if err := tx.Create(&trioMidHero).Error; err != nil {
+		tx.Rollback() // Rollback if any error occurs
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Commit the transaction
+	if err := tx.Commit().Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not commit transaction"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"message": "TrioMid added successfully"})
+}
+
+// @Tags Game
+// @Summary Update a TrioMid
+// @Description Update a TrioMid with the given game ID, match ID, and TrioMid ID with the given information
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param teamID path string true "Team ID"
+// @Param trioMidHeroID path string true "TrioMid ID"
+// @Param trioMid body dto.TrioMidRequestDto true "Trio mid data"
+// @Success 200 {object} models.TrioMid "Trio mid updated successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Game or Trio mid not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /games/{gameID}/teams/{teamID}/trio-mids/{trioMidHeroID} [put]
+func UpdateTrioMid(c *gin.Context) {
+	gameID, teamID, trioMidHeroID := c.Param("gameID"), c.Param("teamID"), c.Param("trioMidHeroID")
+
+	// Validasi parameter
+	if gameID == "" || teamID == "" || trioMidHeroID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Game ID, Team ID, and TrioMidHero ID are required"})
+		return
+	}
+
+	uintTeamID, err := strconv.ParseUint(teamID, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Team ID"})
+		return
+	}
+
 	var game models.Game
 	if err := config.DB.Where("game_id = ?", gameID).First(&game).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Match or game not found"})
@@ -1398,91 +1511,9 @@ func AddTrioMid(c *gin.Context) {
 		return
 	}
 
-	var input dto.TrioMidRequestDto
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	var trioMid models.TrioMid
-
-	// Cek apakah trioMid ada
-	if err := config.DB.Where("game_id = ? AND team_id = ?", gameID, teamID).First(&trioMid).Error; err != nil {
-		// Jika trioMid tidak ada, buat baru dengan EarlyResult kosong
-		if err == gorm.ErrRecordNotFound {
-			trioMid = models.TrioMid{
-				GameID:      game.GameID,
-				TeamID:      uint(uintTeamID),
-				EarlyResult: "", // Kosongkan EarlyResult
-			}
-			if err := config.DB.Create(&trioMid).Error; err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-				return
-			}
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-	}
-
-	// Cek apakah TrioMidHero sudah ada
-	existingTrioMidHero := models.TrioMidHero{}
-	if err := config.DB.Where("trio_mid_id = ? AND hero_id = ?", trioMid.TrioMidID, input.HeroID).First(&existingTrioMidHero).Error; err == nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "TrioMidHero already exists"})
-		return
-	}
-
-	// Buat TrioMidHero baru
-	trioMidHero := models.TrioMidHero{
-		TrioMidID:   trioMid.TrioMidID,
-		HeroID:      input.HeroID,
-		Role:        input.Role,
-		EarlyResult: input.EarlyResult,
-	}
-
-	if err := config.DB.Create(&trioMidHero).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusCreated, gin.H{"message": "TrioMid added successfully"})
-}
-
-// @Tags Game
-// @Summary Update a TrioMid
-// @Description Update a TrioMid with the given game ID, match ID, and TrioMid ID with the given information
-// @Accept  json
-// @Produce  json
-// @Security Bearer
-// @Param gameID path string true "Game ID"
-// @Param teamID path string true "Team ID"
-// @Param trioMidID path string true "TrioMid ID"
-// @Param trioMid body dto.TrioMidRequestDto true "Trio mid data"
-// @Success 200 {object} models.TrioMid "Trio mid updated successfully"
-// @Failure 400 {string} string "Invalid input"
-// @Failure 404 {string} string "Game or Trio mid not found"
-// @Failure 500 {string} string "Internal server error"
-// @Router /games/{gameID}/teams/{teamID}/trio-mids/{trioMidID} [put]
-func UpdateTrioMid(c *gin.Context) {
-	gameID, teamID, trioMidID := c.Param("gameID"), c.Param("teamID"), c.Param("trioMidID")
-
-	// Validasi parameter
-	if gameID == "" || teamID == "" || trioMidID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Game ID, Team ID, and TrioMid ID are required"})
-		return
-	}
-
-	// Cek apakah game dan match ada
-	var game models.Game
-	if err := config.DB.Where("game_id = ?", gameID).First(&game).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Game or match not found"})
-		return
-	}
-
-	// Cek apakah TrioMid ada
-	var trioMid models.TrioMid
-	if err := config.DB.Where("trio_mid_id = ? AND game_id = ?", trioMidID, gameID).First(&trioMid).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "TrioMid not found"})
+	trioMidHero := models.TrioMidHero{}
+	if err := config.DB.Where("trio_mid_hero_id = ?", trioMidHeroID).First(&trioMidHero).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "TrioMidHero not found"})
 		return
 	}
 
@@ -1493,35 +1524,90 @@ func UpdateTrioMid(c *gin.Context) {
 		return
 	}
 
-	// Update TrioMidHero jika sudah ada
-	existingHero := models.TrioMidHero{}
-	if err := config.DB.Where("trio_mid_id = ? AND hero_id = ?", trioMid.TrioMidID, input.HeroID).First(&existingHero).Error; err == nil {
-		existingHero.Role = input.Role
-		existingHero.EarlyResult = input.EarlyResult
-
-		if err := config.DB.Save(&existingHero).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-
-		c.JSON(http.StatusOK, gin.H{"message": "TrioMidHero updated successfully", "data": existingHero})
+	existingTrioMidHero := models.TrioMidHero{}
+	if err := config.DB.Where("trio_mid_id = ? AND hero_id = ? AND trio_mid_hero_id != ?", trioMidHero.TrioMidID, input.HeroID, trioMidHeroID).First(&existingTrioMidHero).Error; err == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "TrioMidHero already exists"})
 		return
 	}
 
-	// Jika hero baru, buat TrioMidHero baru
-	newHero := models.TrioMidHero{
-		TrioMidID:   trioMid.TrioMidID,
-		HeroID:      input.HeroID,
-		Role:        input.Role,
-		EarlyResult: input.EarlyResult,
-	}
+	trioMidHero.EarlyResult = input.EarlyResult
+	trioMidHero.Role = input.Role
+	trioMidHero.HeroID = input.HeroID
 
-	if err := config.DB.Create(&newHero).Error; err != nil {
+	if err := config.DB.Save(&trioMidHero).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "New TrioMidHero added successfully", "data": newHero})
+	// // Mulai transaksi
+	// tx := config.DB.Begin()
+
+	// // Cek apakah game ada
+	// var game models.Game
+	// if err := tx.Where("game_id = ?", gameID).First(&game).Error; err != nil {
+	// 	tx.Rollback() // Rollback jika ada kesalahan
+	// 	c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
+	// 	return
+	// }
+
+	// // Cek apakah TrioMid ada
+	// var trioMid models.TrioMid
+	// if err := tx.Where("trio_mid_id = ? AND game_id = ?", trioMidID, gameID).First(&trioMid).Error; err != nil {
+	// 	tx.Rollback() // Rollback jika ada kesalahan
+	// 	c.JSON(http.StatusNotFound, gin.H{"error": "TrioMid not found"})
+	// 	return
+	// }
+
+	// // Bind input dari JSON request
+	// var input dto.TrioMidRequestDto
+	// if err := c.ShouldBindJSON(&input); err != nil {
+	// 	tx.Rollback() // Rollback jika ada kesalahan
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// 	return
+	// }
+
+	// // Cek jika hero baru sudah digunakan oleh TrioMidHero lainnya
+	// var count int64
+	// if err := tx.Model(&models.TrioMidHero{}).
+	// 	Where("hero_id = ? AND trio_mid_id != ?", input.HeroID, trioMid.TrioMidID).
+	// 	Count(&count).Error; err != nil {
+	// 	tx.Rollback() // Rollback jika ada kesalahan
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// 	return
+	// }
+
+	// if count > 0 {
+	// 	tx.Rollback() // Rollback jika hero sudah digunakan
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "The selected hero is already in use by another TrioMid."})
+	// 	return
+	// }
+
+	// // Update TrioMidHero jika sudah ada
+	// existingHero := models.TrioMidHero{}
+	// if err := tx.Where("trio_mid_id = ? AND hero_id = ?", trioMid.TrioMidID, input.HeroID).First(&existingHero).Error; err == nil {
+	// 	// Update existing hero
+	// 	existingHero.Role = input.Role
+	// 	existingHero.EarlyResult = input.EarlyResult
+
+	// 	if err := tx.Save(&existingHero).Error; err != nil {
+	// 		tx.Rollback() // Rollback jika ada kesalahan
+	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// 		return
+	// 	}
+
+	// 	c.JSON(http.StatusOK, gin.H{"message": "TrioMidHero updated successfully", "data": existingHero})
+	// } else {
+	// 	// Jika tidak ada hero yang ada, beri tahu pengguna
+	// 	tx.Rollback() // Rollback jika tidak ada hero
+	// 	c.JSON(http.StatusNotFound, gin.H{"error": "No existing TrioMidHero found for update."})
+	// 	return
+	// }
+
+	// // Commit transaction after all operations
+	// if err := tx.Commit().Error; err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not commit transaction"})
+	// 	return
+	// }
 }
 
 // @Tags Game
@@ -1532,41 +1618,53 @@ func UpdateTrioMid(c *gin.Context) {
 // @Security Bearer
 // @Param gameID path string true "Game ID"
 // @Param teamID path string true "Team ID"
-// @Param trioMidID path string true "TrioMid ID"
+// @Param trioMidHeroID path string true "TrioMid ID"
 // @Success 200 {string} string "TrioMid deleted successfully"
 // @Failure 400 {string} string "Invalid input"
 // @Failure 404 {string} string "Match, game, or TrioMid not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /games/{gameID}/teams/{teamID}/trio-mids/{trioMidID} [delete]
+// @Router /games/{gameID}/teams/{teamID}/trio-mids/{trioMidHeroID} [delete]
 func RemoveTrioMid(c *gin.Context) {
-	teamID, gameID, trioMidID := c.Param("teamID"), c.Param("gameID"), c.Param("trioMidID")
+	teamID, gameID, trioMidHeroID := c.Param("teamID"), c.Param("gameID"), c.Param("trioMidHeroID")
 
 	// Validasi parameter
-	if teamID == "" || gameID == "" || trioMidID == "" {
+	if teamID == "" || gameID == "" || trioMidHeroID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID, Game ID, and TrioMid ID are required"})
 		return
 	}
 
-	// Mulai transaksi
-	tx := config.DB.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback() // Rollback jika terjadi panic
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
-		}
-	}()
+	uintTeamID, err := strconv.ParseUint(teamID, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Team ID"})
+		return
+	}
 
 	var game models.Game
-	if err := tx.First(&game, "game_id = ?", gameID).Error; err != nil {
-		tx.Rollback()
-		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
+	if err := config.DB.Where("game_id = ?", gameID).First(&game).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Match or game not found"})
+		return
+	}
+
+	match := models.Match{}
+	if err := config.DB.Where("match_id = ?", game.MatchID).First(&match).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "match not found"})
+		return
+	}
+
+	if match.TeamAID != uint(uintTeamID) && match.TeamBID != uint(uintTeamID) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID is not part of the match"})
+		return
+	}
+
+	trioMidHero := models.TrioMidHero{}
+	if err := config.DB.Where("trio_mid_hero_id = ?", trioMidHeroID).First(&trioMidHero).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "TrioMidHero not found"})
 		return
 	}
 
 	// Cek jumlah TrioMidHero
 	var trioMidHeroCount int64
-	if err := tx.Model(&models.TrioMidHero{}).Where("trio_mid_id = ?", trioMidID).Count(&trioMidHeroCount).Error; err != nil {
-		tx.Rollback()
+	if err := config.DB.Model(&models.TrioMidHero{}).Where("trio_mid_id = ?", trioMidHero.TrioMidID).Count(&trioMidHeroCount).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -1574,42 +1672,97 @@ func RemoveTrioMid(c *gin.Context) {
 	// Hapus TrioMidHero atau TrioMid sesuai dengan jumlahnya
 	if trioMidHeroCount > 1 {
 		// Hapus TrioMidHero
-		if err := tx.Where("trio_mid_id = ?", trioMidID).Delete(&models.TrioMidHero{}).Error; err != nil {
-			tx.Rollback()
+		if err := config.DB.Where("trio_mid_hero_id = ?", trioMidHero.TrioMidHeroID).Delete(&models.TrioMidHero{}).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"message": "TrioMidHero deleted successfully"})
-	} else {
-		// Hapus TrioMidHero
-		if err := tx.Where("trio_mid_id = ?", trioMidID).Delete(&models.TrioMidHero{}).Error; err != nil {
-			tx.Rollback()
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-
-		// Hapus TrioMid
-		var trioMid models.TrioMid
-		if err := tx.First(&trioMid, "trio_mid_id = ? AND game_id = ?", trioMidID, gameID).Error; err != nil {
-			tx.Rollback()
-			c.JSON(http.StatusNotFound, gin.H{"error": "TrioMid not found"})
-			return
-		}
-
-		if err := tx.Delete(&trioMid).Error; err != nil {
-			tx.Rollback()
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-
-		c.JSON(http.StatusOK, gin.H{"message": "TrioMid deleted successfully"})
-	}
-
-	// Commit transaksi
-	if err := tx.Commit().Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to commit transaction"})
 		return
 	}
+	
+	// Hapus TrioMidHero
+	if err := config.DB.Where("trio_mid_hero_id = ?", trioMidHero.TrioMidHeroID).Delete(&models.TrioMidHero{}).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	var trioMid models.TrioMid
+	if err := config.DB.First(&trioMid, "trio_mid_id = ?", trioMidHero.TrioMidID).Error; err != nil {
+		config.DB.Rollback()
+		c.JSON(http.StatusNotFound, gin.H{"error": "TrioMid not found"})
+		return
+	}
+
+	if err := config.DB.Delete(&trioMid).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "TrioMid deleted successfully"})
+
+	// // Mulai transaksi
+	// tx := config.DB.Begin()
+	// defer func() {
+	// 	if r := recover(); r != nil {
+	// 		tx.Rollback() // Rollback jika terjadi panic
+	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+	// 	}
+	// }()
+
+	// var game models.Game
+	// if err := tx.First(&game, "game_id = ?", gameID).Error; err != nil {
+	// 	tx.Rollback()
+	// 	c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
+	// 	return
+	// }
+
+	// // Cek jumlah TrioMidHero
+	// var trioMidHeroCount int64
+	// if err := tx.Model(&models.TrioMidHero{}).Where("trio_mid_hero_id = ?", trioMidHeroID).Count(&trioMidHeroCount).Error; err != nil {
+	// 	tx.Rollback()
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// 	return
+	// }
+
+	// // Hapus TrioMidHero atau TrioMid sesuai dengan jumlahnya
+	// if trioMidHeroCount > 1 {
+	// 	// Hapus TrioMidHero
+	// 	if err := tx.Where("trio_mid_id = ?", trioMidID).Delete(&models.TrioMidHero{}).Error; err != nil {
+	// 		tx.Rollback()
+	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// 		return
+	// 	}
+	// 	c.JSON(http.StatusOK, gin.H{"message": "TrioMidHero deleted successfully"})
+	// } else {
+	// 	// Hapus TrioMidHero
+	// 	if err := tx.Where("trio_mid_id = ?", trioMidID).Delete(&models.TrioMidHero{}).Error; err != nil {
+	// 		tx.Rollback()
+	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// 		return
+	// 	}
+
+	// 	// Hapus TrioMid
+	// 	var trioMid models.TrioMid
+	// 	if err := tx.First(&trioMid, "trio_mid_id = ? AND game_id = ?", trioMidID, gameID).Error; err != nil {
+	// 		tx.Rollback()
+	// 		c.JSON(http.StatusNotFound, gin.H{"error": "TrioMid not found"})
+	// 		return
+	// 	}
+
+	// 	if err := tx.Delete(&trioMid).Error; err != nil {
+	// 		tx.Rollback()
+	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// 		return
+	// 	}
+
+	// 	c.JSON(http.StatusOK, gin.H{"message": "TrioMid deleted successfully"})
+	// }
+
+	// // Commit transaksi
+	// if err := tx.Commit().Error; err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to commit transaction"})
+	// 	return
+	// }
 }
 
 // @Tags Game
@@ -1638,14 +1791,18 @@ func GetAllTrioMids(c *gin.Context) {
 		return
 	}
 
-	var results []dto.TrioMidResponseDto
+	var results = []dto.TrioMidResponseDto{}
 
 	// Query untuk mengambil TrioMidHero dengan JOIN
 	query := `
 		SELECT 
-			tm.trio_mid_id, tm.game_id, tm.team_id, tm.early_result,
-			t.team_id AS team_id, t.name AS team_name, t.image AS team_image,
-			th.hero_id, th.name AS hero_name, th.image AS hero_image
+			tm.trio_mid_id, 
+			tm.game_id, 
+			tmh.trio_mid_hero_id,
+			tmh.role, 
+			tmh.early_result,
+			t.team_id AS team_team_id, t.name AS team_name, t.image AS team_image,
+			th.hero_id AS hero_hero_id, th.name AS hero_name, th.image AS hero_image
 		FROM trio_mids tm
 		JOIN teams t ON tm.team_id = t.team_id
 		JOIN trio_mid_heros tmh ON tm.trio_mid_id = tmh.trio_mid_id
@@ -1665,7 +1822,7 @@ func GetAllTrioMids(c *gin.Context) {
 			Name   string `json:"name"`
 			Image  string `json:"image"`
 		}{
-			HeroID: results[i].HeroID,
+			HeroID: results[i].Hero.HeroID,
 			Name:   results[i].Hero.Name,
 			Image:  results[i].Hero.Image,
 		}
@@ -1674,7 +1831,7 @@ func GetAllTrioMids(c *gin.Context) {
 			Name   string `json:"name"`
 			Image  string `json:"image"`
 		}{
-			TeamID: results[i].TeamID,
+			TeamID: results[i].Team.TeamID,
 			Name:   results[i].Team.Name,
 			Image:  results[i].Team.Image,
 		}
@@ -1713,14 +1870,18 @@ func GetTrioMidByID(c *gin.Context) {
 		return
 	}
 
-	var result dto.TrioMidResponseDto
+	var result = dto.TrioMidResponseDto{}
 
 	// Query untuk mengambil TrioMidHero dengan JOIN
 	query := `
 		SELECT 
-			tm.trio_mid_id, tm.game_id, tm.team_id, tm.early_result,
-			t.team_id AS team_id, t.name AS team_name, t.image AS team_image,
-			th.hero_id, th.name AS hero_name, th.image AS hero_image
+			tm.trio_mid_id, 
+			tm.game_id, 
+			tmh.trio_mid_hero_id,
+			tmh.role, 
+			tmh.early_result,
+			t.team_id AS team_team_id , t.name AS team_name, t.image AS team_image,
+			th.hero_id AS hero_hero_id, th.name AS hero_name, th.image AS hero_image
 		FROM trio_mids tm
 		JOIN teams t ON tm.team_id = t.team_id
 		JOIN trio_mid_heros tmh ON tm.trio_mid_id = tmh.trio_mid_id
@@ -1739,7 +1900,7 @@ func GetTrioMidByID(c *gin.Context) {
 		Name   string `json:"name"`
 		Image  string `json:"image"`
 	}{
-		HeroID: result.HeroID,
+		HeroID: result.Hero.HeroID,
 		Name:   result.Hero.Name,
 		Image:  result.Hero.Image,
 	}
@@ -1749,7 +1910,7 @@ func GetTrioMidByID(c *gin.Context) {
 		Name   string `json:"name"`
 		Image  string `json:"image"`
 	}{
-		TeamID: result.TeamID,
+		TeamID: result.Team.TeamID,
 		Name:   result.Team.Name,
 		Image:  result.Team.Image,
 	}
@@ -1800,7 +1961,7 @@ func UpdateTrioMidResult(c *gin.Context) {
 		return
 	}
 
-	trioMid.EarlyResult = result.EarlyResult
+	trioMid.EarlyResult = &result.EarlyResult
 	if err := config.DB.Save(&trioMid).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -1924,7 +2085,7 @@ func GetAllGameResults(c *gin.Context) {
 
 	// Count results for TrioMids
 	for _, trioMid := range trioMids {
-		switch trioMid.EarlyResult {
+		switch *trioMid.EarlyResult {
 		case "win":
 			winCount++
 		case "draw":
