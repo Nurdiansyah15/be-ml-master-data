@@ -11,6 +11,35 @@ definitions:
       win:
         type: integer
     type: object
+  controllers.TeamStatisticsDto:
+    properties:
+      teamID:
+        type: integer
+      totalFirstPick:
+        type: integer
+      totalFirstPickAndLose:
+        type: integer
+      totalFirstPickAndWin:
+        type: integer
+      totalGame:
+        type: integer
+      totalGameAndLose:
+        type: integer
+      totalGameAndWin:
+        type: integer
+      totalMatch:
+        type: integer
+      totalMatchAndLose:
+        type: integer
+      totalMatchAndWin:
+        type: integer
+      totalSecondPick:
+        type: integer
+      totalSecondPickAndLose:
+        type: integer
+      totalSecondPickAndWin:
+        type: integer
+    type: object
   controllers.TrioMidResultDto:
     properties:
       early_result:
@@ -476,6 +505,8 @@ definitions:
       team_b_id:
         type: integer
       team_b_score:
+        type: integer
+      tournament_id:
         type: integer
       week:
         type: integer
@@ -4527,6 +4558,46 @@ paths:
       summary: Create a match for a tournament
       tags:
       - Match
+  /tournaments/{tournamentID}/teams/{teamID}/team-statistics:
+    get:
+      consumes:
+      - application/json
+      description: Get team statistics with the given team ID
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Tournament ID
+        in: path
+        name: tournamentID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.TeamStatisticsDto'
+        "400":
+          description: Team ID is required" or "Invalid Team ID format
+          schema:
+            type: string
+        "404":
+          description: Team not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get team statistics
+      tags:
+      - Team
 securityDefinitions:
   Bearer:
     in: header

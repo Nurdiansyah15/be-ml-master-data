@@ -11,12 +11,13 @@ type MatchRequestDto struct {
 }
 
 type MatchResponseDto struct {
-	MatchID *uint `json:"match_id"`
-	Week    *int  `json:"week"`
-	Day     *int  `json:"day"`
-	Date    *int  `json:"date"`
-	TeamAID *uint `json:"team_a_id"`
-	TeamA   *struct {
+	MatchID      *uint `json:"match_id"`
+	TournamentID *uint `json:"tournament_id"`
+	Week         *int  `json:"week"`
+	Day          *int  `json:"day"`
+	Date         *int  `json:"date"`
+	TeamAID      *uint `json:"team_a_id"`
+	TeamA        *struct {
 		TeamID *uint   `json:"team_id"`
 		Name   *string `json:"name"`
 		Image  *string `json:"image"`

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -689,4 +690,120 @@ func GetCoachByID(c *gin.Context) {
 
 	// Kembalikan data pelatih dalam format JSON
 	c.JSON(http.StatusOK, coach)
+}
+
+type TeamStatisticsDto struct {
+	TeamID                 uint `json:"teamID"`
+	TotalMatch             int  `json:"totalMatch"`
+	TotalMatchAndWin       int  `json:"totalMatchAndWin"`
+	TotalMatchAndLose      int  `json:"totalMatchAndLose"`
+	TotalGame              int  `json:"totalGame"`
+	TotalGameAndWin        int  `json:"totalGameAndWin"`
+	TotalGameAndLose       int  `json:"totalGameAndLose"`
+	TotalFirstPick         int  `json:"totalFirstPick"`
+	TotalFirstPickAndWin   int  `json:"totalFirstPickAndWin"`
+	TotalFirstPickAndLose  int  `json:"totalFirstPickAndLose"`
+	TotalSecondPick        int  `json:"totalSecondPick"`
+	TotalSecondPickAndWin  int  `json:"totalSecondPickAndWin"`
+	TotalSecondPickAndLose int  `json:"totalSecondPickAndLose"`
+}
+
+// @Summary Get team statistics
+// @Description Get team statistics with the given team ID
+// @Accept  json
+// @Produce  json
+// @Tags Team
+// @Security Bearer
+// @Param teamID path string true "Team ID"
+// @Param tournamentID path string true "Tournament ID"
+// @Success 200 {object} TeamStatisticsDto
+// @Failure 400 {string} string "Team ID is required" or "Invalid Team ID format"
+// @Failure 404 {string} string "Team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /tournaments/{tournamentID}/teams/{teamID}/team-statistics [get]
+func GetTeamStatistics(c *gin.Context) {
+	teamIDStr := c.Param("teamID")
+	tournamentIDStr := c.Param("tournamentID")
+
+	if teamIDStr == "" || tournamentIDStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID and Tournament ID are required"})
+		return
+	}
+
+	teamID, err := strconv.ParseUint(teamIDStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Team ID format"})
+		return
+	}
+
+	tournamentID, err := strconv.ParseUint(tournamentIDStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Tournament ID format"})
+		return
+	}
+
+	stats := TeamStatisticsDto{}
+	stats.TeamID = uint(teamID)
+
+	// Query matches for the specific team and tournament
+	var matches []models.Match
+	if err := config.DB.Where("tournament_id = ? AND (team_a_id = ? OR team_b_id = ?)", tournamentID, teamID, teamID).Find(&matches).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error querying matches: " + err.Error()})
+		return
+	}
+
+	stats.TotalMatch = len(matches)
+
+	// Calculate match wins and losses from match scores
+	matchIDs := make([]uint, 0, len(matches))
+	for _, match := range matches {
+		matchIDs = append(matchIDs, match.MatchID)
+		if match.TeamAID == uint(teamID) {
+			if match.TeamAScore > match.TeamBScore {
+				stats.TotalMatchAndWin++
+			} else if match.TeamAScore < match.TeamBScore {
+				stats.TotalMatchAndLose++
+			}
+		} else if match.TeamBID == uint(teamID) {
+			if match.TeamBScore > match.TeamAScore {
+				stats.TotalMatchAndWin++
+			} else if match.TeamBScore < match.TeamAScore {
+				stats.TotalMatchAndLose++
+			}
+		}
+	}
+
+	// Query games for the filtered matches and specific team
+	var games []models.Game
+	if err := config.DB.Where("match_id IN ? AND (first_pick_team_id = ? OR second_pick_team_id = ?)", matchIDs, teamID, teamID).Find(&games).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error querying games: " + err.Error()})
+		return
+	}
+
+	stats.TotalGame = len(games)
+
+	// Calculate game-specific statistics
+	for _, game := range games {
+		if game.FirstPickTeamID == uint(teamID) {
+			stats.TotalFirstPick++
+			if game.WinnerTeamID == uint(teamID) {
+				stats.TotalGameAndWin++
+				stats.TotalFirstPickAndWin++
+			} else {
+				stats.TotalGameAndLose++
+				stats.TotalFirstPickAndLose++
+			}
+		} else if game.SecondPickTeamID == uint(teamID) {
+			stats.TotalSecondPick++
+			if game.WinnerTeamID == uint(teamID) {
+				stats.TotalGameAndWin++
+				stats.TotalSecondPickAndWin++
+			} else {
+				stats.TotalGameAndLose++
+				stats.TotalSecondPickAndLose++
+			}
+		}
+	}
+
+	c.JSON(http.StatusOK, stats)
 }

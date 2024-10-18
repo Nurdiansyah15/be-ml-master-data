@@ -159,6 +159,7 @@ func SetupRouter() *gin.Engine {
 
 		// protected.GET("matches/:matchID/teams", controllers.GetAllTeamsInMatch)
 
+		protected.GET("/tournaments/:tournamentID/teams/:teamID/team-statistics", controllers.GetTeamStatistics)
 		protected.GET("/teams", controllers.GetAllTeams)
 		protected.GET("/teams/:teamID", controllers.GetTeamByID)
 		protected.POST("/teams", controllers.CreateTeam)        //ok image ok

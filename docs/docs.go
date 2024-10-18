@@ -5588,6 +5588,68 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/tournaments/{tournamentID}/teams/{teamID}/team-statistics": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get team statistics with the given team ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Team"
+                ],
+                "summary": "Get team statistics",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Team ID",
+                        "name": "teamID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Tournament ID",
+                        "name": "tournamentID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.TeamStatisticsDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Team ID is required\" or \"Invalid Team ID format",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Team not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -5604,6 +5666,50 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "win": {
+                    "type": "integer"
+                }
+            }
+        },
+        "controllers.TeamStatisticsDto": {
+            "type": "object",
+            "properties": {
+                "teamID": {
+                    "type": "integer"
+                },
+                "totalFirstPick": {
+                    "type": "integer"
+                },
+                "totalFirstPickAndLose": {
+                    "type": "integer"
+                },
+                "totalFirstPickAndWin": {
+                    "type": "integer"
+                },
+                "totalGame": {
+                    "type": "integer"
+                },
+                "totalGameAndLose": {
+                    "type": "integer"
+                },
+                "totalGameAndWin": {
+                    "type": "integer"
+                },
+                "totalMatch": {
+                    "type": "integer"
+                },
+                "totalMatchAndLose": {
+                    "type": "integer"
+                },
+                "totalMatchAndWin": {
+                    "type": "integer"
+                },
+                "totalSecondPick": {
+                    "type": "integer"
+                },
+                "totalSecondPickAndLose": {
+                    "type": "integer"
+                },
+                "totalSecondPickAndWin": {
                     "type": "integer"
                 }
             }
@@ -6309,6 +6415,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "team_b_score": {
+                    "type": "integer"
+                },
+                "tournament_id": {
                     "type": "integer"
                 },
                 "week": {
