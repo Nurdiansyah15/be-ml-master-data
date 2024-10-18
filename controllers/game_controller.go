@@ -1936,12 +1936,13 @@ type TrioMidResultDto struct {
 // @Failure 400 {string} string "Invalid input"
 // @Failure 404 {string} string "Game or Trio mid not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /games/{gameID}/teams/{teamID}/trio-mid-result [put]
+// @Router /games/{gameID}/teams/{teamID}/trio-mid-results/{trioMidID} [put]
 func UpdateTrioMidResult(c *gin.Context) {
 	teamID := c.Param("teamID")
 	gameID := c.Param("gameID")
-	if teamID == "" || gameID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID and Game ID are required"})
+	trioMidID := c.Param("trioMidID")
+	if teamID == "" || gameID == "" || trioMidID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID, Game ID and Team ID are required"})
 		return
 	}
 
@@ -1956,7 +1957,7 @@ func UpdateTrioMidResult(c *gin.Context) {
 	}
 
 	trioMid := models.TrioMid{}
-	if err := config.DB.First(&trioMid, "game_id = ? AND team_id = ?", gameID, result.TeamID).Error; err != nil {
+	if err := config.DB.First(&trioMid, "game_id = ? AND team_id = ? AND trio_mid_id = ?", gameID, result.TeamID, trioMidID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "TrioMid not found"})
 		return
 	}
@@ -1983,7 +1984,7 @@ func UpdateTrioMidResult(c *gin.Context) {
 // @Failure 400 {string} string "Invalid input"
 // @Failure 404 {string} string "Game or Trio mid not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /games/{gameID}/teams/{teamID}/trio-mid-result/{trioMidID} [get]
+// @Router /games/{gameID}/teams/{teamID}/trio-mid-results/{trioMidID} [get]
 func GetTrioMidResultByID(c *gin.Context) {
 	teamID := c.Param("teamID")
 	gameID := c.Param("gameID")
@@ -2085,13 +2086,15 @@ func GetAllGameResults(c *gin.Context) {
 
 	// Count results for TrioMids
 	for _, trioMid := range trioMids {
-		switch *trioMid.EarlyResult {
-		case "win":
-			winCount++
-		case "draw":
-			drawCount++
-		case "lose":
-			loseCount++
+		if trioMid.EarlyResult != nil {
+			switch *trioMid.EarlyResult {
+			case "win":
+				winCount++
+			case "draw":
+				drawCount++
+			case "lose":
+				loseCount++
+			}
 		}
 	}
 

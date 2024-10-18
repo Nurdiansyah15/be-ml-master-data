@@ -1437,7 +1437,52 @@ paths:
       summary: Update a Goldlaner
       tags:
       - Game
-  /games/{gameID}/teams/{teamID}/trio-mid-result:
+  /games/{gameID}/teams/{teamID}/trio-mid-results/{trioMidID}:
+    get:
+      consumes:
+      - application/json
+      description: Get a TrioMid result with the given game ID, match ID, and TrioMid
+        ID
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Game ID
+        in: path
+        name: gameID
+        required: true
+        type: string
+      - description: TrioMid ID
+        in: path
+        name: trioMidID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Trio mid result found successfully
+          schema:
+            $ref: '#/definitions/models.TrioMid'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Game or Trio mid not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get a TrioMid result by ID
+      tags:
+      - Game
     put:
       consumes:
       - application/json
@@ -1482,52 +1527,6 @@ paths:
       security:
       - Bearer: []
       summary: Update a TrioMid result
-      tags:
-      - Game
-  /games/{gameID}/teams/{teamID}/trio-mid-result/{trioMidID}:
-    get:
-      consumes:
-      - application/json
-      description: Get a TrioMid result with the given game ID, match ID, and TrioMid
-        ID
-      parameters:
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: TrioMid ID
-        in: path
-        name: trioMidID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Trio mid result found successfully
-          schema:
-            $ref: '#/definitions/models.TrioMid'
-        "400":
-          description: Invalid input
-          schema:
-            type: string
-        "404":
-          description: Game or Trio mid not found
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      security:
-      - Bearer: []
-      summary: Get a TrioMid result by ID
       tags:
       - Game
   /games/{gameID}/teams/{teamID}/trio-mids:
