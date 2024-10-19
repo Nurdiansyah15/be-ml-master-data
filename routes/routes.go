@@ -99,17 +99,17 @@ func SetupRouter() *gin.Engine {
 		protected.GET("matches/:matchID/games", controllers.GetAllGames)
 		protected.GET("matches/:matchID/games/:gameID", controllers.GetGameByID)
 
-		protected.POST("matches/:matchID/games/:gameID/lord-result", controllers.AddLordResult)                 //ok
-		protected.PUT("matches/:matchID/games/:gameID/lord-result/:lordResultID", controllers.UpdateLordResult) //ok
-		protected.GET("matches/:matchID/games/:gameID/lord-result", controllers.GetAllLordResults)
-		protected.GET("matches/:matchID/games/:gameID/lord-result/:lordResultID", controllers.GetLordResultByID)
-		protected.DELETE("matches/:matchID/games/:gameID/lord-result/:lordResultID", controllers.RemoveLordResult)
+		protected.POST("matches/:matchID/games/:gameID/lord-results", controllers.AddLordResult)                 //ok
+		protected.PUT("matches/:matchID/games/:gameID/lord-results/:lordResultID", controllers.UpdateLordResult) //ok
+		protected.GET("matches/:matchID/games/:gameID/lord-results", controllers.GetAllLordResults)
+		protected.GET("matches/:matchID/games/:gameID/lord-results/:lordResultID", controllers.GetLordResultByID)
+		protected.DELETE("matches/:matchID/games/:gameID/lord-results/:lordResultID", controllers.RemoveLordResult)
 
-		protected.POST("matches/:matchID/games/:gameID/turtle-result", controllers.AddTurtleResult)
-		protected.PUT("matches/:matchID/games/:gameID/turtle-result/:turtleResultID", controllers.UpdateTurtleResult)
-		protected.GET("matches/:matchID/games/:gameID/turtle-result", controllers.GetAllTurtleResults)
-		protected.GET("matches/:matchID/games/:gameID/turtle-result/:turtleResultID", controllers.GetTurtleResultByID)
-		protected.DELETE("matches/:matchID/games/:gameID/turtle-result/:turtleResultID", controllers.RemoveTurtleResult)
+		protected.POST("matches/:matchID/games/:gameID/turtle-results", controllers.AddTurtleResult)
+		protected.PUT("matches/:matchID/games/:gameID/turtle-results/:turtleResultID", controllers.UpdateTurtleResult)
+		protected.GET("matches/:matchID/games/:gameID/turtle-results", controllers.GetAllTurtleResults)
+		protected.GET("matches/:matchID/games/:gameID/turtle-results/:turtleResultID", controllers.GetTurtleResultByID)
+		protected.DELETE("matches/:matchID/games/:gameID/turtle-results/:turtleResultID", controllers.RemoveTurtleResult)
 
 		// protected.POST("matches/:matchID/games/:gameID/explaner", controllers.AddExplaner)
 		// protected.PUT("matches/:matchID/games/:gameID/explaner/:explanerID", controllers.UpdateExplaner)
