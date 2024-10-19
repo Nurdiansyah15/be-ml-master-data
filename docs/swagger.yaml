@@ -1,5 +1,16 @@
 basePath: /api/
 definitions:
+  controllers.CoachStats:
+    properties:
+      total_game:
+        type: integer
+      total_game_win:
+        type: integer
+      total_match:
+        type: integer
+      total_match_win:
+        type: integer
+    type: object
   controllers.GameResultDto:
     properties:
       draw:
@@ -9,6 +20,17 @@ definitions:
       result:
         type: string
       win:
+        type: integer
+    type: object
+  controllers.PlayerStats:
+    properties:
+      total_game:
+        type: integer
+      total_game_win:
+        type: integer
+      total_match:
+        type: integer
+      total_match_win:
         type: integer
     type: object
   controllers.TeamStatisticsDto:
@@ -4152,6 +4174,43 @@ paths:
       summary: Get a player by ID
       tags:
       - Team
+  /players/{playerID}/tournaments/{tournamentID}/player-statistics:
+    get:
+      consumes:
+      - application/json
+      description: Get player statistics with the given player ID and tournament ID
+      parameters:
+      - description: Player ID
+        in: path
+        name: playerID
+        required: true
+        type: string
+      - description: Tournament ID
+        in: path
+        name: tournamentID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.PlayerStats'
+        "400":
+          description: Player ID and Tournament ID are required" or "Invalid Player
+            ID format" or "Invalid Tournament ID format
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get player statistics
+      tags:
+      - Team
   /players/{teamID}:
     put:
       description: Update a player in a team and save its image
@@ -4615,6 +4674,46 @@ paths:
       summary: Update a tournament
       tags:
       - Tournament
+  /tournaments/{tournamentID}/coachs/{coachID}/coach-statistics:
+    get:
+      consumes:
+      - application/json
+      description: Get coach statistics with the given coach ID and tournament ID
+      parameters:
+      - description: Coach ID
+        in: path
+        name: coachID
+        required: true
+        type: string
+      - description: Tournament ID
+        in: path
+        name: tournamentID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.CoachStats'
+        "400":
+          description: Coach ID and Tournament ID are required
+          schema:
+            type: string
+        "404":
+          description: Coach not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get coach statistics
+      tags:
+      - Team
   /tournaments/{tournamentID}/matches:
     get:
       description: Get all matches for a tournament with the given tournament ID

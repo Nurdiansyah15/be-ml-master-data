@@ -4955,6 +4955,62 @@ const docTemplate = `{
                 }
             }
         },
+        "/players/{playerID}/tournaments/{tournamentID}/player-statistics": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get player statistics with the given player ID and tournament ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Team"
+                ],
+                "summary": "Get player statistics",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Player ID",
+                        "name": "playerID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Tournament ID",
+                        "name": "tournamentID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.PlayerStats"
+                        }
+                    },
+                    "400": {
+                        "description": "Player ID and Tournament ID are required\" or \"Invalid Player ID format\" or \"Invalid Tournament ID format",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/players/{teamID}": {
             "put": {
                 "security": [
@@ -5677,6 +5733,68 @@ const docTemplate = `{
                 }
             }
         },
+        "/tournaments/{tournamentID}/coachs/{coachID}/coach-statistics": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get coach statistics with the given coach ID and tournament ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Team"
+                ],
+                "summary": "Get coach statistics",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Coach ID",
+                        "name": "coachID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Tournament ID",
+                        "name": "tournamentID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.CoachStats"
+                        }
+                    },
+                    "400": {
+                        "description": "Coach ID and Tournament ID are required",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Coach not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/tournaments/{tournamentID}/matches": {
             "get": {
                 "security": [
@@ -5837,6 +5955,23 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controllers.CoachStats": {
+            "type": "object",
+            "properties": {
+                "total_game": {
+                    "type": "integer"
+                },
+                "total_game_win": {
+                    "type": "integer"
+                },
+                "total_match": {
+                    "type": "integer"
+                },
+                "total_match_win": {
+                    "type": "integer"
+                }
+            }
+        },
         "controllers.GameResultDto": {
             "type": "object",
             "properties": {
@@ -5850,6 +5985,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "win": {
+                    "type": "integer"
+                }
+            }
+        },
+        "controllers.PlayerStats": {
+            "type": "object",
+            "properties": {
+                "total_game": {
+                    "type": "integer"
+                },
+                "total_game_win": {
+                    "type": "integer"
+                },
+                "total_match": {
+                    "type": "integer"
+                },
+                "total_match_win": {
                     "type": "integer"
                 }
             }
