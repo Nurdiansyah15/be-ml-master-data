@@ -755,17 +755,19 @@ func CoachStatistics(c *gin.Context) {
 	}{}
 	// Query untuk total_match dan total_match_win
 	matchQuery := `
-		SELECT 
-			COUNT(DISTINCT m.match_id) as total_match,
-			SUM(CASE 
-				WHEN (m.team_a_id = t.team_id AND m.team_a_score > m.team_b_score) OR 
-					 (m.team_b_id = t.team_id AND m.team_b_score > m.team_a_score) 
-				THEN 1 ELSE 0 END) as total_match_win
-		FROM coaches c
-		JOIN teams t ON c.team_id = t.team_id
-		JOIN matches m ON (m.team_a_id = t.team_id OR m.team_b_id = t.team_id)
-		WHERE c.coach_id = ? AND m.tournament_id = ?
-	`
+	SELECT 
+		COUNT(DISTINCT m.match_id) as total_match,
+		SUM(CASE 
+			WHEN (m.team_a_id = t.team_id AND m.team_a_score > m.team_b_score) OR 
+				 (m.team_b_id = t.team_id AND m.team_b_score > m.team_a_score) 
+			THEN 1 ELSE 0 END) as total_match_win
+	FROM coaches p
+	JOIN teams t ON p.team_id = t.team_id
+	JOIN coach_matches pm ON p.coach_id = pm.coach_id
+	JOIN match_team_details mtd ON pm.match_team_detail_id = mtd.match_team_detail_id
+	JOIN matches m ON mtd.match_id = m.match_id
+	WHERE p.coach_id = ? AND m.tournament_id = ?
+`
 	if err := config.DB.Raw(matchQuery, coachID, tournamentID).Scan(&matchStats).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error querying match statistics: " + err.Error()})
 		return
@@ -778,15 +780,17 @@ func CoachStatistics(c *gin.Context) {
 
 	// Query untuk total_game dan total_game_win
 	gameQuery := `
-		SELECT 
-			COUNT(DISTINCT g.game_id) as total_game,
-			SUM(CASE WHEN g.winner_team_id = t.team_id THEN 1 ELSE 0 END) as total_game_win
-		FROM coaches c
-		JOIN teams t ON c.team_id = t.team_id
-		JOIN matches m ON (m.team_a_id = t.team_id OR m.team_b_id = t.team_id)
-		JOIN games g ON m.match_id = g.match_id
-		WHERE c.coach_id = ? AND m.tournament_id = ?
-	`
+			SELECT 
+				COUNT(DISTINCT g.game_id) as total_game,
+				SUM(CASE WHEN g.winner_team_id = t.team_id THEN 1 ELSE 0 END) as total_game_win
+			FROM coaches p
+			JOIN teams t ON p.team_id = t.team_id
+			JOIN coach_matches pm ON p.coach_id = pm.coach_id
+			JOIN match_team_details mtd ON pm.match_team_detail_id = mtd.match_team_detail_id
+			JOIN matches m ON mtd.match_id = m.match_id
+			JOIN games g ON m.match_id = g.match_id
+			WHERE p.coach_id = ? AND m.tournament_id = ?
+		`
 	if err := config.DB.Raw(gameQuery, coachID, tournamentID).Scan(&gameStats).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error querying game statistics: " + err.Error()})
 		return
