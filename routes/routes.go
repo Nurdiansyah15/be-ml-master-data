@@ -55,10 +55,12 @@ func SetupRouter() *gin.Engine {
 		protected.GET("/matches/:matchID/teams", controllers.GetTeamsByMatchID)
 
 		protected.POST("matches/:matchID/teams/:teamID/players", controllers.AddPlayerMatch) //ok
+		protected.PUT("matches/:matchID/teams/:teamID/players/:playerID", controllers.UpdatePlayerMatch)
 		protected.DELETE("matches/:matchID/teams/:teamID/players/:playerID", controllers.RemovePlayerMatch)
 		protected.GET("matches/:matchID/teams/:teamID/players", controllers.GetAllPlayersMatch)
 
 		protected.POST("matches/:matchID/teams/:teamID/coaches", controllers.AddCoachMatch) //ok
+		protected.PUT("matches/:matchID/teams/:teamID/coaches/:coachID", controllers.UpdateCoachMatch)
 		protected.DELETE("matches/:matchID/teams/:teamID/coaches/:coachID", controllers.RemoveCoachMatch)
 		protected.GET("matches/:matchID/teams/:teamID/coaches", controllers.GetAllCoachesMatch)
 

@@ -33,35 +33,43 @@ type MatchResponseDto struct {
 }
 
 type PlayerMatchRequestDto struct {
-	PlayerID *uint `json:"player_id" binding:"required"`
+	PlayerID *uint   `json:"player_id" binding:"required"`
+	Role     *string `json:"role" binding:"required,oneof=goldlaner explaner roamer midlaner jungler"`
+}
+
+type UpdatePlayerMatchRequestDto struct {
+	Role *string `json:"role" binding:"required,oneof=goldlaner explaner roamer midlaner jungler"`
 }
 
 type PlayerMatchResponseDto struct {
-	PlayerMatchID     *uint `json:"player_match_id"`
-	MatchTeamDetailID *uint `json:"match_team_detail_id"`
-	PlayerID          *uint `json:"player_id"`
+	PlayerMatchID     *uint   `json:"player_match_id"`
+	MatchTeamDetailID *uint   `json:"match_team_detail_id"`
+	Role              *string `json:"role"`
 	Player            *struct {
 		PlayerID *uint   `json:"player_id"`
 		TeamID   *uint   `json:"team_id"`
 		Name     *string `json:"name"`
-		Role     *string `json:"role"`
 		Image    *string `json:"image"`
 	} `gorm:"embedded;embeddedPrefix:player_" json:"player"`
 }
 
 type CoachMatchRequestDto struct {
-	CoachID *uint `json:"coach_id" binding:"required"`
+	CoachID *uint   `json:"coach_id" binding:"required"`
+	Role    *string `json:"role" binding:"required"`
+}
+
+type UpdateCoachMatchRequestDto struct {
+	Role *string `json:"role" binding:"required"`
 }
 
 type CoachMatchResponseDto struct {
-	CoachMatchID      *uint `json:"coach_match_id"`
-	MatchTeamDetailID *uint `json:"match_team_detail_id"`
-	CoachID           *uint `json:"coach_id"`
+	CoachMatchID      *uint   `json:"coach_match_id"`
+	MatchTeamDetailID *uint   `json:"match_team_detail_id"`
+	Role              *string `json:"role"`
 	Coach             *struct {
 		CoachID *uint   `json:"coach_id"`
 		TeamID  *uint   `json:"team_id"`
 		Name    *string `json:"name"`
-		Role    *string `json:"role"`
 		Image   *string `json:"image"`
 	} `gorm:"embedded;embeddedPrefix:coach_" json:"coach"`
 }

@@ -325,6 +325,7 @@ func AddPlayerMatch(c *gin.Context) {
 	playerMatch := models.PlayerMatch{
 		MatchTeamDetailID: matchTeamDetail.MatchTeamDetailID,
 		PlayerID:          player.PlayerID,
+		Role:              *input.Role,
 	}
 
 	if err := config.DB.Create(&playerMatch).Error; err != nil {
@@ -333,6 +334,67 @@ func AddPlayerMatch(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "Player match added successfully"})
+}
+
+// @Summary Update a player match
+// @Description Update a player match with the given match ID, team ID, and player ID
+// @Accept  json
+// @Security Bearer
+// @Tags Match
+// @Produce  json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param playerID path string true "Player ID"
+// @Param playerMatch body dto.UpdatePlayerMatchRequestDto true "Player match"
+// @Success 200 {string} string "Player match updated successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found" or "Player not found in the match"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/players/{playerID} [put]
+func UpdatePlayerMatch(c *gin.Context) {
+	matchID := c.Param("matchID")
+	teamID := c.Param("teamID")
+	playerID := c.Param("playerID") // Tambahkan playerID sebagai parameter untuk identifikasi
+
+	if matchID == "" || teamID == "" || playerID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID, Team ID, and Player ID are required"})
+		return
+	}
+
+	// Cari match_team_detail berdasarkan matchID dan teamID
+	matchTeamDetail := models.MatchTeamDetail{}
+	if err := config.DB.Where("match_id = ? AND team_id = ?", matchID, teamID).First(&matchTeamDetail).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Match or team not found"})
+		return
+	}
+
+	// Cari player_match berdasarkan matchTeamDetailID dan playerID
+	playerMatch := models.PlayerMatch{}
+	if err := config.DB.Where("match_team_detail_id = ? AND player_id = ?", matchTeamDetail.MatchTeamDetailID, playerID).First(&playerMatch).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Player not found in the match"})
+		return
+	}
+
+	// Bind input JSON ke struct PlayerMatchRequestDto
+	input := dto.UpdatePlayerMatchRequestDto{}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Update data role jika ada perubahan
+	if input.Role != nil {
+		playerMatch.Role = *input.Role
+	}
+
+	// Simpan perubahan ke database
+	if err := config.DB.Save(&playerMatch).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Response sukses
+	c.JSON(http.StatusOK, gin.H{"message": "Player match updated successfully"})
 }
 
 // @Summary Remove a player match
@@ -411,9 +473,9 @@ func GetAllPlayersMatch(c *gin.Context) {
 
 	query := `
 		SELECT 
-			pm.player_match_id, pm.match_team_detail_id, pm.player_id,
+			pm.player_match_id, pm.match_team_detail_id, pm.role,
 			p.player_id AS player_player_id, p.team_id AS player_team_id, 
-			p.name AS player_name, p.role AS player_role, p.image AS player_image
+			p.name AS player_name, p.image AS player_image
 		FROM player_matches pm
 		JOIN players p ON pm.player_id = p.player_id
 		JOIN match_team_details mtd ON pm.match_team_detail_id = mtd.match_team_detail_id
@@ -483,6 +545,7 @@ func AddCoachMatch(c *gin.Context) {
 	coachMatch := models.CoachMatch{
 		MatchTeamDetailID: matchTeamDetail.MatchTeamDetailID,
 		CoachID:           coach.CoachID,
+		Role:              *input.Role,
 	}
 
 	if err := config.DB.Create(&coachMatch).Error; err != nil {
@@ -492,6 +555,67 @@ func AddCoachMatch(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{"message": "Coach match added successfully"})
 
+}
+
+// @Summary Update a coach in a match
+// @Description Update a coach in a match by specifying the match ID, team ID, and coach ID
+// @Accept  json
+// @Security Bearer
+// @Tags Match
+// @Produce  json
+// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
+// @Param coachID path string true "Coach ID"
+// @Param dto body dto.UpdateCoachMatchRequestDto true "Update coach match request"
+// @Success 200 {string} string "Coach match updated successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match or team not found" or "Coach not found in the match"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/teams/{teamID}/coaches/{coachID} [put]
+func UpdateCoachMatch(c *gin.Context) {
+	matchID := c.Param("matchID")
+	teamID := c.Param("teamID")
+	coachID := c.Param("coachID") // Gunakan coachID untuk identifikasi
+
+	if matchID == "" || teamID == "" || coachID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID, Team ID, and Coach ID are required"})
+		return
+	}
+
+	// Cari match_team_detail berdasarkan matchID dan teamID
+	matchTeamDetail := models.MatchTeamDetail{}
+	if err := config.DB.Where("match_id = ? AND team_id = ?", matchID, teamID).First(&matchTeamDetail).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Match or team not found"})
+		return
+	}
+
+	// Cari coach_match berdasarkan matchTeamDetailID dan coachID
+	coachMatch := models.CoachMatch{}
+	if err := config.DB.Where("match_team_detail_id = ? AND coach_id = ?", matchTeamDetail.MatchTeamDetailID, coachID).First(&coachMatch).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Coach not found in the match"})
+		return
+	}
+
+	// Bind input JSON ke struct UpdateCoachMatchRequestDto
+	input := dto.UpdateCoachMatchRequestDto{}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Update role atau field lain jika ada perubahan
+	if input.Role != nil {
+		coachMatch.Role = *input.Role
+	}
+
+	// Simpan perubahan ke database
+	if err := config.DB.Save(&coachMatch).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Response sukses
+	c.JSON(http.StatusOK, gin.H{"message": "Coach match updated successfully"})
 }
 
 // @Summary Remove a coach match
@@ -571,9 +695,9 @@ func GetAllCoachesMatch(c *gin.Context) {
 
 	query := `
 		SELECT 
-			cm.coach_match_id, cm.match_team_detail_id, cm.coach_id,
+			cm.coach_match_id, cm.match_team_detail_id, cm.role,
 			c.coach_id AS coach_coach_id, c.team_id AS coach_team_id, 
-			c.name AS coach_name, c.role AS coach_role, c.image AS coach_image
+			c.name AS coach_name, c.image AS coach_image
 		FROM coach_matches cm
 		JOIN coaches c ON cm.coach_id = c.coach_id
 		JOIN match_team_details mtd ON cm.match_team_detail_id = mtd.match_team_detail_id

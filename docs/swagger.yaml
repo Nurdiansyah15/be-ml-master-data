@@ -59,17 +59,15 @@ definitions:
             type: string
           name:
             type: string
-          role:
-            type: string
           team_id:
             type: integer
         type: object
-      coach_id:
-        type: integer
       coach_match_id:
         type: integer
       match_team_detail_id:
         type: integer
+      role:
+        type: string
     type: object
   dto.ExplanerRequestDto:
     properties:
@@ -492,8 +490,17 @@ definitions:
     properties:
       player_id:
         type: integer
+      role:
+        enum:
+        - goldlaner
+        - explaner
+        - roamer
+        - midlaner
+        - jungler
+        type: string
     required:
     - player_id
+    - role
     type: object
   dto.PlayerMatchResponseDto:
     properties:
@@ -507,15 +514,13 @@ definitions:
             type: string
           player_id:
             type: integer
-          role:
-            type: string
           team_id:
             type: integer
         type: object
-      player_id:
-        type: integer
       player_match_id:
         type: integer
+      role:
+        type: string
     type: object
   dto.PriorityBanRequestDto:
     properties:
@@ -700,6 +705,26 @@ definitions:
       turtle_result_id:
         type: integer
     type: object
+  dto.UpdateCoachMatchRequestDto:
+    properties:
+      role:
+        type: string
+    required:
+    - role
+    type: object
+  dto.UpdatePlayerMatchRequestDto:
+    properties:
+      role:
+        enum:
+        - goldlaner
+        - explaner
+        - roamer
+        - midlaner
+        - jungler
+        type: string
+    required:
+    - role
+    type: object
   models.Coach:
     properties:
       coach_id:
@@ -707,8 +732,6 @@ definitions:
       image:
         type: string
       name:
-        type: string
-      role:
         type: string
       team_id:
         type: integer
@@ -813,8 +836,6 @@ definitions:
         type: string
       player_id:
         type: integer
-      role:
-        type: string
       team_id:
         type: integer
     type: object
@@ -922,10 +943,6 @@ paths:
       - description: Coach name
         in: formData
         name: name
-        type: string
-      - description: Coach role
-        in: formData
-        name: role
         type: string
       - description: Coach image
         in: formData
@@ -2726,6 +2743,57 @@ paths:
       summary: Remove a coach match
       tags:
       - Match
+    put:
+      consumes:
+      - application/json
+      description: Update a coach in a match by specifying the match ID, team ID,
+        and coach ID
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Coach ID
+        in: path
+        name: coachID
+        required: true
+        type: string
+      - description: Update coach match request
+        in: body
+        name: dto
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateCoachMatchRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Coach match updated successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or team not found" or "Coach not found in the match
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update a coach in a match
+      tags:
+      - Match
   /matches/{matchID}/teams/{teamID}/flex-picks:
     get:
       consumes:
@@ -3522,6 +3590,57 @@ paths:
       summary: Remove a player match
       tags:
       - Match
+    put:
+      consumes:
+      - application/json
+      description: Update a player match with the given match ID, team ID, and player
+        ID
+      parameters:
+      - description: Match ID
+        in: path
+        name: matchID
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      - description: Player ID
+        in: path
+        name: playerID
+        required: true
+        type: string
+      - description: Player match
+        in: body
+        name: playerMatch
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdatePlayerMatchRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Player match updated successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Match or team not found" or "Player not found in the match
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update a player match
+      tags:
+      - Match
   /matches/{matchID}/teams/{teamID}/priority-bans:
     get:
       consumes:
@@ -4046,10 +4165,6 @@ paths:
         in: formData
         name: name
         type: string
-      - description: Player role
-        in: formData
-        name: role
-        type: string
       - description: Player image
         in: formData
         name: image
@@ -4244,11 +4359,6 @@ paths:
         name: name
         required: true
         type: string
-      - description: Coach role
-        in: formData
-        name: role
-        required: true
-        type: string
       - description: Coach image
         in: formData
         name: image
@@ -4329,11 +4439,6 @@ paths:
       - description: Player name
         in: formData
         name: name
-        required: true
-        type: string
-      - description: Player role
-        in: formData
-        name: role
         required: true
         type: string
       - description: Player image

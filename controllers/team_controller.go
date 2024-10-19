@@ -62,7 +62,7 @@ func CreateTeam(c *gin.Context) {
 		// Memeriksa ukuran file
 		if file.Size > 500*1024 { // 500 KB
 			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
-			return	
+			return
 		}
 
 		ext := strings.ToLower(filepath.Ext(file.Filename))
@@ -221,7 +221,6 @@ func GetTeamByID(c *gin.Context) {
 // @Security Bearer
 // @Param teamID path string true "Team ID"
 // @Param name formData string true "Player name"
-// @Param role formData string true "Player role"
 // @Param image formData file false "Player image"
 // @Success 201 {object} models.Player
 // @Failure 400 {string} string "Team ID is required" or "Name and Role are required" or "File size must not exceed 500 KB" or "Invalid file type"
@@ -236,10 +235,9 @@ func CreatePlayerInTeam(c *gin.Context) {
 
 	// Tangkap data name dan role dari form-data
 	name := c.Request.FormValue("name")
-	role := c.Request.FormValue("role")
 
-	if name == "" || role == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Name and Role are required"})
+	if name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Name are required"})
 		return
 	}
 
@@ -284,7 +282,6 @@ func CreatePlayerInTeam(c *gin.Context) {
 	// Buat objek Player
 	player := models.Player{
 		Name:   name,
-		Role:   role,
 		Image:  imagePath,
 		TeamID: team.TeamID,
 	}
@@ -307,7 +304,6 @@ func CreatePlayerInTeam(c *gin.Context) {
 // @Security Bearer
 // @Param teamID path string true "Team ID"
 // @Param name formData string true "Coach name"
-// @Param role formData string true "Coach role"
 // @Param image formData file false "Coach image"
 // @Success 201 {object} models.Coach
 // @Failure 400 {string} string "Bad request"
@@ -332,10 +328,9 @@ func CreateCoachInTeam(c *gin.Context) {
 
 	// Tangkap data name dan role dari form-data
 	name := c.Request.FormValue("name")
-	role := c.Request.FormValue("role")
 
-	if name == "" || role == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Name and Role are required"})
+	if name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Name are required"})
 		return
 	}
 
@@ -371,7 +366,6 @@ func CreateCoachInTeam(c *gin.Context) {
 	// Buat objek Coach
 	coach := models.Coach{
 		Name:   name,
-		Role:   role,
 		Image:  imagePath,
 		TeamID: team.TeamID,
 	}
@@ -393,7 +387,6 @@ func CreateCoachInTeam(c *gin.Context) {
 // @Security Bearer
 // @Param teamID path string true "Player ID"
 // @Param name formData string false "Player name"
-// @Param role formData string false "Player role"
 // @Param image formData file false "Player image"
 // @Success 200 {object} models.Player
 // @Failure 400 {string} string "Player ID is required" or "File size must not exceed 500 KB" or "Invalid file type"
@@ -415,14 +408,10 @@ func UpdatePlayerInTeam(c *gin.Context) {
 
 	// Menangkap data name dan role dari form-data
 	name := c.Request.FormValue("name")
-	role := c.Request.FormValue("role")
 
 	// Update data jika ada input baru
 	if name != "" {
 		player.Name = name
-	}
-	if role != "" {
-		player.Role = role
 	}
 
 	// Tangani file gambar jika ada
@@ -480,7 +469,6 @@ func UpdatePlayerInTeam(c *gin.Context) {
 // @Security Bearer
 // @Param coachID path string true "Coach ID"
 // @Param name formData string false "Coach name"
-// @Param role formData string false "Coach role"
 // @Param image formData file false "Coach image"
 // @Success 200 {object} models.Coach
 // @Failure 400 {string} string "Coach ID is required" or "File size must not exceed 500 KB" or "Invalid file type"
@@ -503,14 +491,10 @@ func UpdateCoachInTeam(c *gin.Context) {
 
 	// Tangkap data name dan role dari form-data
 	name := c.Request.FormValue("name")
-	role := c.Request.FormValue("role")
 
 	// Update data jika ada input baru
 	if name != "" {
 		coach.Name = name
-	}
-	if role != "" {
-		coach.Role = role
 	}
 
 	// Tangani file gambar jika ada

@@ -98,12 +98,6 @@ const docTemplate = `{
                         "in": "formData"
                     },
                     {
-                        "type": "string",
-                        "description": "Coach role",
-                        "name": "role",
-                        "in": "formData"
-                    },
-                    {
                         "type": "file",
                         "description": "Coach image",
                         "name": "image",
@@ -2752,6 +2746,82 @@ const docTemplate = `{
             }
         },
         "/matches/{matchID}/teams/{teamID}/coaches/{coachID}": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Update a coach in a match by specifying the match ID, team ID, and coach ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Match"
+                ],
+                "summary": "Update a coach in a match",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Match ID",
+                        "name": "matchID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Team ID",
+                        "name": "teamID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Coach ID",
+                        "name": "coachID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update coach match request",
+                        "name": "dto",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateCoachMatchRequestDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Coach match updated successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Match or team not found\" or \"Coach not found in the match",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
             "delete": {
                 "security": [
                     {
@@ -3960,6 +4030,82 @@ const docTemplate = `{
             }
         },
         "/matches/{matchID}/teams/{teamID}/players/{playerID}": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Update a player match with the given match ID, team ID, and player ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Match"
+                ],
+                "summary": "Update a player match",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Match ID",
+                        "name": "matchID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Team ID",
+                        "name": "teamID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Player ID",
+                        "name": "playerID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Player match",
+                        "name": "playerMatch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdatePlayerMatchRequestDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Player match updated successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Match or team not found\" or \"Player not found in the match",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
             "delete": {
                 "security": [
                     {
@@ -4839,12 +4985,6 @@ const docTemplate = `{
                         "in": "formData"
                     },
                     {
-                        "type": "string",
-                        "description": "Player role",
-                        "name": "role",
-                        "in": "formData"
-                    },
-                    {
                         "type": "file",
                         "description": "Player image",
                         "name": "image",
@@ -5147,13 +5287,6 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "Coach role",
-                        "name": "role",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
                         "type": "file",
                         "description": "Coach image",
                         "name": "image",
@@ -5277,13 +5410,6 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Player name",
                         "name": "name",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Player role",
-                        "name": "role",
                         "in": "formData",
                         "required": true
                     },
@@ -5801,22 +5927,19 @@ const docTemplate = `{
                         "name": {
                             "type": "string"
                         },
-                        "role": {
-                            "type": "string"
-                        },
                         "team_id": {
                             "type": "integer"
                         }
                     }
-                },
-                "coach_id": {
-                    "type": "integer"
                 },
                 "coach_match_id": {
                     "type": "integer"
                 },
                 "match_team_detail_id": {
                     "type": "integer"
+                },
+                "role": {
+                    "type": "string"
                 }
             }
         },
@@ -6452,11 +6575,22 @@ const docTemplate = `{
         "dto.PlayerMatchRequestDto": {
             "type": "object",
             "required": [
-                "player_id"
+                "player_id",
+                "role"
             ],
             "properties": {
                 "player_id": {
                     "type": "integer"
+                },
+                "role": {
+                    "type": "string",
+                    "enum": [
+                        "goldlaner",
+                        "explaner",
+                        "roamer",
+                        "midlaner",
+                        "jungler"
+                    ]
                 }
             }
         },
@@ -6478,19 +6612,16 @@ const docTemplate = `{
                         "player_id": {
                             "type": "integer"
                         },
-                        "role": {
-                            "type": "string"
-                        },
                         "team_id": {
                             "type": "integer"
                         }
                     }
                 },
-                "player_id": {
-                    "type": "integer"
-                },
                 "player_match_id": {
                     "type": "integer"
+                },
+                "role": {
+                    "type": "string"
                 }
             }
         },
@@ -6765,6 +6896,35 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.UpdateCoachMatchRequestDto": {
+            "type": "object",
+            "required": [
+                "role"
+            ],
+            "properties": {
+                "role": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdatePlayerMatchRequestDto": {
+            "type": "object",
+            "required": [
+                "role"
+            ],
+            "properties": {
+                "role": {
+                    "type": "string",
+                    "enum": [
+                        "goldlaner",
+                        "explaner",
+                        "roamer",
+                        "midlaner",
+                        "jungler"
+                    ]
+                }
+            }
+        },
         "models.Coach": {
             "type": "object",
             "properties": {
@@ -6775,9 +6935,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
-                },
-                "role": {
                     "type": "string"
                 },
                 "team_id": {
@@ -6937,9 +7094,6 @@ const docTemplate = `{
                 },
                 "player_id": {
                     "type": "integer"
-                },
-                "role": {
-                    "type": "string"
                 },
                 "team_id": {
                     "type": "integer"
