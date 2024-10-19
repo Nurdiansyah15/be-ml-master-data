@@ -440,8 +440,8 @@ func GetAllLordResults(c *gin.Context) {
 
 	query := `
 		SELECT 
-			l.lord_result_id, l.game_id, l.team_id, 
-			t.team_id, t.name AS team_name, t.image AS team_image,
+			l.lord_result_id, l.game_id,
+			t.team_id AS team_team_id, t.name AS team_name, t.image AS team_image,
 			l.phase, l.setup, l.initiate, l.result
 		FROM lord_results l
 		JOIN teams t ON l.team_id = t.team_id
@@ -489,8 +489,8 @@ func GetLordResultByID(c *gin.Context) {
 
 	query := `
 		SELECT 
-			l.lord_result_id, l.game_id, l.team_id, 
-			t.team_id, t.name AS team_name, t.image AS team_image,
+			l.lord_result_id, l.game_id,
+			t.team_id AS team_team_id, t.name AS team_name, t.image AS team_image,
 			l.phase, l.setup, l.initiate, l.result
 		FROM lord_results l
 		JOIN teams t ON l.team_id = t.team_id
@@ -693,8 +693,8 @@ func GetAllTurtleResults(c *gin.Context) {
 
 	query := `
 		SELECT 
-			tr.turtle_result_id, tr.game_id, tr.team_id, 
-			t.team_id AS team_id, t.name AS team_name, t.image AS team_image,
+			tr.turtle_result_id, tr.game_id,
+			t.team_id AS team_team_id, t.name AS team_name, t.image AS team_image,
 			tr.phase, tr.setup, tr.initiate, tr.result
 		FROM turtle_results tr
 		JOIN teams t ON tr.team_id = t.team_id
@@ -741,8 +741,8 @@ func GetTurtleResultByID(c *gin.Context) {
 
 	query := `
 		SELECT 
-			tr.turtle_result_id, tr.game_id, tr.team_id, 
-			t.team_id AS team_id, t.name AS team_name, t.image AS team_image,
+			tr.turtle_result_id, tr.game_id,
+			t.team_id AS team_team_id, t.name AS team_name, t.image AS team_image,
 			tr.phase, tr.setup, tr.initiate, tr.result
 		FROM turtle_results tr
 		JOIN teams t ON tr.team_id = t.team_id
@@ -2133,4 +2133,3 @@ func GetAllGameResults(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response)
 }
-

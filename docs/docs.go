@@ -6322,9 +6322,6 @@ const docTemplate = `{
                             "type": "integer"
                         }
                     }
-                },
-                "team_id": {
-                    "type": "integer"
                 }
             }
         },
@@ -6733,9 +6730,6 @@ const docTemplate = `{
                             "type": "integer"
                         }
                     }
-                },
-                "team_id": {
-                    "type": "integer"
                 },
                 "turtle_result_id": {
                     "type": "integer"

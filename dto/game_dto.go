@@ -46,12 +46,11 @@ type LordResultRequestDto struct {
 type LordResultResponseDto struct {
 	LordResultID uint `json:"lord_result_id"`
 	GameID       uint `json:"game_id"`
-	TeamID       uint `json:"team_id"`
 	Team         struct {
 		TeamID uint   `json:"team_id"`
 		Name   string `json:"name"`
 		Image  string `json:"image"`
-	}
+	} `gorm:"embedded;embeddedPrefix:team_" json:"team"`
 	Phase    string `json:"phase"`
 	Setup    string `json:"setup"`
 	Initiate string `json:"initiate"`
@@ -69,12 +68,11 @@ type TurtleResultRequestDto struct {
 type TurtleResultResponseDto struct {
 	TurtleResultID uint `json:"turtle_result_id"`
 	GameID         uint `json:"game_id"`
-	TeamID         uint `json:"team_id"`
 	Team           struct {
 		TeamID uint   `json:"team_id"`
 		Name   string `json:"name"`
 		Image  string `json:"image"`
-	} `json:"team"`
+	} `gorm:"embedded;embeddedPrefix:team_" json:"team"`
 	Phase    string `json:"phase"`
 	Setup    string `json:"setup"`
 	Initiate string `json:"initiate"`
@@ -135,12 +133,12 @@ type TrioMidRequestDto struct {
 }
 
 type TrioMidResponseDto struct {
-	TrioMidHeroID uint `json:"trio_mid_hero_id"`
-	TrioMidID   uint   `json:"trio_mid_id"`
-	GameID      uint   `json:"game_id"`
-	Role        string `json:"role"`
-	EarlyResult string `json:"early_result"`
-	Team        struct {
+	TrioMidHeroID uint   `json:"trio_mid_hero_id"`
+	TrioMidID     uint   `json:"trio_mid_id"`
+	GameID        uint   `json:"game_id"`
+	Role          string `json:"role"`
+	EarlyResult   string `json:"early_result"`
+	Team          struct {
 		TeamID uint   `json:"team_id"` // Tetap menggunakan team_id
 		Name   string `json:"name"`
 		Image  string `json:"image"`

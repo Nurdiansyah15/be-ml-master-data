@@ -443,8 +443,6 @@ definitions:
           team_id:
             type: integer
         type: object
-      team_id:
-        type: integer
     type: object
   dto.MatchRequestDto:
     properties:
@@ -719,8 +717,6 @@ definitions:
           team_id:
             type: integer
         type: object
-      team_id:
-        type: integer
       turtle_result_id:
         type: integer
     type: object

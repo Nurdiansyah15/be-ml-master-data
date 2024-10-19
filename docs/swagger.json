@@ -6316,9 +6316,6 @@
                             "type": "integer"
                         }
                     }
-                },
-                "team_id": {
-                    "type": "integer"
                 }
             }
         },
@@ -6727,9 +6724,6 @@
                             "type": "integer"
                         }
                     }
-                },
-                "team_id": {
-                    "type": "integer"
                 },
                 "turtle_result_id": {
                     "type": "integer"
