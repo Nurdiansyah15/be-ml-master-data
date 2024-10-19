@@ -1681,7 +1681,7 @@ func GetAllPriorityPicks(c *gin.Context) {
 	// Query dengan WHERE untuk filter MatchTeamDetailID
 	query := `
 		SELECT 
-			pp.priority_pick_id, pp.match_team_detail_id, pp.hero_id, 
+			pp.priority_pick_id, pp.match_team_detail_id,
 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image, 
 			pp.total, pp.role, pp.pick_rate
 		FROM priority_picks pp
@@ -1726,7 +1726,7 @@ func GetPriorityPickByID(c *gin.Context) {
 
 	query := `
 		SELECT 
-			pp.priority_pick_id, pp.match_team_detail_id, pp.hero_id, 
+			pp.priority_pick_id, pp.match_team_detail_id,
 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image, 
 			pp.total, pp.role, pp.pick_rate
 		FROM priority_picks pp
@@ -1968,7 +1968,7 @@ func GetAllFlexPicks(c *gin.Context) {
 	// Query dengan WHERE untuk filter MatchTeamDetailID
 	query := `
 		SELECT 
-			fp.flex_pick_id, fp.match_team_detail_id, fp.hero_id, 
+			fp.flex_pick_id, fp.match_team_detail_id,
 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image, 
 			fp.total, fp.role, fp.pick_rate
 		FROM flex_picks fp
@@ -2013,7 +2013,7 @@ func GetFlexPickByID(c *gin.Context) {
 
 	query := `
 		SELECT 
-			fp.flex_pick_id, fp.match_team_detail_id, fp.hero_id, 
+			fp.flex_pick_id, fp.match_team_detail_id,
 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image, 
 			fp.total, fp.role, fp.pick_rate
 		FROM flex_picks fp
@@ -2259,7 +2259,7 @@ func GetAllPriorityBans(c *gin.Context) {
 	// Query dengan WHERE untuk filter MatchTeamDetailID
 	query := `
 		SELECT 
-			pb.priority_ban_id, pb.match_team_detail_id, pb.hero_id, 
+			pb.priority_ban_id, pb.match_team_detail_id, 
 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image, 
 			pb.total, pb.role, pb.ban_rate
 		FROM priority_bans pb
@@ -2305,7 +2305,7 @@ func GetPriorityBanByID(c *gin.Context) {
 
 	query := `
 		SELECT 
-			pb.priority_ban_id, pb.match_team_detail_id, pb.hero_id, 
+			pb.priority_ban_id, pb.match_team_detail_id, 
 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image, 
 			pb.total, pb.role, pb.ban_rate
 		FROM priority_bans pb

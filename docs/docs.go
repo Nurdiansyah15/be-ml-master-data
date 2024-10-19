@@ -5842,10 +5842,11 @@ const docTemplate = `{
                 "role": {
                     "type": "string",
                     "enum": [
-                        "Roam/Exp",
-                        "Jung/Gold",
-                        "Jung/Mid",
-                        "Jung/Exp"
+                        "gold",
+                        "exp",
+                        "roam",
+                        "mid",
+                        "jungler"
                     ]
                 },
                 "total": {
@@ -5872,9 +5873,6 @@ const docTemplate = `{
                             "type": "string"
                         }
                     }
-                },
-                "hero_id": {
-                    "type": "integer"
                 },
                 "match_team_detail_id": {
                     "type": "integer"
@@ -6488,11 +6486,11 @@ const docTemplate = `{
                 "role": {
                     "type": "string",
                     "enum": [
-                        "Gold",
-                        "Exp",
-                        "Roam",
-                        "Mid",
-                        "Jung"
+                        "gold",
+                        "exp",
+                        "roam",
+                        "mid",
+                        "jungler"
                     ]
                 },
                 "total": {
@@ -6519,9 +6517,6 @@ const docTemplate = `{
                             "type": "string"
                         }
                     }
-                },
-                "hero_id": {
-                    "type": "integer"
                 },
                 "match_team_detail_id": {
                     "type": "integer"
@@ -6555,11 +6550,11 @@ const docTemplate = `{
                 "role": {
                     "type": "string",
                     "enum": [
-                        "Gold",
-                        "Exp",
-                        "Roam",
-                        "Mid",
-                        "Jung"
+                        "gold",
+                        "exp",
+                        "roam",
+                        "mid",
+                        "jungler"
                     ]
                 },
                 "total": {
@@ -6583,9 +6578,6 @@ const docTemplate = `{
                             "type": "string"
                         }
                     }
-                },
-                "hero_id": {
-                    "type": "integer"
                 },
                 "match_team_detail_id": {
                     "type": "integer"

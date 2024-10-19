@@ -5836,10 +5836,11 @@
                 "role": {
                     "type": "string",
                     "enum": [
-                        "Roam/Exp",
-                        "Jung/Gold",
-                        "Jung/Mid",
-                        "Jung/Exp"
+                        "gold",
+                        "exp",
+                        "roam",
+                        "mid",
+                        "jungler"
                     ]
                 },
                 "total": {
@@ -5866,9 +5867,6 @@
                             "type": "string"
                         }
                     }
-                },
-                "hero_id": {
-                    "type": "integer"
                 },
                 "match_team_detail_id": {
                     "type": "integer"
@@ -6482,11 +6480,11 @@
                 "role": {
                     "type": "string",
                     "enum": [
-                        "Gold",
-                        "Exp",
-                        "Roam",
-                        "Mid",
-                        "Jung"
+                        "gold",
+                        "exp",
+                        "roam",
+                        "mid",
+                        "jungler"
                     ]
                 },
                 "total": {
@@ -6513,9 +6511,6 @@
                             "type": "string"
                         }
                     }
-                },
-                "hero_id": {
-                    "type": "integer"
                 },
                 "match_team_detail_id": {
                     "type": "integer"
@@ -6549,11 +6544,11 @@
                 "role": {
                     "type": "string",
                     "enum": [
-                        "Gold",
-                        "Exp",
-                        "Roam",
-                        "Mid",
-                        "Jung"
+                        "gold",
+                        "exp",
+                        "roam",
+                        "mid",
+                        "jungler"
                     ]
                 },
                 "total": {
@@ -6577,9 +6572,6 @@
                             "type": "string"
                         }
                     }
-                },
-                "hero_id": {
-                    "type": "integer"
                 },
                 "match_team_detail_id": {
                     "type": "integer"

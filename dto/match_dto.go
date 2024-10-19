@@ -131,19 +131,18 @@ type HeroBanResponseDto struct {
 type PriorityPickRequestDto struct {
 	HeroID   *uint    `json:"hero_id" binding:"required"`
 	Total    *int     `json:"total" binding:"required"`
-	Role     *string  `json:"role" binding:"required,oneof=Gold Exp Roam Mid Jung"`
+	Role     *string  `json:"role" binding:"required,oneof=gold exp roam mid jungler"`
 	PickRate *float64 `json:"pick_rate" binding:"required"`
 }
 
 type PriorityPickResponseDto struct {
 	PriorityPickID    *uint `json:"priority_pick_id"`
 	MatchTeamDetailID *uint `json:"match_team_detail_id"`
-	HeroID            *uint `json:"hero_id"`
 	Hero              *struct {
 		HeroID *uint   `json:"hero_id"`
 		Name   *string `json:"name"`
 		Image  *string `json:"image"`
-	}
+	} `gorm:"embedded;embeddedPrefix:hero_" json:"hero"`
 	Total    *int     `json:"total"`
 	Role     *string  `json:"role"`
 	PickRate *float64 `json:"pick_rate"`
@@ -152,19 +151,18 @@ type PriorityPickResponseDto struct {
 type FlexPickRequestDto struct {
 	HeroID   *uint    `json:"hero_id" binding:"required"`
 	Total    *int     `json:"total" binding:"required"`
-	Role     *string  `json:"role" binding:"required,oneof=Roam/Exp Jung/Gold Jung/Mid Jung/Exp"`
+	Role     *string  `json:"role" binding:"required,oneof=gold exp roam mid jungler"`
 	PickRate *float64 `json:"pick_rate" binding:"required"`
 }
 
 type FlexPickResponseDto struct {
 	FlexPickID        *uint `json:"flex_pick_id"`
 	MatchTeamDetailID *uint `json:"match_team_detail_id"`
-	HeroID            *uint `json:"hero_id"`
 	Hero              *struct {
 		HeroID *uint   `json:"hero_id"`
 		Name   *string `json:"name"`
 		Image  *string `json:"image"`
-	}
+	} `gorm:"embedded;embeddedPrefix:hero_" json:"hero"`
 	Total    *int     `json:"total"`
 	Role     *string  `json:"role"`
 	PickRate *float64 `json:"pick_rate"`
@@ -173,19 +171,18 @@ type FlexPickResponseDto struct {
 type PriorityBanRequestDto struct {
 	HeroID  *uint    `json:"hero_id" binding:"required"`
 	Total   *int     `json:"total" binding:"required"`
-	Role    *string  `json:"role" binding:"required,oneof=Gold Exp Roam Mid Jung"`
+	Role    *string  `json:"role" binding:"required,oneof=gold exp roam mid jungler"`
 	BanRate *float64 `json:"ban_rate" binding:"required"`
 }
 
 type PriorityBanResponseDto struct {
 	PriorityBanID     *uint `json:"priority_ban_id"`
 	MatchTeamDetailID *uint `json:"match_team_detail_id"`
-	HeroID            *uint `json:"hero_id"`
 	Hero              *struct {
 		HeroID *uint   `json:"hero_id"`
 		Name   *string `json:"name"`
 		Image  *string `json:"image"`
-	}
+	} `gorm:"embedded;embeddedPrefix:hero_" json:"hero"`
 	Total   *int     `json:"total"`
 	Role    *string  `json:"role"`
 	BanRate *float64 `json:"ban_rate"`

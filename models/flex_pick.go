@@ -5,6 +5,6 @@ type FlexPick struct {
 	MatchTeamDetailID uint    `json:"match_team_detail_id"`
 	HeroID            uint    `json:"hero_id"`
 	Total             int     `json:"total"`
-	Role              string  `gorm:"type:enum('Roam/Exp', 'Jung/Gold', 'Jung/Mid', 'Jung/Exp');" json:"role"`
+	Role              string  `gorm:"type:enum('gold', 'exp', 'roam', 'mid', 'jungler');" json:"role"`
 	PickRate          float64 `json:"pick_rate"`
 }

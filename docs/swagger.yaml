@@ -119,10 +119,11 @@ definitions:
         type: number
       role:
         enum:
-        - Roam/Exp
-        - Jung/Gold
-        - Jung/Mid
-        - Jung/Exp
+        - gold
+        - exp
+        - roam
+        - mid
+        - jungler
         type: string
       total:
         type: integer
@@ -145,8 +146,6 @@ definitions:
           name:
             type: string
         type: object
-      hero_id:
-        type: integer
       match_team_detail_id:
         type: integer
       pick_rate:
@@ -548,11 +547,11 @@ definitions:
         type: integer
       role:
         enum:
-        - Gold
-        - Exp
-        - Roam
-        - Mid
-        - Jung
+        - gold
+        - exp
+        - roam
+        - mid
+        - jungler
         type: string
       total:
         type: integer
@@ -575,8 +574,6 @@ definitions:
           name:
             type: string
         type: object
-      hero_id:
-        type: integer
       match_team_detail_id:
         type: integer
       priority_ban_id:
@@ -594,11 +591,11 @@ definitions:
         type: number
       role:
         enum:
-        - Gold
-        - Exp
-        - Roam
-        - Mid
-        - Jung
+        - gold
+        - exp
+        - roam
+        - mid
+        - jungler
         type: string
       total:
         type: integer
@@ -619,8 +616,6 @@ definitions:
           name:
             type: string
         type: object
-      hero_id:
-        type: integer
       match_team_detail_id:
         type: integer
       pick_rate:
