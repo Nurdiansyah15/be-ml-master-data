@@ -155,26 +155,6 @@ definitions:
       total:
         type: integer
     type: object
-  dto.GameRequestDto:
-    properties:
-      first_pick_team_id:
-        type: integer
-      full_draft_image:
-        type: string
-      game_number:
-        type: integer
-      second_pick_team_id:
-        type: integer
-      video_link:
-        type: string
-      winner_team_id:
-        type: integer
-    required:
-    - first_pick_team_id
-    - game_number
-    - second_pick_team_id
-    - winner_team_id
-    type: object
   dto.GameResponseDto:
     properties:
       first_pick_team_id:
@@ -2002,20 +1982,44 @@ paths:
       - Game
     post:
       consumes:
-      - application/json
-      description: Create a new game with the given match ID and additional information
+      - multipart/form-data
+      description: Create a new game for the specified match with additional information
+        including the first pick team ID, second pick team ID, winner team ID, game
+        number, video link, and optionally a full draft image.
       parameters:
       - description: Match ID
         in: path
         name: matchID
         required: true
         type: string
-      - description: Game data
-        in: body
-        name: game
+      - description: First Pick Team ID
+        in: formData
+        name: first_pick_team_id
         required: true
-        schema:
-          $ref: '#/definitions/dto.GameRequestDto'
+        type: integer
+      - description: Second Pick Team ID
+        in: formData
+        name: second_pick_team_id
+        required: true
+        type: integer
+      - description: Winner Team ID
+        in: formData
+        name: winner_team_id
+        required: true
+        type: integer
+      - description: Game Number
+        in: formData
+        name: game_number
+        required: true
+        type: integer
+      - description: Video Link
+        in: formData
+        name: video_link
+        type: string
+      - description: Full Draft Image
+        in: formData
+        name: full_draft_image
+        type: file
       produces:
       - application/json
       responses:
@@ -2024,7 +2028,7 @@ paths:
           schema:
             $ref: '#/definitions/models.Game'
         "400":
-          description: Invalid input
+          description: Bad Request
           schema:
             type: string
         "404":
@@ -2082,7 +2086,7 @@ paths:
       - Game
     put:
       consumes:
-      - application/json
+      - multipart/form-data
       description: Update a game with the given game ID and match ID with the given
         information
       parameters:
@@ -2096,12 +2100,30 @@ paths:
         name: matchID
         required: true
         type: string
-      - description: Game data
-        in: body
-        name: game
-        required: true
-        schema:
-          $ref: '#/definitions/dto.GameRequestDto'
+      - description: First Pick Team ID
+        in: formData
+        name: first_pick_team_id
+        type: integer
+      - description: Second Pick Team ID
+        in: formData
+        name: second_pick_team_id
+        type: integer
+      - description: Winner Team ID
+        in: formData
+        name: winner_team_id
+        type: integer
+      - description: Game Number
+        in: formData
+        name: game_number
+        type: integer
+      - description: Video Link
+        in: formData
+        name: video_link
+        type: string
+      - description: Full Draft Image
+        in: formData
+        name: full_draft_image
+        type: file
       produces:
       - application/json
       responses:
@@ -2110,11 +2132,11 @@ paths:
           schema:
             $ref: '#/definitions/models.Game'
         "400":
-          description: Invalid input
+          description: Bad Request
           schema:
             type: string
         "404":
-          description: Game not found
+          description: Match or game not found
           schema:
             type: string
         "500":

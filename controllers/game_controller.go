@@ -1,11 +1,17 @@
 package controllers
 
 import (
+	"fmt"
+	"io"
 	"ml-master-data/config"
 	"ml-master-data/dto"
 	"ml-master-data/models"
+	"ml-master-data/utils"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -13,14 +19,19 @@ import (
 
 // @Tags Game
 // @Summary Create a new game
-// @Description Create a new game with the given match ID and additional information
-// @Accept  json
-// @Produce  json
+// @Description Create a new game for the specified match with additional information including the first pick team ID, second pick team ID, winner team ID, game number, video link, and optionally a full draft image.
+// @Accept multipart/form-data
+// @Produce json
 // @Security Bearer
 // @Param matchID path string true "Match ID"
-// @Param game body dto.GameRequestDto true "Game data"
+// @Param first_pick_team_id formData integer true "First Pick Team ID"
+// @Param second_pick_team_id formData integer true "Second Pick Team ID"
+// @Param winner_team_id formData integer true "Winner Team ID"
+// @Param game_number formData integer true "Game Number"
+// @Param video_link formData string false "Video Link"
+// @Param full_draft_image formData file false "Full Draft Image"
 // @Success 201 {object} models.Game "Game created successfully"
-// @Failure 400 {string} string "Invalid input"
+// @Failure 400 {string} string "Bad Request"
 // @Failure 404 {string} string "Match not found"
 // @Failure 500 {string} string "Internal server error"
 // @Router /matches/{matchID}/games [post]
@@ -31,19 +42,97 @@ func CreateGame(c *gin.Context) {
 		return
 	}
 
+	// Cari match berdasarkan ID
 	var match models.Match
 	if err := config.DB.First(&match, matchID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
 		return
 	}
 
-	input := dto.GameRequestDto{}
-
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// Parse form data
+	if err := c.Request.ParseMultipartForm(10 << 20); err != nil { // 10 MB max memory
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to parse multipart form"})
 		return
 	}
 
+	// Inisialisasi struct untuk menerima input
+	input := dto.GameRequestDto{}
+
+	// Mengisi struct dari form data dengan penanganan error
+	firstPickTeamID, err := strconv.ParseUint(c.Request.FormValue("first_pick_team_id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid first_pick_team_id"})
+		return
+	}
+	input.FirstPickTeamID = uint(firstPickTeamID)
+
+	secondPickTeamID, err := strconv.ParseUint(c.Request.FormValue("second_pick_team_id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid second_pick_team_id"})
+		return
+	}
+	input.SecondPickTeamID = uint(secondPickTeamID)
+
+	winnerTeamID, err := strconv.ParseUint(c.Request.FormValue("winner_team_id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid winner_team_id"})
+		return
+	}
+	input.WinnerTeamID = uint(winnerTeamID)
+
+	gameNumber, err := strconv.Atoi(c.Request.FormValue("game_number"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid game_number"})
+		return
+	}
+	input.GameNumber = gameNumber
+
+	input.VideoLink = c.Request.FormValue("video_link")
+
+	// Validasi input
+	if input.FirstPickTeamID == 0 || input.SecondPickTeamID == 0 || input.WinnerTeamID == 0 || input.GameNumber == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing required fields"})
+		return
+	}
+
+	var fullDraftImagePath string
+
+	// Cek apakah ada file gambar
+	file, header, err := c.Request.FormFile("full_draft_image")
+	if err == nil {
+		// Memeriksa ukuran file
+		if header.Size > 500*1024 { // 500 KB
+			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
+			return
+		}
+
+		ext := strings.ToLower(filepath.Ext(header.Filename))
+		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file type"})
+			return
+		}
+
+		// Simpan file gambar
+		newFileName := utils.GenerateUniqueFileName("draft") + ext
+		fullDraftImagePath = fmt.Sprintf("public/images/%s", newFileName)
+
+		dst, err := os.Create(fullDraftImagePath)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create file"})
+			return
+		}
+		defer dst.Close()
+
+		if _, err = io.Copy(dst, file); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
+			return
+		}
+
+		// Atur path lengkap dengan BASE_URL
+		fullDraftImagePath = os.Getenv("BASE_URL") + "/" + fullDraftImagePath
+	}
+
+	// Buat instance Game
 	game := models.Game{
 		MatchID:          match.MatchID,
 		FirstPickTeamID:  input.FirstPickTeamID,
@@ -51,29 +140,36 @@ func CreateGame(c *gin.Context) {
 		WinnerTeamID:     input.WinnerTeamID,
 		GameNumber:       input.GameNumber,
 		VideoLink:        input.VideoLink,
-		FullDraftImage:   input.FullDraftImage,
+		FullDraftImage:   fullDraftImagePath, // Path file atau kosong jika tidak ada gambar
 	}
 
+	// Simpan game ke database
 	if err := config.DB.Create(&game).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	// Kembalikan response sukses
 	c.JSON(http.StatusCreated, game)
 }
 
 // @Tags Game
 // @Summary Update a game
 // @Description Update a game with the given game ID and match ID with the given information
-// @Accept  json
-// @Produce  json
+// @Accept multipart/form-data
+// @Produce json
 // @Security Bearer
 // @Param gameID path string true "Game ID"
 // @Param matchID path string true "Match ID"
-// @Param game body dto.GameRequestDto true "Game data"
+// @Param first_pick_team_id formData integer false "First Pick Team ID"
+// @Param second_pick_team_id formData integer false "Second Pick Team ID"
+// @Param winner_team_id formData integer false "Winner Team ID"
+// @Param game_number formData integer false "Game Number"
+// @Param video_link formData string false "Video Link"
+// @Param full_draft_image formData file false "Full Draft Image"
 // @Success 200 {object} models.Game "Game updated successfully"
-// @Failure 400 {string} string "Invalid input"
-// @Failure 404 {string} string "Game not found"
+// @Failure 400 {string} string "Bad Request"
+// @Failure 404 {string} string "Match or game not found"
 // @Failure 500 {string} string "Internal server error"
 // @Router /matches/{matchID}/games/{gameID} [put]
 func UpdateGame(c *gin.Context) {
@@ -97,37 +193,81 @@ func UpdateGame(c *gin.Context) {
 		return
 	}
 
-	input := dto.GameRequestDto{}
-
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// Parse form data
+	if err := c.Request.ParseMultipartForm(10 << 20); err != nil { // 10 MB max memory
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to parse multipart form"})
 		return
 	}
 
-	if input.FirstPickTeamID != 0 {
-		game.FirstPickTeamID = input.FirstPickTeamID
-	}
-	if input.SecondPickTeamID != 0 {
-		game.SecondPickTeamID = input.SecondPickTeamID
-	}
-	if input.WinnerTeamID != 0 {
-		game.WinnerTeamID = input.WinnerTeamID
-	}
-	if input.GameNumber != 0 {
-		game.GameNumber = input.GameNumber
-	}
-	if input.VideoLink != "" {
-		game.VideoLink = input.VideoLink
-	}
-	if input.FullDraftImage != "" {
-		game.FullDraftImage = input.FullDraftImage
+	// Tangani file gambar jika ada
+	file, header, err := c.Request.FormFile("full_draft_image")
+	if err == nil {
+		// Memeriksa ukuran file
+		if header.Size > 500*1024 { // 500 KB
+			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
+			return
+		}
+
+		ext := strings.ToLower(filepath.Ext(header.Filename))
+		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file type"})
+			return
+		}
+
+		// Jika ada gambar sebelumnya, hapus
+		if game.FullDraftImage != "" {
+			oldImagePath := strings.Replace(game.FullDraftImage, os.Getenv("BASE_URL")+"/", "", 1)
+			if _, err := os.Stat(oldImagePath); err == nil {
+				if err := os.Remove(oldImagePath); err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove old image"})
+					return
+				}
+			}
+		}
+
+		// Simpan gambar baru
+		newFileName := utils.GenerateUniqueFileName("draft") + ext
+		newImagePath := fmt.Sprintf("public/images/%s", newFileName)
+
+		dst, err := os.Create(newImagePath)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create file"})
+			return
+		}
+		defer dst.Close()
+
+		if _, err = io.Copy(dst, file); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save new image"})
+			return
+		}
+
+		game.FullDraftImage = os.Getenv("BASE_URL") + "/" + newImagePath
 	}
 
+	// Update game fields if provided in the form
+	if firstPickTeamID, err := strconv.ParseUint(c.Request.FormValue("first_pick_team_id"), 10, 32); err == nil {
+		game.FirstPickTeamID = uint(firstPickTeamID)
+	}
+	if secondPickTeamID, err := strconv.ParseUint(c.Request.FormValue("second_pick_team_id"), 10, 32); err == nil {
+		game.SecondPickTeamID = uint(secondPickTeamID)
+	}
+	if winnerTeamID, err := strconv.ParseUint(c.Request.FormValue("winner_team_id"), 10, 32); err == nil {
+		game.WinnerTeamID = uint(winnerTeamID)
+	}
+	if gameNumber, err := strconv.Atoi(c.Request.FormValue("game_number")); err == nil {
+		game.GameNumber = gameNumber
+	}
+	if videoLink := c.Request.FormValue("video_link"); videoLink != "" {
+		game.VideoLink = videoLink
+	}
+
+	// Simpan perubahan ke database
 	if err := config.DB.Save(&game).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	// Kembalikan response sukses
 	c.JSON(http.StatusOK, game)
 }
 

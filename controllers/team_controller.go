@@ -62,7 +62,7 @@ func CreateTeam(c *gin.Context) {
 		// Memeriksa ukuran file
 		if file.Size > 500*1024 { // 500 KB
 			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
-			return
+			return	
 		}
 
 		ext := strings.ToLower(filepath.Ext(file.Filename))

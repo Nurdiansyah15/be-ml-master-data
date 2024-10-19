@@ -1701,9 +1701,9 @@ const docTemplate = `{
                         "Bearer": []
                     }
                 ],
-                "description": "Create a new game with the given match ID and additional information",
+                "description": "Create a new game for the specified match with additional information including the first pick team ID, second pick team ID, winner team ID, game number, video link, and optionally a full draft image.",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -1721,13 +1721,44 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Game data",
-                        "name": "game",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.GameRequestDto"
-                        }
+                        "type": "integer",
+                        "description": "First Pick Team ID",
+                        "name": "first_pick_team_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Second Pick Team ID",
+                        "name": "second_pick_team_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Winner Team ID",
+                        "name": "winner_team_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Game Number",
+                        "name": "game_number",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Video Link",
+                        "name": "video_link",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "file",
+                        "description": "Full Draft Image",
+                        "name": "full_draft_image",
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -1738,7 +1769,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Invalid input",
+                        "description": "Bad Request",
                         "schema": {
                             "type": "string"
                         }
@@ -1827,7 +1858,7 @@ const docTemplate = `{
                 ],
                 "description": "Update a game with the given game ID and match ID with the given information",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -1852,13 +1883,40 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Game data",
-                        "name": "game",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.GameRequestDto"
-                        }
+                        "type": "integer",
+                        "description": "First Pick Team ID",
+                        "name": "first_pick_team_id",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Second Pick Team ID",
+                        "name": "second_pick_team_id",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Winner Team ID",
+                        "name": "winner_team_id",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Game Number",
+                        "name": "game_number",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Video Link",
+                        "name": "video_link",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "file",
+                        "description": "Full Draft Image",
+                        "name": "full_draft_image",
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -1869,13 +1927,13 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Invalid input",
+                        "description": "Bad Request",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "404": {
-                        "description": "Game not found",
+                        "description": "Match or game not found",
                         "schema": {
                             "type": "string"
                         }
@@ -5884,35 +5942,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.GameRequestDto": {
-            "type": "object",
-            "required": [
-                "first_pick_team_id",
-                "game_number",
-                "second_pick_team_id",
-                "winner_team_id"
-            ],
-            "properties": {
-                "first_pick_team_id": {
-                    "type": "integer"
-                },
-                "full_draft_image": {
-                    "type": "string"
-                },
-                "game_number": {
-                    "type": "integer"
-                },
-                "second_pick_team_id": {
-                    "type": "integer"
-                },
-                "video_link": {
-                    "type": "string"
-                },
-                "winner_team_id": {
                     "type": "integer"
                 }
             }
