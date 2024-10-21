@@ -6951,11 +6951,11 @@
             "required": [
                 "date",
                 "day",
+                "stage",
                 "team_a_id",
                 "team_a_score",
                 "team_b_id",
-                "team_b_score",
-                "week"
+                "team_b_score"
             ],
             "properties": {
                 "date": {
@@ -6963,6 +6963,9 @@
                 },
                 "day": {
                     "type": "integer"
+                },
+                "stage": {
+                    "type": "string"
                 },
                 "team_a_id": {
                     "type": "integer"
@@ -6974,9 +6977,6 @@
                     "type": "integer"
                 },
                 "team_b_score": {
-                    "type": "integer"
-                },
-                "week": {
                     "type": "integer"
                 }
             }
@@ -6992,6 +6992,9 @@
                 },
                 "match_id": {
                     "type": "integer"
+                },
+                "stage": {
+                    "type": "string"
                 },
                 "team_a": {
                     "type": "object",
@@ -7034,9 +7037,6 @@
                     "type": "integer"
                 },
                 "tournament_id": {
-                    "type": "integer"
-                },
-                "week": {
                     "type": "integer"
                 }
             }
@@ -7532,6 +7532,9 @@
                 "match_id": {
                     "type": "integer"
                 },
+                "stage": {
+                    "type": "string"
+                },
                 "team_a_id": {
                     "type": "integer"
                 },
@@ -7545,9 +7548,6 @@
                     "type": "integer"
                 },
                 "tournament_id": {
-                    "type": "integer"
-                },
-                "week": {
                     "type": "integer"
                 }
             }

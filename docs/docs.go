@@ -6957,11 +6957,11 @@ const docTemplate = `{
             "required": [
                 "date",
                 "day",
+                "stage",
                 "team_a_id",
                 "team_a_score",
                 "team_b_id",
-                "team_b_score",
-                "week"
+                "team_b_score"
             ],
             "properties": {
                 "date": {
@@ -6969,6 +6969,9 @@ const docTemplate = `{
                 },
                 "day": {
                     "type": "integer"
+                },
+                "stage": {
+                    "type": "string"
                 },
                 "team_a_id": {
                     "type": "integer"
@@ -6980,9 +6983,6 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "team_b_score": {
-                    "type": "integer"
-                },
-                "week": {
                     "type": "integer"
                 }
             }
@@ -6998,6 +6998,9 @@ const docTemplate = `{
                 },
                 "match_id": {
                     "type": "integer"
+                },
+                "stage": {
+                    "type": "string"
                 },
                 "team_a": {
                     "type": "object",
@@ -7040,9 +7043,6 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "tournament_id": {
-                    "type": "integer"
-                },
-                "week": {
                     "type": "integer"
                 }
             }
@@ -7538,6 +7538,9 @@ const docTemplate = `{
                 "match_id": {
                     "type": "integer"
                 },
+                "stage": {
+                    "type": "string"
+                },
                 "team_a_id": {
                     "type": "integer"
                 },
@@ -7551,9 +7554,6 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "tournament_id": {
-                    "type": "integer"
-                },
-                "week": {
                     "type": "integer"
                 }
             }
