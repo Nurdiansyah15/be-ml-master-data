@@ -62,7 +62,7 @@ func DeleteGame(db *gorm.DB, game models.Game) error {
 
 	// update heropick
 	var heroPickGames []models.HeroPickGame
-	if err := tx.Where("game_number = ?", game.GameNumber).Find(&heroPickGames).Error; err != nil {
+	if err := tx.Where("game_number = ? AND game_id = ?", game.GameNumber, game.GameID).Find(&heroPickGames).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -76,27 +76,24 @@ func DeleteGame(db *gorm.DB, game models.Game) error {
 				return err
 			}
 
-			fmt.Println("heroPick", heroPick)
-
 			heroPick.Total = heroPick.Total - 1
 			if err := tx.Save(&heroPick).Error; err != nil {
 				tx.Rollback()
 				return err
 			}
 
-			fmt.Println("heroPick after", heroPick)
 		}
 	}
 
 	// Hapus HeroPickGame terkait
-	if err := tx.Where("game_number = ?", game.GameNumber).Delete(&models.HeroPickGame{}).Error; err != nil {
+	if err := tx.Where("game_number = ? AND game_id = ?", game.GameNumber, game.GameID).Delete(&models.HeroPickGame{}).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
 
 	// update heroban
 	var heroBanGames []models.HeroBanGame
-	if err := tx.Where("game_number = ?", game.GameNumber).Find(&heroBanGames).Error; err != nil {
+	if err := tx.Where("game_number = ? AND game_id = ?", game.GameNumber, game.GameID).Find(&heroBanGames).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -119,7 +116,7 @@ func DeleteGame(db *gorm.DB, game models.Game) error {
 	}
 
 	// Hapus HeroBanGame terkait
-	if err := tx.Where("game_number = ?", game.GameNumber).Delete(&models.HeroBanGame{}).Error; err != nil {
+	if err := tx.Where("game_number = ? AND game_id = ?", game.GameNumber, game.GameID).Delete(&models.HeroBanGame{}).Error; err != nil {
 		tx.Rollback()
 		return err
 	}

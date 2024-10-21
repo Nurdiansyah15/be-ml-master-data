@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"ml-master-data/config"
 	"ml-master-data/dto"
 	"ml-master-data/models"
@@ -60,8 +59,6 @@ func Login(c *gin.Context) {
 // @Router /me [get]
 func Me(c *gin.Context) {
 	userCtx, _ := c.Get("user")
-
-	fmt.Println(userCtx)
 
 	var user models.User
 	user.UserID = userCtx.(models.User).UserID

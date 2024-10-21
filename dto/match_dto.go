@@ -80,6 +80,7 @@ type HeroPickRequestDto struct {
 	SecondPhase  *int  `json:"second_phase" binding:"required"`
 	Total        *int  `json:"total" binding:"required"`
 	HeroPickGame []struct {
+		GameID     *uint `json:"game_id" binding:"required"`
 		GameNumber *int  `json:"game_number" binding:"required"`
 		IsPicked   *bool `json:"is_picked" binding:"required"`
 	} `json:"hero_pick_game"`
@@ -100,6 +101,7 @@ type HeroPickResponseDto struct {
 	HeroPickGame []struct {
 		HeroPickGameID uint `json:"hero_pick_game_id"`
 		HeroPickID     uint `json:"hero_pick_id"`
+		GameID         uint `json:"game_id"`
 		GameNumber     int  `json:"game_number"`
 		IsPicked       bool `json:"is_picked"`
 	} `json:"hero_pick_game"`
@@ -111,6 +113,7 @@ type HeroBanRequestDto struct {
 	SecondPhase *int  `json:"second_phase" binding:"required"`
 	Total       *int  `json:"total" binding:"required"`
 	HeroBanGame []struct {
+		GameID     *uint `json:"game_id" binding:"required"`
 		GameNumber *int  `json:"game_number" binding:"required"`
 		IsBanned   *bool `json:"is_banned" binding:"required"`
 	} `json:"hero_ban_game"`
@@ -131,6 +134,7 @@ type HeroBanResponseDto struct {
 	HeroBanGame []struct {
 		HeroBanGameID uint `json:"hero_ban_game_id"`
 		HeroBanID     uint `json:"hero_ban_id"`
+		GameID        uint `json:"game_id"`
 		GameNumber    int  `json:"game_number"`
 		IsBanned      bool `json:"is_banned"`
 	} `json:"hero_ban_game"`

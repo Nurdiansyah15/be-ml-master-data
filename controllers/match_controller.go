@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"ml-master-data/config"
 	"ml-master-data/dto"
 	"ml-master-data/models"
@@ -822,6 +821,7 @@ func AddHeroPick(c *gin.Context) {
 	for _, game := range input.HeroPickGame {
 		heroPickGame := models.HeroPickGame{
 			HeroPickID: heroPick.HeroPickID,
+			GameID:     *game.GameID,
 			GameNumber: *game.GameNumber,
 			IsPicked:   *game.IsPicked,
 		}
@@ -925,6 +925,7 @@ func UpdateHeroPick(c *gin.Context) {
 			// Buat entri baru jika tidak ada
 			heroPickGame = models.HeroPickGame{
 				HeroPickID: heroPick.HeroPickID,
+				GameID:     *game.GameID,
 				GameNumber: *game.GameNumber,
 				IsPicked:   *game.IsPicked,
 			}
@@ -1126,6 +1127,7 @@ func GetAllHeroPicks(c *gin.Context) {
 		var heroPickGames []struct {
 			HeroPickGameID uint `json:"hero_pick_game_id"`
 			HeroPickID     uint `json:"hero_pick_id"`
+			GameID         uint `json:"game_id"`
 			GameNumber     int  `json:"game_number"`
 			IsPicked       bool `json:"is_picked"`
 		}
@@ -1133,7 +1135,7 @@ func GetAllHeroPicks(c *gin.Context) {
 		// Query untuk mengambil game picks berdasarkan hero_pick_id
 		gamePickQuery := `
 			SELECT 
-				hpg.hero_pick_game_id, hpg.hero_pick_id, hpg.game_number, hpg.is_picked
+				hpg.hero_pick_game_id, hpg.hero_pick_id, hpg.game_number, hpg.is_picked, hpg.game_id
 			FROM hero_pick_games hpg
 			WHERE hpg.hero_pick_id = ?
 		`
@@ -1282,6 +1284,7 @@ func AddHeroBan(c *gin.Context) {
 	for _, ban := range input.HeroBanGame {
 		heroBanGame := models.HeroBanGame{
 			HeroBanID:  heroBan.HeroBanID,
+			GameID:     *ban.GameID,
 			GameNumber: *ban.GameNumber,
 			IsBanned:   *ban.IsBanned,
 		}
@@ -1382,6 +1385,7 @@ func UpdateHeroBan(c *gin.Context) {
 		if err := tx.Where("hero_ban_id = ? AND game_number = ?", heroBan.HeroBanID, game.GameNumber).First(&heroBanGame).Error; err != nil {
 			heroBanGame = models.HeroBanGame{
 				HeroBanID:  heroBan.HeroBanID,
+				GameID:     *game.GameID,
 				GameNumber: *game.GameNumber,
 				IsBanned:   *game.IsBanned,
 			}
@@ -1586,6 +1590,7 @@ func GetAllHeroBans(c *gin.Context) {
 		var heroBanGames []struct {
 			HeroBanGameID uint `json:"hero_ban_game_id"`
 			HeroBanID     uint `json:"hero_ban_id"`
+			GameID        uint `json:"game_id"`
 			GameNumber    int  `json:"game_number"`
 			IsBanned      bool `json:"is_banned"`
 		}
@@ -1593,7 +1598,7 @@ func GetAllHeroBans(c *gin.Context) {
 		// Query untuk mengambil hero ban games berdasarkan hero_ban_id
 		gameBanQuery := `
 			SELECT 
-				hbg.hero_ban_game_id, hbg.hero_ban_id, hbg.game_number, hbg.is_banned
+				hbg.hero_ban_game_id, hbg.hero_ban_id, hbg.game_number, hbg.is_banned, hbg.game_id
 			FROM hero_ban_games hbg
 			WHERE hbg.hero_ban_id = ?
 		`
@@ -2562,8 +2567,6 @@ func GetTeamsByMatchID(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
 		return
 	}
-
-	fmt.Println(match)
 
 	var teams []models.Team
 	if err := config.DB.Where("team_id = ? OR team_id = ?", match.TeamAID, match.TeamBID).Find(&teams).Error; err != nil {

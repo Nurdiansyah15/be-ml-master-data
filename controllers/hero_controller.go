@@ -232,7 +232,7 @@ func DeleteHero(c *gin.Context) {
 	}
 
 	hero := models.Hero{}
-	if err := config.DB.First(hero, heroID).Error; err != nil {
+	if err := config.DB.Where("hero_id = ?", heroID).First(&hero).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Hero not found"})
 		return
 	}

@@ -207,7 +207,7 @@ func DeleteTeam(c *gin.Context) {
 	}
 
 	team := models.Team{}
-	if err := config.DB.First(&team, teamID).Error; err != nil {
+	if err := config.DB.Where("team_id = ?", teamID).First(&team).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
 		return
 	}

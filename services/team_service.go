@@ -19,68 +19,46 @@ func DeleteTeam(db *gorm.DB, team models.Team) error {
 		return tx.Error
 	}
 
-	// 1. Hapus Player terkait
-	if err := tx.Where("team_id = ?", team.TeamID).Delete(&models.Player{}).Error; err != nil {
-		tx.Rollback()
-		return fmt.Errorf("gagal menghapus Player: %w", err)
-	}
-
-	// 2. Hapus Coach terkait
-	if err := tx.Where("team_id = ?", team.TeamID).Delete(&models.Coach{}).Error; err != nil {
-		tx.Rollback()
-		return fmt.Errorf("gagal menghapus Coach: %w", err)
-	}
-
-	// 3. Temukan semua Match yang melibatkan tim tersebut
-	var matches []models.Match
+	matches := []models.Match{}
 	if err := tx.Where("team_a_id = ? OR team_b_id = ?", team.TeamID, team.TeamID).Find(&matches).Error; err != nil {
 		tx.Rollback()
-		return fmt.Errorf("gagal menemukan Match terkait: %w", err)
+		return fmt.Errorf("gagal mendapatkan semua Match: %w", err)
 	}
 
-	// 4. Hapus semua Match dan relasi terkait menggunakan fungsi deleteMatch
+	// 2. Panggil DeleteMatch untuk setiap Match terkait
 	for _, match := range matches {
 		if err := DeleteMatch(db, match.MatchID); err != nil {
 			tx.Rollback()
-			return fmt.Errorf("gagal menghapus Match ID %d: %w", match.MatchID, err)
+			return err
 		}
 	}
 
-	// 5. Hapus MatchTeamDetail terkait
-	if err := tx.Where("team_id = ?", team.TeamID).Delete(&models.MatchTeamDetail{}).Error; err != nil {
+	players := []models.Player{}
+	if err := tx.Where("team_id = ?", team.TeamID).Find(&players).Error; err != nil {
 		tx.Rollback()
-		return fmt.Errorf("gagal menghapus MatchTeamDetail: %w", err)
+		return fmt.Errorf("gagal mendapatkan semua Player: %w", err)
 	}
 
-	// 6. Hapus Goldlaner, Explaner, TrioMid, GameResult, LordResult, dan TurtleResult terkait
-	if err := tx.Where("team_id = ?", team.TeamID).Delete(&models.Goldlaner{}).Error; err != nil {
-		tx.Rollback()
-		return fmt.Errorf("gagal menghapus Goldlaner: %w", err)
+	//panggil DeletePlayer untuk setiap Player terkait
+	for _, player := range players {
+		if err := DeletePlayer(db, player); err != nil {
+			tx.Rollback()
+			return err
+		}
 	}
 
-	if err := tx.Where("team_id = ?", team.TeamID).Delete(&models.Explaner{}).Error; err != nil {
+	coaches := []models.Coach{}
+	if err := tx.Where("team_id = ?", team.TeamID).Find(&coaches).Error; err != nil {
 		tx.Rollback()
-		return fmt.Errorf("gagal menghapus Explaner: %w", err)
+		return fmt.Errorf("gagal mendapatkan semua Coach: %w", err)
 	}
 
-	if err := tx.Where("team_id = ?", team.TeamID).Delete(&models.TrioMid{}).Error; err != nil {
-		tx.Rollback()
-		return fmt.Errorf("gagal menghapus TrioMid: %w", err)
-	}
-
-	if err := tx.Where("team_id = ?", team.TeamID).Delete(&models.GameResult{}).Error; err != nil {
-		tx.Rollback()
-		return fmt.Errorf("gagal menghapus GameResult: %w", err)
-	}
-
-	if err := tx.Where("team_id = ?", team.TeamID).Delete(&models.LordResult{}).Error; err != nil {
-		tx.Rollback()
-		return fmt.Errorf("gagal menghapus LordResult: %w", err)
-	}
-
-	if err := tx.Where("team_id = ?", team.TeamID).Delete(&models.TurtleResult{}).Error; err != nil {
-		tx.Rollback()
-		return fmt.Errorf("gagal menghapus TurtleResult: %w", err)
+	//panggil DeleteCoach untuk setiap Coach terkait
+	for _, coach := range coaches {
+		if err := DeleteCoach(db, coach); err != nil {
+			tx.Rollback()
+			return err
+		}
 	}
 
 	// 7. Hapus Team itu sendiri
