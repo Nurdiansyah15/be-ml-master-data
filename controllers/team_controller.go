@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"ml-master-data/config"
 	"ml-master-data/models"
+	"ml-master-data/services"
 	"ml-master-data/utils"
 	"net/http"
 	"os"
@@ -183,6 +184,40 @@ func UpdateTeam(c *gin.Context) {
 
 	// Kembalikan response sukses
 	c.JSON(http.StatusOK, team)
+}
+
+// DeleteTeam godoc
+// @Summary Delete a team
+// @Description Delete a team and all related data
+// @Tags Team
+// @Security Bearer
+// @Param teamID path string true "Team ID"
+// @Success 200 {object} string "Team deleted successfully"
+// @Failure 400 {string} string "Team ID is required" or "Bad request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Team not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /teams/{teamID} [delete]
+func DeleteTeam(c *gin.Context) {
+	// Ambil parameter teamID dari URL
+	teamID := c.Param("teamID")
+	if teamID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID is required"})
+		return
+	}
+
+	team := models.Team{}
+	if err := config.DB.First(&team, teamID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
+		return
+	}
+
+	if err := services.DeleteTeam(config.DB, team); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Team deleted successfully"})
 }
 
 // @Summary Get a team by ID
@@ -462,6 +497,41 @@ func UpdatePlayerInTeam(c *gin.Context) {
 	c.JSON(http.StatusOK, player)
 }
 
+// @Summary Delete a player in a team
+// @Description Delete a player in a team and all its related data
+// @Produce json
+// @Tags Team
+// @Security Bearer
+// @Param playerID path string true "Player ID"
+// @Success 200 {string} string "Player deleted successfully"
+// @Failure 400 {string} string "Player ID is required"
+// @Failure 404 {string} string "Player not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /players/{playerID} [delete]
+func DeletePlayerInTeam(c *gin.Context) {
+
+	playerID := c.Param("playerID")
+	if playerID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Player ID is required"})
+		return
+	}
+
+	player := models.Player{}
+
+	if err := config.DB.First(&player, playerID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Player not found"})
+		return
+	}
+
+	if err := services.DeletePlayer(config.DB, player); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Player deleted successfully"})
+
+}
+
 // @Summary Update a coach in a team
 // @Description Update a coach in a team and save its image
 // @Produce json
@@ -544,6 +614,41 @@ func UpdateCoachInTeam(c *gin.Context) {
 
 	// Kembalikan response sukses
 	c.JSON(http.StatusOK, coach)
+}
+
+// @Summary Delete a coach in a team
+// @Description Delete a coach in a team and all its related data
+// @Produce json
+// @Tags Team
+// @Security Bearer
+// @Param coachID path string true "Coach ID"
+// @Success 200 {string} string "Coach deleted successfully"
+// @Failure 400 {string} string "Coach ID is required"
+// @Failure 404 {string} string "Coach not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /coaches/{coachID} [delete]
+func DeleteCoachInTeam(c *gin.Context) {
+	// Ambil parameter coachID dari URL
+	coachID := c.Param("coachID")
+
+	if coachID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Coach ID is required"})
+		return
+	}
+
+	coach := models.Coach{}
+
+	if err := config.DB.First(&coach, coachID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Coach not found"})
+		return
+	}
+
+	if err := services.DeleteCoach(config.DB, coach); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Coach deleted successfully"})
 }
 
 type PlayerStats struct {

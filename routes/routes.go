@@ -51,6 +51,7 @@ func SetupRouter() *gin.Engine {
 		protected.POST("/tournaments/:tournamentID/matches", controllers.CreateTournamentMatch) //ok
 		protected.GET("/matches/:matchID", controllers.GetMatchByID)
 		protected.PUT("/matches/:matchID", controllers.UpdateMatch) //ok
+		protected.DELETE("/matches/:matchID", controllers.DeleteMatch)
 
 		protected.GET("/matches/:matchID/teams", controllers.GetTeamsByMatchID)
 
@@ -100,6 +101,7 @@ func SetupRouter() *gin.Engine {
 		protected.PUT("matches/:matchID/games/:gameID", controllers.UpdateGame) //ok
 		protected.GET("matches/:matchID/games", controllers.GetAllGames)
 		protected.GET("matches/:matchID/games/:gameID", controllers.GetGameByID)
+		protected.DELETE("matches/:matchID/games/:gameID", controllers.RemoveGame)
 
 		protected.POST("matches/:matchID/games/:gameID/lord-results", controllers.AddLordResult)                 //ok
 		protected.PUT("matches/:matchID/games/:gameID/lord-results/:lordResultID", controllers.UpdateLordResult) //ok
@@ -166,23 +168,27 @@ func SetupRouter() *gin.Engine {
 		protected.GET("/teams/:teamID", controllers.GetTeamByID)
 		protected.POST("/teams", controllers.CreateTeam)        //ok image ok
 		protected.PUT("/teams/:teamID", controllers.UpdateTeam) //ok image ok
+		protected.DELETE("/teams/:teamID", controllers.DeleteTeam)
 
 		protected.GET("/tournaments/:tournamentID/coachs/:coachID/coach-statistics", controllers.CoachStatistics)
 		protected.GET("teams/:teamID/coaches", controllers.GetAllCoachesInTeam)
 		protected.GET("coaches/:coachID", controllers.GetCoachByID)
 		protected.POST("teams/:teamID/coaches", controllers.CreateCoachInTeam) //ok image ok
 		protected.PUT("coaches/:coachID", controllers.UpdateCoachInTeam)       //ok image ok
+		protected.DELETE("coaches/:coachID", controllers.DeleteCoachInTeam)
 
 		protected.GET("/tournaments/:tournamentID/players/:playerID/player-statistics", controllers.PlayerStatistics)
 		protected.GET("teams/:teamID/players", controllers.GetAllPlayersInTeam)
 		protected.GET("players/:playerID", controllers.GetPlayerByID)
 		protected.POST("teams/:teamID/players", controllers.CreatePlayerInTeam) //ok image ok
 		protected.PUT("players/:playerID", controllers.UpdatePlayerInTeam)      //ok image ok
+		protected.DELETE("players/:playerID", controllers.DeletePlayerInTeam)
 
 		protected.GET("heroes", controllers.GetAllHeroes)
 		protected.GET("heroes/:heroID", controllers.GetHeroByID)
 		protected.POST("heroes", controllers.CreateHero)        //ok image ok
 		protected.PUT("heroes/:heroID", controllers.UpdateHero) //ok image ok
+		protected.DELETE("heroes/:heroID", controllers.DeleteHero)
 
 		// protected.POST("matches/:matchID/player-stats", controllers.AddPlayerStatsToMatch) //ok
 		// protected.PUT("player-stats/:playerStatID", controllers.UpdatePlayerStats)         //ok

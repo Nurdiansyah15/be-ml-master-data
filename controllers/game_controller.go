@@ -6,6 +6,7 @@ import (
 	"ml-master-data/config"
 	"ml-master-data/dto"
 	"ml-master-data/models"
+	"ml-master-data/services"
 	"ml-master-data/utils"
 	"net/http"
 	"os"
@@ -366,6 +367,50 @@ func GetGameByID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, game)
+}
+
+// @Tags Game
+// @Summary Delete a game
+// @Description Delete a game with the given game ID and match ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param matchID path string true "Match ID"
+// @Param gameID path string true "Game ID"
+// @Success 200 {string} string "Game deleted successfully"
+// @Failure 400 {string} string "Bad Request"
+// @Failure 404 {string} string "Match or game not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID}/games/{gameID} [delete]
+func RemoveGame(c *gin.Context) {
+	matchID := c.Param("matchID")
+	if matchID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID is required"})
+		return
+	}
+	gameID := c.Param("gameID")
+	if gameID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Game ID is required"})
+		return
+	}
+
+	match := models.Match{}
+	if err := config.DB.Where("match_id = ?", matchID).First(&match).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+		return
+	}
+
+	game := models.Game{}
+	if err := config.DB.Where("game_id = ?", gameID).First(&game).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
+		return
+	}
+
+	if err := services.DeleteGame(config.DB, game); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Game deleted successfully"})
 }
 
 // @Tags Game

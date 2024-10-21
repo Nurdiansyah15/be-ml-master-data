@@ -124,6 +124,56 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Delete a coach in a team and all its related data",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Team"
+                ],
+                "summary": "Delete a coach in a team",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Coach ID",
+                        "name": "coachID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Coach deleted successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Coach ID is required",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Coach not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
         "/games/{gameID}/teams/{teamID}/explaners": {
@@ -1476,6 +1526,56 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Delete a hero by ID and remove its image from the system if it exists",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Hero"
+                ],
+                "summary": "Delete a hero",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Hero ID",
+                        "name": "heroID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Hero deleted successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Hero ID is required",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Hero not found\" or \"Old image not found, skipping deletion",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to remove old image\" or \"Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
         "/login": {
@@ -1621,6 +1721,52 @@ const docTemplate = `{
                         "description": "Match updated successfully",
                         "schema": {
                             "$ref": "#/definitions/models.Match"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Match not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a match by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Match"
+                ],
+                "summary": "Delete a match",
+                "operationId": "delete-match",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Match ID",
+                        "name": "matchID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Match deleted successfully",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     "400": {
@@ -1918,6 +2064,66 @@ const docTemplate = `{
                         "description": "Game updated successfully",
                         "schema": {
                             "$ref": "#/definitions/models.Game"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Match or game not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Delete a game with the given game ID and match ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Game"
+                ],
+                "summary": "Delete a game",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Match ID",
+                        "name": "matchID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Game ID",
+                        "name": "gameID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Game deleted successfully",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     "400": {
@@ -4953,6 +5159,56 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Delete a player in a team and all its related data",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Team"
+                ],
+                "summary": "Delete a player in a team",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Player ID",
+                        "name": "playerID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Player deleted successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Player ID is required",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Player not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
         "/players/{playerID}/tournaments/{tournamentID}/player-statistics": {
@@ -5243,6 +5499,59 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Delete a team and all related data",
+                "tags": [
+                    "Team"
+                ],
+                "summary": "Delete a team",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Team ID",
+                        "name": "teamID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Team deleted successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Team ID is required\" or \"Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Team not found",
                         "schema": {
                             "type": "string"
                         }

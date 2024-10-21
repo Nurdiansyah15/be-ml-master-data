@@ -6,6 +6,7 @@ import (
 	"ml-master-data/config" // Ganti dengan path yang sesuai untuk package database Anda
 	"ml-master-data/dto"
 	"ml-master-data/models"
+	"ml-master-data/services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -157,7 +158,13 @@ func DeleteTournament(c *gin.Context) {
 		return
 	}
 
-	if err := config.DB.Delete(&tournament).Error; err != nil {
+	tournament = models.Tournament{}
+	if err := config.DB.Where("tournament_id = ?", tournamentID).First(&tournament).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
+		return
+	}
+
+	if err := services.DeleteTournament(config.DB, uint(tournament.TournamentID)); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

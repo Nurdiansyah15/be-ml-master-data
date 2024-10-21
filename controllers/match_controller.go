@@ -5,7 +5,9 @@ import (
 	"ml-master-data/config"
 	"ml-master-data/dto"
 	"ml-master-data/models"
+	"ml-master-data/services"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -181,6 +183,44 @@ func UpdateMatch(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, match)
+}
+
+// @Summary Delete a match
+// @Description Delete a match by ID
+// @ID delete-match
+// @Tags Match
+// @Produce json
+// @Param matchID path string true "Match ID"
+// @Success 200 {string} string "Match deleted successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 404 {string} string "Match not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{matchID} [delete]
+func DeleteMatch(c *gin.Context) {
+	matchIDStr := c.Param("matchID")
+	if matchIDStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID is required"})
+		return
+	}
+
+	match := models.Match{}
+	if err := config.DB.First(&match, matchIDStr).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+		return
+	}
+
+	matchID, err := strconv.Atoi(matchIDStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	if err := services.DeleteMatch(config.DB, uint(matchID)); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Match deleted successfully"})
 }
 
 // @Summary Get a match by ID

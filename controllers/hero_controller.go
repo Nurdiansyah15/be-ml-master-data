@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"ml-master-data/config"
 	"ml-master-data/models"
+	"ml-master-data/services"
 	"ml-master-data/utils"
 	"net/http"
 	"os"
@@ -209,4 +210,38 @@ func UpdateHero(c *gin.Context) {
 
 	// Kembalikan response sukses
 	c.JSON(http.StatusOK, hero)
+}
+
+// DeleteHero godoc
+// @Summary Delete a hero
+// @Description Delete a hero by ID and remove its image from the system if it exists
+// @Tags Hero
+// @Produce json
+// @Security Bearer
+// @Param heroID path string true "Hero ID"
+// @Success 200 {string} string "Hero deleted successfully"
+// @Failure 400 {string} string "Hero ID is required"
+// @Failure 404 {string} string "Hero not found" or "Old image not found, skipping deletion"
+// @Failure 500 {string} string "Failed to remove old image" or "Internal server error"
+// @Router /heroes/{heroID} [delete]
+func DeleteHero(c *gin.Context) {
+	heroID := c.Param("heroID")
+	if heroID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Hero ID is required"})
+		return
+	}
+
+	hero := models.Hero{}
+	if err := config.DB.First(hero, heroID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Hero not found"})
+		return
+	}
+
+	if err := services.DeleteHero(config.DB, hero); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Kembalikan response sukses
+	c.JSON(http.StatusOK, gin.H{"message": "Hero deleted successfully"})
 }
