@@ -1,22 +1,22 @@
 package dto
 
 type MatchRequestDto struct {
-	Week       *int  `json:"week" binding:"required"`
-	Day        *int  `json:"day" binding:"required"`
-	Date       *int  `json:"date" binding:"required"`
-	TeamAID    *uint `json:"team_a_id" binding:"required"`
-	TeamBID    *uint `json:"team_b_id" binding:"required"`
-	TeamAScore *int  `json:"team_a_score" binding:"required"`
-	TeamBScore *int  `json:"team_b_score" binding:"required"`
+	Stage      *string `json:"stage" binding:"required"`
+	Day        *int    `json:"day" binding:"required"`
+	Date       *int    `json:"date" binding:"required"`
+	TeamAID    *uint   `json:"team_a_id" binding:"required"`
+	TeamBID    *uint   `json:"team_b_id" binding:"required"`
+	TeamAScore *int    `json:"team_a_score" binding:"required"`
+	TeamBScore *int    `json:"team_b_score" binding:"required"`
 }
 
 type MatchResponseDto struct {
-	MatchID      *uint `json:"match_id"`
-	TournamentID *uint `json:"tournament_id"`
-	Week         *int  `json:"week"`
-	Day          *int  `json:"day"`
-	Date         *int  `json:"date"`
-	TeamAID      *uint `json:"team_a_id"`
+	MatchID      *uint   `json:"match_id"`
+	TournamentID *uint   `json:"tournament_id"`
+	Stage        *string `json:"stage"`
+	Day          *int    `json:"day"`
+	Date         *int    `json:"date"`
+	TeamAID      *uint   `json:"team_a_id"`
 	TeamA        *struct {
 		TeamID *uint   `json:"team_id"`
 		Name   *string `json:"name"`

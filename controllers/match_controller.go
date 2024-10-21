@@ -63,7 +63,7 @@ func CreateTournamentMatch(c *gin.Context) {
 
 	match := models.Match{
 		TournamentID: tournament.TournamentID,
-		Week:         *input.Week,
+		Stage:        *input.Stage,
 		Day:          *input.Day,
 		Date:         *input.Date,
 		TeamAID:      *input.TeamAID,
@@ -160,8 +160,8 @@ func UpdateMatch(c *gin.Context) {
 		match.TeamBID = *input.TeamBID
 	}
 
-	if input.Week != nil {
-		match.Week = *input.Week
+	if input.Stage != nil {
+		match.Stage = *input.Stage
 	}
 	if input.Day != nil {
 		match.Day = *input.Day
@@ -244,7 +244,7 @@ func GetMatchByID(c *gin.Context) {
 
 	query := `
 		SELECT 
-			m.match_id, m.week, m.day, m.date, m.team_a_id, m.team_b_id, m.tournament_id,
+			m.match_id, m.stage, m.day, m.date, m.team_a_id, m.team_b_id, m.tournament_id,
 			tA.team_id AS team_a_team_id, tA.name AS team_a_name, tA.image AS team_a_image,
 			tB.team_id AS team_b_team_id, tB.name AS team_b_name, tB.image AS team_b_image,
 			m.team_a_score, m.team_b_score
@@ -292,7 +292,7 @@ func GetMatchesByTournamentID(c *gin.Context) {
 
 	query := `
 		SELECT 
-			m.match_id, m.week, m.day, m.date, m.team_a_id, m.team_b_id, m.tournament_id,
+			m.match_id, m.stage, m.day, m.date, m.team_a_id, m.team_b_id, m.tournament_id,
 			tA.team_id AS team_a_team_id, tA.name AS team_a_name, tA.image AS team_a_image,
 			tB.team_id AS team_b_team_id, tB.name AS team_b_name, tB.image AS team_b_image,
 			m.team_a_score, m.team_b_score
