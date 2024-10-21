@@ -6680,10 +6680,14 @@ const docTemplate = `{
                     "items": {
                         "type": "object",
                         "required": [
+                            "game_id",
                             "game_number",
                             "is_banned"
                         ],
                         "properties": {
+                            "game_id": {
+                                "type": "integer"
+                            },
                             "game_number": {
                                 "type": "integer"
                             },
@@ -6729,6 +6733,9 @@ const docTemplate = `{
                     "items": {
                         "type": "object",
                         "properties": {
+                            "game_id": {
+                                "type": "integer"
+                            },
                             "game_number": {
                                 "type": "integer"
                             },
@@ -6781,10 +6788,14 @@ const docTemplate = `{
                     "items": {
                         "type": "object",
                         "required": [
+                            "game_id",
                             "game_number",
                             "is_picked"
                         ],
                         "properties": {
+                            "game_id": {
+                                "type": "integer"
+                            },
                             "game_number": {
                                 "type": "integer"
                             },
@@ -6830,6 +6841,9 @@ const docTemplate = `{
                     "items": {
                         "type": "object",
                         "properties": {
+                            "game_id": {
+                                "type": "integer"
+                            },
                             "game_number": {
                                 "type": "integer"
                             },

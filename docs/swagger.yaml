@@ -268,11 +268,14 @@ definitions:
       hero_ban_game:
         items:
           properties:
+            game_id:
+              type: integer
             game_number:
               type: integer
             is_banned:
               type: boolean
           required:
+          - game_id
           - game_number
           - is_banned
           type: object
@@ -305,6 +308,8 @@ definitions:
       hero_ban_game:
         items:
           properties:
+            game_id:
+              type: integer
             game_number:
               type: integer
             hero_ban_game_id:
@@ -335,11 +340,14 @@ definitions:
       hero_pick_game:
         items:
           properties:
+            game_id:
+              type: integer
             game_number:
               type: integer
             is_picked:
               type: boolean
           required:
+          - game_id
           - game_number
           - is_picked
           type: object
@@ -372,6 +380,8 @@ definitions:
       hero_pick_game:
         items:
           properties:
+            game_id:
+              type: integer
             game_number:
               type: integer
             hero_pick_game_id:
