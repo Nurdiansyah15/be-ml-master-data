@@ -28,26 +28,33 @@ func ConnectDatabase() {
 	fmt.Println("Connected to database successfully")
 
 	err = database.AutoMigrate(
+		&models.User{},
+		&models.Tournament{},
+		&models.Match{},
+		&models.PlayerMatch{},
+		&models.CoachMatch{},
+		&models.Game{},
+		&models.Team{},
+		&models.Player{},
+		&models.Coach{},
+		&models.Hero{},
+		&models.MatchTeamDetail{},
 		&models.HeroPick{},
 		&models.HeroBan{},
-		&models.ObjectiveResult{},
-		&models.PlayerStats{},
-		&models.CoachStats{},
+		&models.HeroPickGame{},
+		&models.HeroBanGame{},
 		&models.PriorityPick{},
 		&models.PriorityBan{},
 		&models.FlexPick{},
-		&models.MatchVideo{},
-		&models.Coach{},
-		&models.GameDetail{},
-		&models.Hero{},
-		&models.Team{},
-		&models.Player{},
-		&models.Game{},
-		&models.Match{},
-		&models.TournamentTeam{},
-		&models.Tournament{},
-		&models.User{},
+		&models.GameResult{},
+		&models.TrioMid{},
+		&models.TrioMidHero{},
+		&models.Goldlaner{},
+		&models.Explaner{},
+		&models.TurtleResult{},
+		&models.LordResult{},
 	)
+
 	if err != nil {
 		log.Fatal("Failed to migrate database: ", err)
 	}

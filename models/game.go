@@ -1,12 +1,12 @@
 package models
 
 type Game struct {
-	GameID             uint   `gorm:"primaryKey;autoIncrement"`
-	MatchID            uint   `gorm:"not null"`
-	GameNumber         int    `gorm:"not null"`
-	FirstPickTeamID    uint   `gorm:"not null"`
-	SecondPickTeamID   uint   `gorm:"not null"`
-	WinnerTeamID       uint   `gorm:"not null"`
-	TrioMidOverallResult string `gorm:"size:20"`
-	EarlyGameResult    string `gorm:"size:20"`
+	GameID           uint   `gorm:"primaryKey;autoIncrement" json:"game_id"`
+	MatchID          uint   `json:"match_id"`
+	FirstPickTeamID  uint   `json:"first_pick_team_id"`
+	SecondPickTeamID uint   `json:"second_pick_team_id"`
+	WinnerTeamID     uint   `json:"winner_team_id"`
+	GameNumber       int    `json:"game_number"`
+	VideoLink        string `json:"video_link"`
+	FullDraftImage   string `json:"full_draft_image"`
 }

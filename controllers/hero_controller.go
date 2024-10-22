@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"ml-master-data/config"
 	"ml-master-data/models"
+	"ml-master-data/services"
 	"ml-master-data/utils"
 	"net/http"
 	"os"
@@ -13,6 +14,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// GetAllHeroes godoc
+// @Summary Get all heroes
+// @Description Get all heroes data
+// @Tags Hero
+// @Produce json
+// @Security Bearer
+// @Success 200 {array} models.Hero
+// @Router /heroes [get]
 func GetAllHeroes(c *gin.Context) {
 	var heroes []models.Hero
 
@@ -24,7 +33,18 @@ func GetAllHeroes(c *gin.Context) {
 	c.JSON(http.StatusOK, heroes)
 }
 
+// CreateHero godoc
+// @Summary Create a hero
+// @Description Create a hero and save its image
+// @Tags Hero
+// @Produce json
+// @Security Bearer
+// @Param name formData string true "Hero name"
+// @Param image formData file true "Hero image"
+// @Success 201 {object} models.Hero
+// @Router /heroes [post]
 func CreateHero(c *gin.Context) {
+
 	// Mengambil nama hero dari FormValue
 	name := c.PostForm("name")
 	if name == "" {
@@ -32,13 +52,19 @@ func CreateHero(c *gin.Context) {
 		return
 	}
 
-	file, err := c.FormFile("hero_image")
+	file, err := c.FormFile("image")
 	var heroImagePath string
 
 	// Menetapkan path default jika tidak ada gambar
 	if err != nil {
 		heroImagePath = "https://placehold.co/400x600"
 	} else {
+		// Memeriksa ukuran file
+		if file.Size > 500*1024 { // 500 KB
+			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
+			return
+		}
+
 		// Mendapatkan ekstensi file
 		ext := strings.ToLower(filepath.Ext(file.Filename))
 
@@ -63,8 +89,8 @@ func CreateHero(c *gin.Context) {
 
 	// Membuat objek hero baru
 	hero := models.Hero{
-		Name:      name,
-		HeroImage: heroImagePath,
+		Name:  name,
+		Image: heroImagePath,
 	}
 
 	// Menyimpan hero ke database
@@ -77,6 +103,15 @@ func CreateHero(c *gin.Context) {
 	c.JSON(http.StatusCreated, hero)
 }
 
+// GetHeroByID godoc
+// @Summary Get a hero by ID
+// @Description Get a hero data by ID
+// @Tags Hero
+// @Produce json
+// @Security Bearer
+// @Param heroID path string true "Hero ID"
+// @Success 200 {object} models.Hero
+// @Router /heroes/{heroID} [get]
 func GetHeroByID(c *gin.Context) {
 	heroID := c.Param("heroID")
 
@@ -89,6 +124,17 @@ func GetHeroByID(c *gin.Context) {
 	c.JSON(http.StatusOK, hero)
 }
 
+// UpdateHero godoc
+// @Summary Update a hero
+// @Description Update a hero and save its image
+// @Tags Hero
+// @Produce json
+// @Security Bearer
+// @Param heroID path string true "Hero ID"
+// @Param name formData string false "Hero name"
+// @Param image formData file false "Hero image"
+// @Success 200 {object} models.Hero
+// @Router /heroes/{heroID} [put]
 func UpdateHero(c *gin.Context) {
 	heroID := c.Param("heroID")
 	if heroID == "" {
@@ -106,7 +152,7 @@ func UpdateHero(c *gin.Context) {
 	name := c.PostForm("name")
 
 	// Mengambil file gambar dari FormFile
-	file, err := c.FormFile("hero_image")
+	file, err := c.FormFile("image")
 
 	// Memperbarui nama jika ada
 	if name != "" {
@@ -115,6 +161,11 @@ func UpdateHero(c *gin.Context) {
 
 	// Memeriksa jika ada gambar baru yang diupload
 	if err == nil {
+		// Memeriksa ukuran file
+		if file.Size > 500*1024 { // 500 KB
+			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
+			return
+		}
 
 		// Validasi ekstensi file
 		ext := strings.ToLower(filepath.Ext(file.Filename))
@@ -124,12 +175,12 @@ func UpdateHero(c *gin.Context) {
 		}
 
 		// Cek apakah file gambar lama ada di sistem
-		if hero.HeroImage != "" && hero.HeroImage != "https://placehold.co/400x600" {
+		if hero.Image != "" && hero.Image != "https://placehold.co/400x600" {
 			// Cek apakah file gambar lama ada di sistem
-			hero.HeroImage = strings.Replace(hero.HeroImage, os.Getenv("BASE_URL")+"/", "", 1)
-			if _, err := os.Stat(hero.HeroImage); err == nil {
+			heroImagePath := strings.Replace(hero.Image, os.Getenv("BASE_URL")+"/", "", 1)
+			if _, err := os.Stat(heroImagePath); err == nil {
 				// Jika file ada, hapus file gambar lama dari folder images
-				if err := os.Remove(hero.HeroImage); err != nil {
+				if err := os.Remove(heroImagePath); err != nil {
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove old image"})
 					return
 				}
@@ -148,7 +199,7 @@ func UpdateHero(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save new image"})
 			return
 		}
-		hero.HeroImage = os.Getenv("BASE_URL") + "/" + heroImagePath // Perbarui dengan path gambar baru
+		hero.Image = os.Getenv("BASE_URL") + "/" + heroImagePath // Perbarui dengan path gambar baru
 	}
 
 	// Simpan perubahan ke database
@@ -159,4 +210,38 @@ func UpdateHero(c *gin.Context) {
 
 	// Kembalikan response sukses
 	c.JSON(http.StatusOK, hero)
+}
+
+// DeleteHero godoc
+// @Summary Delete a hero
+// @Description Delete a hero by ID and remove its image from the system if it exists
+// @Tags Hero
+// @Produce json
+// @Security Bearer
+// @Param heroID path string true "Hero ID"
+// @Success 200 {string} string "Hero deleted successfully"
+// @Failure 400 {string} string "Hero ID is required"
+// @Failure 404 {string} string "Hero not found" or "Old image not found, skipping deletion"
+// @Failure 500 {string} string "Failed to remove old image" or "Internal server error"
+// @Router /heroes/{heroID} [delete]
+func DeleteHero(c *gin.Context) {
+	heroID := c.Param("heroID")
+	if heroID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Hero ID is required"})
+		return
+	}
+
+	hero := models.Hero{}
+	if err := config.DB.Where("hero_id = ?", heroID).First(&hero).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Hero not found"})
+		return
+	}
+
+	if err := services.DeleteHero(config.DB, hero); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Kembalikan response sukses
+	c.JSON(http.StatusOK, gin.H{"message": "Hero deleted successfully"})
 }

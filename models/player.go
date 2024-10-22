@@ -1,9 +1,8 @@
 package models
 
 type Player struct {
-	PlayerID uint   `gorm:"primaryKey;autoIncrement"`
-	TeamID   uint   `gorm:"not null"`
-	Name     string `gorm:"size:100;not null"`
-	Role     string `gorm:"size:50"`
-	Image    string `gorm:"size:255"`
+	PlayerID uint   `gorm:"primaryKey;autoIncrement" json:"player_id"`
+	TeamID   uint   `json:"team_id"`
+	Name     string `json:"name"`
+	Image    string `json:"image"`
 }

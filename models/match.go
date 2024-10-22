@@ -1,14 +1,13 @@
 package models
 
 type Match struct {
-	MatchID          uint `gorm:"primaryKey;autoIncrement"`
-	TournamentTeamID uint
-	OpponentTeamID   uint
-	Week             int
-	Day              int
-	Date             int
-	// HomeTeamScore    int
-	// AwayTeamScore    int
-	// WinnerTeamID     uint
-	// TotalGames       int
+	MatchID      uint   `gorm:"primaryKey;autoIncrement" json:"match_id"`
+	TournamentID uint   `json:"tournament_id"`
+	Stage        string `json:"stage"`
+	Day          int    `json:"day"`
+	Date         int    `json:"date"`
+	TeamAID      uint   `json:"team_a_id"`
+	TeamBID      uint   `json:"team_b_id"`
+	TeamAScore   int    `json:"team_a_score"`
+	TeamBScore   int    `json:"team_b_score"`
 }

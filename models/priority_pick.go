@@ -1,11 +1,10 @@
 package models
 
 type PriorityPick struct {
-	PriorityPickID uint `gorm:"primaryKey;autoIncrement"`
-	HeroID         uint `gorm:"not null"`
-	MatchID        uint `gorm:"not null"`
-	TeamID         uint `gorm:"not null"`
-	Total          int
-	Role           string  `gorm:"size:50"`
-	RatePick       float64 `gorm:"type:decimal(5,2)"`
+	PriorityPickID    uint    `gorm:"primaryKey;autoIncrement" json:"priority_pick_id"`
+	MatchTeamDetailID uint    `json:"match_team_detail_id"`
+	HeroID            uint    `json:"hero_id"`
+	Total             int     `json:"total"`
+	Role              string  `gorm:"type:enum('gold', 'exp', 'roam', 'mid', 'jungler');" json:"role"`
+	PickRate          float64 `json:"pick_rate"`
 }
