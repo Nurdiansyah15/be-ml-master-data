@@ -44,9 +44,6 @@ func SetupRouter() *gin.Engine {
 		protected.PUT("/tournaments/:tournamentID", controllers.UpdateTournament) //ok
 		protected.DELETE("/tournaments/:tournamentID", controllers.DeleteTournament)
 
-		// protected.POST("/tournaments/:tournamentID/teams", controllers.CreateTeamInTournament) //ok
-		// protected.GET("/tournaments/:tournamentID/teams", controllers.GetAllTeamsInTournament)
-
 		protected.GET("/tournaments/:tournamentID/matches", controllers.GetMatchesByTournamentID)
 		protected.POST("/tournaments/:tournamentID/matches", controllers.CreateTournamentMatch) //ok
 		protected.GET("/matches/:matchID", controllers.GetMatchByID)
@@ -115,29 +112,6 @@ func SetupRouter() *gin.Engine {
 		protected.GET("matches/:matchID/games/:gameID/turtle-results/:turtleResultID", controllers.GetTurtleResultByID)
 		protected.DELETE("matches/:matchID/games/:gameID/turtle-results/:turtleResultID", controllers.RemoveTurtleResult)
 
-		// protected.POST("matches/:matchID/games/:gameID/explaner", controllers.AddExplaner)
-		// protected.PUT("matches/:matchID/games/:gameID/explaner/:explanerID", controllers.UpdateExplaner)
-		// protected.GET("matches/:matchID/games/:gameID/explaner", controllers.GetAllExplaners)
-		// protected.GET("matches/:matchID/games/:gameID/explaner/:explanerID", controllers.GetExplanerByID)
-		// protected.DELETE("matches/:matchID/games/:gameID/explaner/:explanerID", controllers.RemoveExplaner)
-
-		// protected.POST("matches/:matchID/games/:gameID/goldlaner", controllers.AddGoldlaner)
-		// protected.PUT("matches/:matchID/games/:gameID/goldlaner/:goldlanerID", controllers.UpdateGoldlaner)
-		// protected.GET("matches/:matchID/games/:gameID/goldlaner", controllers.GetAllGoldlaners)
-		// protected.GET("matches/:matchID/games/:gameID/goldlaner/:goldlanerID", controllers.GetGoldlanerByID)
-		// protected.DELETE("matches/:matchID/games/:gameID/goldlaner/:goldlanerID", controllers.RemoveGoldlaner)
-
-		// protected.POST("matches/:matchID/games/:gameID/trio-mid", controllers.AddTrioMid)
-		// protected.PUT("matches/:matchID/games/:gameID/trio-mid/:trioMidID", controllers.UpdateTrioMid)
-		// protected.GET("matches/:matchID/games/:gameID/trio-mid", controllers.GetAllTrioMids)
-		// protected.GET("matches/:matchID/games/:gameID/trio-mid/:trioMidID", controllers.GetTrioMidByID)
-		// protected.DELETE("matches/:matchID/games/:gameID/trio-mid/:trioMidID", controllers.RemoveTrioMid)
-
-		// protected.PUT("matches/:matchID/games/:gameID/trio-mid-result", controllers.UpdateTrioMidResult)
-		// protected.GET("matches/:matchID/games/:gameID/trio-mid-result/:trioMidID", controllers.GetTrioMidResultByID)
-
-		// protected.GET("matches/:matchID/games/:gameID/game-results", controllers.GetAllGameResults)
-
 		protected.POST("games/:gameID/teams/:teamID/explaners", controllers.AddExplaner)
 		protected.PUT("games/:gameID/teams/:teamID/explaners/:explanerID", controllers.UpdateExplaner)
 		protected.GET("games/:gameID/teams/:teamID/explaners", controllers.GetAllExplaners)
@@ -160,8 +134,6 @@ func SetupRouter() *gin.Engine {
 		protected.GET("games/:gameID/teams/:teamID/trio-mid-results/:trioMidID", controllers.GetTrioMidResultByID)
 
 		protected.GET("games/:gameID/teams/:teamID/game-results", controllers.GetAllGameResults)
-
-		// protected.GET("matches/:matchID/teams", controllers.GetAllTeamsInMatch)
 
 		protected.GET("/tournaments/:tournamentID/teams/:teamID/team-statistics", controllers.GetTeamStatistics)
 		protected.GET("/teams", controllers.GetAllTeams)
@@ -190,25 +162,6 @@ func SetupRouter() *gin.Engine {
 		protected.PUT("heroes/:heroID", controllers.UpdateHero) //ok image ok
 		protected.DELETE("heroes/:heroID", controllers.DeleteHero)
 
-		// protected.POST("matches/:matchID/player-stats", controllers.AddPlayerStatsToMatch) //ok
-		// protected.PUT("player-stats/:playerStatID", controllers.UpdatePlayerStats)         //ok
-		// protected.GET("matches/:matchID/player-stats", controllers.GetAllPlayerStatsinMatch)
-
-		// protected.POST("matches/:matchID/coach-stats", controllers.AddCoachStatsToMatch) //ok
-		// protected.PUT("coach-stats/:coachStatID", controllers.UpdateCoachStats)          //ok
-		// protected.GET("matches/:matchID/coach-stats", controllers.GetAllCoachStatsinMatch)
-
-		// protected.POST("matches/:matchID/priority-picks", controllers.AddPriorityPickToMatch) //ok
-		// protected.PUT("priority-picks/:priorityPickID", controllers.UpdatePriorityPick)       //ok
-		// protected.GET("matches/:matchID/priority-picks", controllers.GetAllPriorityPicksinMatch)
-
-		// protected.POST("matches/:matchID/priority-bans", controllers.AddPriorityBansToMatch) //ok
-		// protected.PUT("priority-bans/:priorityBanID", controllers.UpdatePriorityBan)         //ok
-		// protected.GET("matches/:matchID/priority-bans", controllers.GetAllPriorityBansinMatch)
-
-		// protected.POST("matches/:matchID/flex-picks", controllers.AddFlexPicksToMatch) //ok
-		// protected.PUT("flex-picks/:flexPickID", controllers.UpdateFlexPick)            //ok
-		// protected.GET("matches/:matchID/flex-picks", controllers.GetAllFlexPicksinMatch)
 	}
 
 	r.NoRoute(func(c *gin.Context) {

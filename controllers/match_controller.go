@@ -1028,48 +1028,6 @@ func RemoveHeroPick(c *gin.Context) {
 }
 
 // @Summary Get all hero picks
-// @Description Get all hero picks in a match with the given team ID
-// @ID get-all-hero-picks
-// @Accept json
-// @Security Bearer
-// @Tags Match
-// @Produce json
-// @Param matchID path string true "Match ID"
-// @Param teamID path string true "Team ID"
-// @Success 200 {array} dto.HeroPickResponseDto
-// @Failure 400 {string} string "Invalid input"
-// @Failure 404 {string} string "Hero picks not found"
-// @Router /matches/{matchID}/teams/{teamID}/hero-picks [get]
-// func GetAllHeroPicks(c *gin.Context) {
-// 	matchID := c.Param("matchID")
-// 	teamID := c.Param("teamID")
-
-// 	if matchID == "" || teamID == "" {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID and Team ID are required"})
-// 		return
-// 	}
-
-// 	var picks = []dto.HeroPickResponseDto{}
-// 	query := `
-// 		SELECT
-// 			hp.hero_pick_id, hp.match_team_detail_id, hp.hero_id,
-// 			hp.first_phase, hp.second_phase, hp.total,
-// 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image
-// 		FROM hero_picks hp
-// 		JOIN heros h ON hp.hero_id = h.hero_id
-// 		JOIN match_team_details mtd ON hp.match_team_detail_id = mtd.match_team_detail_id
-// 		WHERE mtd.match_id = ? AND mtd.team_id = ?
-// 	`
-
-// 	if err := config.DB.Raw(query, matchID, teamID).Scan(&picks).Error; err != nil {
-// 		c.JSON(http.StatusNotFound, gin.H{"error": "Hero picks not found"})
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusOK, picks)
-// }
-
-// @Summary Get all hero picks
 // @Description Get all hero picks in a match with the given team ID, including nested game picks
 // @ID get-all-hero-picks
 // @Accept json
@@ -1485,49 +1443,6 @@ func RemoveHeroBan(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Hero ban removed successfully"})
 }
-
-// @Summary Get all hero bans
-// @Description Get all hero bans of a match by team
-// @ID get-all-hero-bans
-// @Accept json
-// @Security Bearer
-// @Tags Match
-// @Produce json
-// @Param matchID path string true "Match ID"
-// @Param teamID path string true "Team ID"
-// @Success 200 {array} dto.HeroBanResponseDto "Hero bans"
-// @Failure 400 {string} string "Invalid input"
-// @Failure 404 {string} string "Match or team not found"
-// @Failure 500 {string} string "Internal server error"
-// @Router /matches/{matchID}/teams/{teamID}/hero-bans [get]
-// func GetAllHeroBans(c *gin.Context) {
-// 	matchID := c.Param("matchID")
-// 	teamID := c.Param("teamID")
-
-// 	if matchID == "" || teamID == "" {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Match ID and Team ID are required"})
-// 		return
-// 	}
-
-// 	var bans = []dto.HeroBanResponseDto{}
-// 	query := `
-// 		SELECT
-// 			hb.hero_ban_id, hb.match_team_detail_id, hb.hero_id,
-// 			hb.first_phase, hb.second_phase, hb.total,
-// 			h.hero_id AS hero_hero_id, h.name AS hero_name, h.image AS hero_image
-// 		FROM hero_bans hb
-// 		JOIN heros h ON hb.hero_id = h.hero_id
-// 		JOIN match_team_details mtd ON hb.match_team_detail_id = mtd.match_team_detail_id
-// 		WHERE mtd.match_id = ? AND mtd.team_id = ?
-// 	`
-
-// 	if err := config.DB.Raw(query, matchID, teamID).Scan(&bans).Error; err != nil {
-// 		c.JSON(http.StatusNotFound, gin.H{"error": "Hero bans not found"})
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusOK, bans)
-// }
 
 // GetAllHeroBans retrieves all hero bans for a given match and team.
 // @Summary Get all hero bans

@@ -1724,75 +1724,7 @@ func UpdateTrioMid(c *gin.Context) {
 		return
 	}
 
-	// // Mulai transaksi
-	// tx := config.DB.Begin()
-
-	// // Cek apakah game ada
-	// var game models.Game
-	// if err := tx.Where("game_id = ?", gameID).First(&game).Error; err != nil {
-	// 	tx.Rollback() // Rollback jika ada kesalahan
-	// 	c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
-	// 	return
-	// }
-
-	// // Cek apakah TrioMid ada
-	// var trioMid models.TrioMid
-	// if err := tx.Where("trio_mid_id = ? AND game_id = ?", trioMidID, gameID).First(&trioMid).Error; err != nil {
-	// 	tx.Rollback() // Rollback jika ada kesalahan
-	// 	c.JSON(http.StatusNotFound, gin.H{"error": "TrioMid not found"})
-	// 	return
-	// }
-
-	// // Bind input dari JSON request
-	// var input dto.TrioMidRequestDto
-	// if err := c.ShouldBindJSON(&input); err != nil {
-	// 	tx.Rollback() // Rollback jika ada kesalahan
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
-
-	// // Cek jika hero baru sudah digunakan oleh TrioMidHero lainnya
-	// var count int64
-	// if err := tx.Model(&models.TrioMidHero{}).
-	// 	Where("hero_id = ? AND trio_mid_id != ?", input.HeroID, trioMid.TrioMidID).
-	// 	Count(&count).Error; err != nil {
-	// 	tx.Rollback() // Rollback jika ada kesalahan
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	// 	return
-	// }
-
-	// if count > 0 {
-	// 	tx.Rollback() // Rollback jika hero sudah digunakan
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "The selected hero is already in use by another TrioMid."})
-	// 	return
-	// }
-
-	// // Update TrioMidHero jika sudah ada
-	// existingHero := models.TrioMidHero{}
-	// if err := tx.Where("trio_mid_id = ? AND hero_id = ?", trioMid.TrioMidID, input.HeroID).First(&existingHero).Error; err == nil {
-	// 	// Update existing hero
-	// 	existingHero.Role = input.Role
-	// 	existingHero.EarlyResult = input.EarlyResult
-
-	// 	if err := tx.Save(&existingHero).Error; err != nil {
-	// 		tx.Rollback() // Rollback jika ada kesalahan
-	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	// 		return
-	// 	}
-
-	// 	c.JSON(http.StatusOK, gin.H{"message": "TrioMidHero updated successfully", "data": existingHero})
-	// } else {
-	// 	// Jika tidak ada hero yang ada, beri tahu pengguna
-	// 	tx.Rollback() // Rollback jika tidak ada hero
-	// 	c.JSON(http.StatusNotFound, gin.H{"error": "No existing TrioMidHero found for update."})
-	// 	return
-	// }
-
-	// // Commit transaction after all operations
-	// if err := tx.Commit().Error; err != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not commit transaction"})
-	// 	return
-	// }
+	c.JSON(http.StatusOK, gin.H{"message": "TrioMid updated successfully"})
 }
 
 // @Tags Game
@@ -1885,69 +1817,6 @@ func RemoveTrioMid(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "TrioMid deleted successfully"})
 
-	// // Mulai transaksi
-	// tx := config.DB.Begin()
-	// defer func() {
-	// 	if r := recover(); r != nil {
-	// 		tx.Rollback() // Rollback jika terjadi panic
-	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
-	// 	}
-	// }()
-
-	// var game models.Game
-	// if err := tx.First(&game, "game_id = ?", gameID).Error; err != nil {
-	// 	tx.Rollback()
-	// 	c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
-	// 	return
-	// }
-
-	// // Cek jumlah TrioMidHero
-	// var trioMidHeroCount int64
-	// if err := tx.Model(&models.TrioMidHero{}).Where("trio_mid_hero_id = ?", trioMidHeroID).Count(&trioMidHeroCount).Error; err != nil {
-	// 	tx.Rollback()
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	// 	return
-	// }
-
-	// // Hapus TrioMidHero atau TrioMid sesuai dengan jumlahnya
-	// if trioMidHeroCount > 1 {
-	// 	// Hapus TrioMidHero
-	// 	if err := tx.Where("trio_mid_id = ?", trioMidID).Delete(&models.TrioMidHero{}).Error; err != nil {
-	// 		tx.Rollback()
-	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	// 		return
-	// 	}
-	// 	c.JSON(http.StatusOK, gin.H{"message": "TrioMidHero deleted successfully"})
-	// } else {
-	// 	// Hapus TrioMidHero
-	// 	if err := tx.Where("trio_mid_id = ?", trioMidID).Delete(&models.TrioMidHero{}).Error; err != nil {
-	// 		tx.Rollback()
-	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	// 		return
-	// 	}
-
-	// 	// Hapus TrioMid
-	// 	var trioMid models.TrioMid
-	// 	if err := tx.First(&trioMid, "trio_mid_id = ? AND game_id = ?", trioMidID, gameID).Error; err != nil {
-	// 		tx.Rollback()
-	// 		c.JSON(http.StatusNotFound, gin.H{"error": "TrioMid not found"})
-	// 		return
-	// 	}
-
-	// 	if err := tx.Delete(&trioMid).Error; err != nil {
-	// 		tx.Rollback()
-	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	// 		return
-	// 	}
-
-	// 	c.JSON(http.StatusOK, gin.H{"message": "TrioMid deleted successfully"})
-	// }
-
-	// // Commit transaksi
-	// if err := tx.Commit().Error; err != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to commit transaction"})
-	// 	return
-	// }
 }
 
 // @Tags Game
