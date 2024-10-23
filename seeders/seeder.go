@@ -33,9 +33,9 @@ func Seed() {
 	// config.DB.Exec("SET FOREIGN_KEY_CHECKS = 1")
 
 	// Seed Users
-	// seedUsers()
-	// seedHeroes()
-	// seedTeams()
+	seedUsers()
+	seedHeroes()
+	seedTeams()
 
 	log.Println("Seeding completed successfully!")
 }

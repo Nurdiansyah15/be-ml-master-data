@@ -18,7 +18,7 @@ func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
 	// swagger
-	url := ginSwagger.URL("http://localhost:8080/swagger/doc.json")
+	url := ginSwagger.URL("https://api.hertod-anal.cloud/swagger/doc.json")
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 
 	// CORS middleware
