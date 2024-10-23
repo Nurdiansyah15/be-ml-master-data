@@ -9,14 +9,12 @@ import (
 
 // Fungsi untuk seeding heroes
 func seedUsers() []models.User {
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("uw928820wjsnnw"), bcrypt.DefaultCost)
+	hashedPassword2, _ := bcrypt.GenerateFromPassword([]byte("amalnudros"), bcrypt.DefaultCost)
 
 	users := []models.User{
-		{Username: "admin1", Password: string(hashedPassword)},
-		{Username: "admin2", Password: string(hashedPassword)},
-		{Username: "admin3", Password: string(hashedPassword)},
-		{Username: "admin4", Password: string(hashedPassword)},
-		{Username: "admin5", Password: string(hashedPassword)},
+		{Username: "heroisgod", Password: string(hashedPassword)},
+		{Username: "amalnudros", Password: string(hashedPassword2)},
 	}
 
 	for i := range users {
