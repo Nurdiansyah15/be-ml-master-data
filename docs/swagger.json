@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:8080",
+    "host": "https://api.hertod-anal.cloud",
     "basePath": "/api/",
     "paths": {
         "/coaches/{coachID}": {

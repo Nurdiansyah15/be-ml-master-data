@@ -931,7 +931,7 @@ definitions:
       username:
         type: string
     type: object
-host: localhost:8080
+host: https://api.hertod-anal.cloud
 info:
   contact: {}
   description: API for ML Master Data
