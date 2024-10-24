@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"log"
 	"ml-master-data/config"
 	"ml-master-data/models"
 	"ml-master-data/services"
@@ -12,6 +13,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/cloudinary/cloudinary-go/v2"
+	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 	"github.com/gin-gonic/gin"
 )
 
@@ -46,7 +49,6 @@ func GetAllTeams(c *gin.Context) {
 // @Failure 500 {string} string "Internal server error"
 // @Router /teams [post]
 func CreateTeam(c *gin.Context) {
-
 	name := c.Request.FormValue("name")
 	if name == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Name is required"})
@@ -54,41 +56,45 @@ func CreateTeam(c *gin.Context) {
 	}
 
 	file, err := c.FormFile("image")
-	var logoPath string
+	var logoURL string
 
 	if err != nil {
-		logoPath = "https://placehold.co/400x600"
+		logoURL = "https://placehold.co/400x600"
 	} else {
-
-		// Memeriksa ukuran file
-		if file.Size > 500*1024 { // 500 KB
+		// Validasi ukuran dan ekstensi file
+		if file.Size > 500*1024 {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
 			return
 		}
-
 		ext := strings.ToLower(filepath.Ext(file.Filename))
-
 		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file type"})
 			return
 		}
 
-		newFileName := utils.GenerateUniqueFileName("team") + ext
-		logoPath = fmt.Sprintf("public/images/%s", newFileName)
-
-		if err := c.SaveUploadedFile(file, logoPath); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save logo file"})
+		cld, err := cloudinary.NewFromURL(os.Getenv("CLOUDINARY_URL"))
+		if err != nil {
+			log.Printf("Cloudinary init error: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to initialize Cloudinary"})
 			return
 		}
 
-		logoPath = os.Getenv("BASE_URL") + "/" + logoPath
+		fileContent, _ := file.Open()
+		defer fileContent.Close()
+
+		newFileName := utils.GenerateUniqueFileName("team")
+		uploadResp, err := cld.Upload.Upload(c, fileContent, uploader.UploadParams{
+			PublicID: fmt.Sprintf("teams/%s", newFileName),
+			Folder:   "teams",
+		})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload logo"})
+			return
+		}
+		logoURL = uploadResp.SecureURL
 	}
 
-	team := models.Team{
-		Name:  name,
-		Image: logoPath,
-	}
-
+	team := models.Team{Name: name, Image: logoURL}
 	if err := config.DB.Create(&team).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -110,79 +116,64 @@ func CreateTeam(c *gin.Context) {
 // @Failure 500 {string} string "Internal server error"
 // @Router /teams/{teamID} [put]
 func UpdateTeam(c *gin.Context) {
-	// Ambil parameter teamID dari URL
 	teamID := c.Param("teamID")
-	if teamID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID is required"})
-		return
-	}
-
-	// Cari tim di database
 	var team models.Team
 	if err := config.DB.First(&team, teamID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
 		return
 	}
 
-	// Tangkap data form dari request (name dan logo jika ada file)
 	name := c.Request.FormValue("name")
-
-	// Jika ada perubahan name, update
 	if name != "" {
 		team.Name = name
 	}
 
-	// Tangani file logo baru jika ada
 	file, err := c.FormFile("image")
 	if err == nil {
-
-		// Memeriksa ukuran file
-		if file.Size > 500*1024 { // 500 KB
+		if file.Size > 500*1024 {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
 			return
 		}
 
 		ext := strings.ToLower(filepath.Ext(file.Filename))
-
 		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file type"})
 			return
 		}
 
-		// Jika ada file logo baru, hapus logo lama
-		if team.Image != "" && team.Image != "https://placehold.co/400x600" {
-			team.Image = strings.Replace(team.Image, os.Getenv("BASE_URL")+"/", "", 1)
-			// Cek apakah file Image lama ada di sistem
-			if _, err := os.Stat(team.Image); err == nil {
-				// Jika file ada, hapus file Image lama dari folder images
-				if err := os.Remove(team.Image); err != nil {
-					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove old image"})
-					return
-				}
-			} else if os.IsNotExist(err) {
-				// Jika file tidak ada, berikan pesan peringatan (opsional)
-				c.JSON(http.StatusNotFound, gin.H{"warning": "Old image not found, skipping deletion"})
-			}
-		}
-
-		newFileName := utils.GenerateUniqueFileName("team") + ext
-		newLogoPath := fmt.Sprintf("public/images/%s", newFileName)
-		if err := c.SaveUploadedFile(file, newLogoPath); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save new logo"})
+		cld, err := cloudinary.NewFromURL(os.Getenv("CLOUDINARY_URL"))
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to initialize Cloudinary"})
 			return
 		}
 
-		// Update path logo di database
-		team.Image = os.Getenv("BASE_URL") + "/" + newLogoPath
+		if team.Image != "" && !strings.Contains(team.Image, "placehold.co") {
+			publicID := utils.ExtractPublicID(team.Image)
+			invalidate := true
+			_, _ = cld.Upload.Destroy(c, uploader.DestroyParams{PublicID: publicID, Invalidate: &invalidate})
+		}
+
+		fileContent, _ := file.Open()
+		defer fileContent.Close()
+
+		newFileName := utils.GenerateUniqueFileName("team")
+		uploadResp, err := cld.Upload.Upload(c, fileContent, uploader.UploadParams{
+			PublicID: fmt.Sprintf("teams/%s", newFileName),
+			Folder:   "teams",
+		})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload new logo"})
+			return
+		}
+
+		team.Image = uploadResp.SecureURL
 	}
 
-	// Simpan perubahan ke database
 	if err := config.DB.Save(&team).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Kembalikan response sukses
 	c.JSON(http.StatusOK, team)
 }
 
@@ -268,11 +259,10 @@ func CreatePlayerInTeam(c *gin.Context) {
 		return
 	}
 
-	// Tangkap data name dan role dari form-data
+	// Tangkap data name dari form-data
 	name := c.Request.FormValue("name")
-
 	if name == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Name are required"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Name is required"})
 		return
 	}
 
@@ -283,6 +273,14 @@ func CreatePlayerInTeam(c *gin.Context) {
 		return
 	}
 
+	// Inisialisasi Cloudinary
+	cld, err := cloudinary.NewFromURL(os.Getenv("CLOUDINARY_URL"))
+	if err != nil {
+		log.Printf("Cloudinary initialization error: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to initialize Cloudinary"})
+		return
+	}
+
 	// Tangani file gambar jika ada
 	file, err := c.FormFile("image")
 	var imagePath string
@@ -290,28 +288,39 @@ func CreatePlayerInTeam(c *gin.Context) {
 		// Jika tidak ada file yang diupload, gunakan placeholder
 		imagePath = "https://placehold.co/400x600"
 	} else {
-
-		// Memeriksa ukuran file
+		// Periksa ukuran file
 		if file.Size > 500*1024 { // 500 KB
 			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
 			return
 		}
 
 		ext := strings.ToLower(filepath.Ext(file.Filename))
-
 		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file type"})
 			return
 		}
 
-		newFileName := utils.GenerateUniqueFileName("player") + ext
-		imagePath = fmt.Sprintf("public/images/%s", newFileName)
-		if err := c.SaveUploadedFile(file, imagePath); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
+		// Buka dan unggah file baru ke Cloudinary
+		fileContent, err := file.Open()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open image file"})
+			return
+		}
+		defer fileContent.Close()
+
+		newFileName := utils.GenerateUniqueFileName("player")
+		uploadResp, err := cld.Upload.Upload(c, fileContent, uploader.UploadParams{
+			PublicID: fmt.Sprintf("players/%s", newFileName),
+			Folder:   "players",
+		})
+		if err != nil {
+			log.Printf("Upload to Cloudinary failed: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload image"})
 			return
 		}
 
-		imagePath = os.Getenv("BASE_URL") + "/" + imagePath
+		// Update path image di database
+		imagePath = uploadResp.SecureURL
 	}
 
 	// Buat objek Player
@@ -331,6 +340,7 @@ func CreatePlayerInTeam(c *gin.Context) {
 	c.JSON(http.StatusCreated, player)
 }
 
+
 // CreateCoachInTeam godoc
 // @Summary Create a coach in a team
 // @Description Create a coach in a team and save its image
@@ -347,71 +357,43 @@ func CreatePlayerInTeam(c *gin.Context) {
 // @Failure 500 {string} string "Internal server error"
 // @Router /teams/{teamID}/coaches [post]
 func CreateCoachInTeam(c *gin.Context) {
-	// Ambil parameter teamID dari URL
 	teamID := c.Param("teamID")
-	if teamID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Team ID is required"})
-		return
-	}
-
-	// Cari tim di database berdasarkan teamID
 	var team models.Team
 	if err := config.DB.First(&team, teamID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
 		return
 	}
 
-	// Tangkap data name dan role dari form-data
 	name := c.Request.FormValue("name")
-
 	if name == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Name are required"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Name is required"})
 		return
 	}
 
-	// Tangani file gambar jika ada
+	cld, _ := cloudinary.NewFromURL(os.Getenv("CLOUDINARY_URL"))
 	file, err := c.FormFile("image")
+
 	var imagePath string
 	if err != nil {
-		// Jika tidak ada file yang diupload, gunakan placeholder
 		imagePath = "https://placehold.co/400x600"
 	} else {
-		// Memeriksa ukuran file
-		if file.Size > 500*1024 { // 500 KB
-			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
-			return
-		}
+		fileContent, _ := file.Open()
+		defer fileContent.Close()
 
-		ext := strings.ToLower(filepath.Ext(file.Filename))
-
-		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file type"})
-			return
-		}
-
-		newFileName := utils.GenerateUniqueFileName("coach") + ext
-		imagePath = fmt.Sprintf("public/images/%s", newFileName)
-		if err := c.SaveUploadedFile(file, imagePath); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
-			return
-		}
-		imagePath = os.Getenv("BASE_URL") + "/" + imagePath
+		newFileName := utils.GenerateUniqueFileName("coach")
+		uploadResp, _ := cld.Upload.Upload(c, fileContent, uploader.UploadParams{
+			PublicID: fmt.Sprintf("coaches/%s", newFileName),
+			Folder:   "coaches",
+		})
+		imagePath = uploadResp.SecureURL
 	}
 
-	// Buat objek Coach
-	coach := models.Coach{
-		Name:   name,
-		Image:  imagePath,
-		TeamID: team.TeamID,
-	}
-
-	// Simpan coach ke database
+	coach := models.Coach{Name: name, Image: imagePath, TeamID: team.TeamID}
 	if err := config.DB.Create(&coach).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Kembalikan response sukses
 	c.JSON(http.StatusCreated, coach)
 }
 
@@ -441,50 +423,70 @@ func UpdatePlayerInTeam(c *gin.Context) {
 		return
 	}
 
-	// Menangkap data name dan role dari form-data
+	// Tangkap data name dari form-data
 	name := c.Request.FormValue("name")
-
-	// Update data jika ada input baru
 	if name != "" {
 		player.Name = name
+	}
+
+	// Inisialisasi Cloudinary
+	cld, err := cloudinary.NewFromURL(os.Getenv("CLOUDINARY_URL"))
+	if err != nil {
+		log.Printf("Cloudinary initialization error: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to initialize Cloudinary"})
+		return
 	}
 
 	// Tangani file gambar jika ada
 	file, err := c.FormFile("image")
 	if err == nil {
-		// Memeriksa ukuran file
+		// Periksa ukuran file
 		if file.Size > 500*1024 { // 500 KB
 			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
 			return
 		}
 
 		ext := strings.ToLower(filepath.Ext(file.Filename))
-
 		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file type"})
 			return
 		}
 
-		// Cek apakah file image lama ada di sistem dan hapus jika ada
+		// Hapus gambar lama di Cloudinary jika ada
 		if player.Image != "" && player.Image != "https://placehold.co/400x600" {
-			player.Image = strings.Replace(player.Image, os.Getenv("BASE_URL")+"/", "", 1)
-			if _, err := os.Stat(player.Image); err == nil {
-				if err := os.Remove(player.Image); err != nil {
-					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove old image"})
-					return
-				}
+			publicID := utils.ExtractPublicID(player.Image)
+			_, err := cld.Upload.Destroy(c, uploader.DestroyParams{
+				PublicID:   publicID,
+				Invalidate: &[]bool{true}[0], // Menggunakan pointer untuk boolean
+			})
+			if err != nil {
+				log.Printf("Failed to delete old image: %v", err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete old image"})
+				return
 			}
 		}
 
-		newFileName := utils.GenerateUniqueFileName("player") + ext
-		imagePath := fmt.Sprintf("public/images/%s", newFileName)
-		if err := c.SaveUploadedFile(file, imagePath); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save new image"})
+		// Buka dan unggah file baru ke Cloudinary
+		fileContent, err := file.Open()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open image file"})
+			return
+		}
+		defer fileContent.Close()
+
+		newFileName := utils.GenerateUniqueFileName("player")
+		uploadResp, err := cld.Upload.Upload(c, fileContent, uploader.UploadParams{
+			PublicID: fmt.Sprintf("players/%s", newFileName),
+			Folder:   "players",
+		})
+		if err != nil {
+			log.Printf("Upload to Cloudinary failed: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload image"})
 			return
 		}
 
 		// Update path image di database
-		player.Image = os.Getenv("BASE_URL") + "/" + imagePath
+		player.Image = uploadResp.SecureURL
 	}
 
 	// Simpan perubahan ke database
@@ -496,6 +498,7 @@ func UpdatePlayerInTeam(c *gin.Context) {
 	// Kembalikan response sukses
 	c.JSON(http.StatusOK, player)
 }
+
 
 // @Summary Delete a player in a team
 // @Description Delete a player in a team and all its related data
@@ -545,74 +548,44 @@ func DeletePlayerInTeam(c *gin.Context) {
 // @Failure 404 {string} string "Coach not found"
 // @Router /coaches/{coachID} [put]
 func UpdateCoachInTeam(c *gin.Context) {
-	// Ambil parameter coachID dari URL
 	coachID := c.Param("coachID")
-	if coachID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Coach ID is required"})
-		return
-	}
-
-	// Cari pelatih di database berdasarkan coachID
 	var coach models.Coach
 	if err := config.DB.First(&coach, coachID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Coach not found"})
 		return
 	}
 
-	// Tangkap data name dan role dari form-data
 	name := c.Request.FormValue("name")
-
-	// Update data jika ada input baru
 	if name != "" {
 		coach.Name = name
 	}
 
-	// Tangani file gambar jika ada
 	file, err := c.FormFile("image")
 	if err == nil {
+		cld, _ := cloudinary.NewFromURL(os.Getenv("CLOUDINARY_URL"))
 
-		// Memeriksa ukuran file
-		if file.Size > 500*1024 { // 500 KB
-			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
-			return
+		if coach.Image != "" && !strings.Contains(coach.Image, "placehold.co") {
+			publicID := utils.ExtractPublicID(coach.Image)
+			invalidate := true
+			_, _ = cld.Upload.Destroy(c, uploader.DestroyParams{PublicID: publicID, Invalidate: &invalidate})
 		}
 
-		ext := strings.ToLower(filepath.Ext(file.Filename))
+		fileContent, _ := file.Open()
+		defer fileContent.Close()
 
-		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file type"})
-			return
-		}
-
-		// Cek apakah file image lama ada di sistem dan hapus jika ada
-		if coach.Image != "" && coach.Image != "https://placehold.co/400x600" {
-			coach.Image = strings.Replace(coach.Image, os.Getenv("BASE_URL")+"/", "", 1)
-			if _, err := os.Stat(coach.Image); err == nil {
-				if err := os.Remove(coach.Image); err != nil {
-					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove old image"})
-					return
-				}
-			}
-		}
-
-		newFileName := utils.GenerateUniqueFileName("coach") + ext
-		imagePath := fmt.Sprintf("public/images/%s", newFileName)
-		if err := c.SaveUploadedFile(file, imagePath); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save new image"})
-			return
-		}
-
-		// Update path image di database
-		coach.Image = os.Getenv("BASE_URL") + "/" + imagePath
+		newFileName := utils.GenerateUniqueFileName("coach")
+		uploadResp, _ := cld.Upload.Upload(c, fileContent, uploader.UploadParams{
+			PublicID: fmt.Sprintf("coaches/%s", newFileName),
+			Folder:   "coaches",
+		})
+		coach.Image = uploadResp.SecureURL
 	}
 
-	// Simpan perubahan ke database
 	if err := config.DB.Save(&coach).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Kembalikan response sukses
 	c.JSON(http.StatusOK, coach)
 }
 

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"log"
 	"ml-master-data/config"
 	"ml-master-data/models"
 	"ml-master-data/services"
@@ -11,6 +12,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/cloudinary/cloudinary-go/v2"
+	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 	"github.com/gin-gonic/gin"
 )
 
@@ -44,7 +47,6 @@ func GetAllHeroes(c *gin.Context) {
 // @Success 201 {object} models.Hero
 // @Router /heroes [post]
 func CreateHero(c *gin.Context) {
-
 	// Mengambil nama hero dari FormValue
 	name := c.PostForm("name")
 	if name == "" {
@@ -74,17 +76,34 @@ func CreateHero(c *gin.Context) {
 			return
 		}
 
-		// Membuat nama file unik
-		newFileName := utils.GenerateUniqueFileName("hero") + ext
-		heroImagePath = fmt.Sprintf("public/images/%s", newFileName)
-
-		// Menyimpan file yang diupload
-		if err := c.SaveUploadedFile(file, heroImagePath); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save hero image"})
+		// Inisialisasi Cloudinary
+		cld, err := cloudinary.NewFromURL(os.Getenv("CLOUDINARY_URL"))
+		if err != nil {
+			log.Printf("Cloudinary initialization error: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to initialize Cloudinary"})
 			return
 		}
 
-		heroImagePath = os.Getenv("BASE_URL") + "/" + heroImagePath
+		// Buka dan unggah file baru ke Cloudinary
+		fileContent, err := file.Open()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open image file"})
+			return
+		}
+		defer fileContent.Close()
+
+		newFileName := utils.GenerateUniqueFileName("hero")
+		uploadResp, err := cld.Upload.Upload(c, fileContent, uploader.UploadParams{
+			PublicID: fmt.Sprintf("heroes/%s", newFileName),
+			Folder:   "heroes",
+		})
+		if err != nil {
+			log.Printf("Upload to Cloudinary failed: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload hero image"})
+			return
+		}
+
+		heroImagePath = uploadResp.SecureURL
 	}
 
 	// Membuat objek hero baru
@@ -93,13 +112,13 @@ func CreateHero(c *gin.Context) {
 		Image: heroImagePath,
 	}
 
-	// Menyimpan hero ke database
+	// Menyimpan hero ke dalam database
 	if err := config.DB.Create(&hero).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Mengembalikan respon dengan hero yang baru dibuat
+	// Mengembalikan response hero yang baru dibuat
 	c.JSON(http.StatusCreated, hero)
 }
 
@@ -142,6 +161,7 @@ func UpdateHero(c *gin.Context) {
 		return
 	}
 
+	// Mencari hero berdasarkan ID
 	var hero models.Hero
 	if err := config.DB.First(&hero, heroID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Hero not found"})
@@ -150,16 +170,12 @@ func UpdateHero(c *gin.Context) {
 
 	// Mengambil nama hero dari FormValue
 	name := c.PostForm("name")
-
-	// Mengambil file gambar dari FormFile
-	file, err := c.FormFile("image")
-
-	// Memperbarui nama jika ada
 	if name != "" {
 		hero.Name = name
 	}
 
-	// Memeriksa jika ada gambar baru yang diupload
+	// Menangani file gambar jika ada
+	file, err := c.FormFile("image")
 	if err == nil {
 		// Memeriksa ukuran file
 		if file.Size > 500*1024 { // 500 KB
@@ -167,48 +183,66 @@ func UpdateHero(c *gin.Context) {
 			return
 		}
 
-		// Validasi ekstensi file
-		ext := strings.ToLower(filepath.Ext(file.Filename))
-		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file type"})
-			return
-		}
-
-		// Cek apakah file gambar lama ada di sistem
+		// Menghapus gambar lama dari Cloudinary jika ada
 		if hero.Image != "" && hero.Image != "https://placehold.co/400x600" {
-			// Cek apakah file gambar lama ada di sistem
-			heroImagePath := strings.Replace(hero.Image, os.Getenv("BASE_URL")+"/", "", 1)
-			if _, err := os.Stat(heroImagePath); err == nil {
-				// Jika file ada, hapus file gambar lama dari folder images
-				if err := os.Remove(heroImagePath); err != nil {
-					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove old image"})
-					return
-				}
-			} else if os.IsNotExist(err) {
-				// Jika file tidak ada, berikan pesan peringatan (opsional)
-				c.JSON(http.StatusNotFound, gin.H{"warning": "Old image not found, skipping deletion"})
+			publicID := utils.ExtractPublicID(hero.Image)
+			cld, err := cloudinary.NewFromURL(os.Getenv("CLOUDINARY_URL"))
+			if err != nil {
+				log.Printf("Cloudinary initialization error: %v", err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to initialize Cloudinary"})
+				return
+			}
+
+			// Menghapus gambar lama
+			_, err = cld.Upload.Destroy(c, uploader.DestroyParams{
+				PublicID:   publicID,
+				Invalidate: &[]bool{true}[0],
+			})
+			if err != nil {
+				log.Printf("Failed to delete old image: %v", err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete old image"})
+				return
 			}
 		}
 
-		// Membuat nama file unik
-		newFileName := utils.GenerateUniqueFileName("hero") + ext
-		heroImagePath := fmt.Sprintf("public/images/%s", newFileName)
-
-		// Menyimpan file yang diupload
-		if err := c.SaveUploadedFile(file, heroImagePath); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save new image"})
+		// Buka dan unggah file baru ke Cloudinary
+		fileContent, err := file.Open()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open image file"})
 			return
 		}
-		hero.Image = os.Getenv("BASE_URL") + "/" + heroImagePath // Perbarui dengan path gambar baru
+		defer fileContent.Close()
+
+		newFileName := utils.GenerateUniqueFileName("hero")
+		cld, err := cloudinary.NewFromURL(os.Getenv("CLOUDINARY_URL"))
+		if err != nil {
+			log.Printf("Cloudinary initialization error: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to initialize Cloudinary"})
+			return
+		}
+
+		// Mengunggah gambar baru
+		uploadResp, err := cld.Upload.Upload(c, fileContent, uploader.UploadParams{
+			PublicID: fmt.Sprintf("heroes/%s", newFileName),
+			Folder:   "heroes",
+		})
+		if err != nil {
+			log.Printf("Upload to Cloudinary failed: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload hero image"})
+			return
+		}
+
+		// Update URL gambar baru ke dalam database
+		hero.Image = uploadResp.SecureURL
 	}
 
-	// Simpan perubahan ke database
+	// Menyimpan perubahan hero ke database
 	if err := config.DB.Save(&hero).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Kembalikan response sukses
+	// Mengembalikan response hero yang telah diperbarui
 	c.JSON(http.StatusOK, hero)
 }
 

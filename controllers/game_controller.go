@@ -14,6 +14,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/cloudinary/cloudinary-go/v2"
+	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -182,25 +184,27 @@ func UpdateGame(c *gin.Context) {
 		return
 	}
 
+	// Mencari match berdasarkan ID
 	var match models.Match
 	if err := config.DB.First(&match, matchID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
 		return
 	}
 
+	// Mencari game berdasarkan ID
 	var game models.Game
 	if err := config.DB.First(&game, gameID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
 		return
 	}
 
-	// Parse form data
+	// Mem-parsing form data
 	if err := c.Request.ParseMultipartForm(10 << 20); err != nil { // 10 MB max memory
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to parse multipart form"})
 		return
 	}
 
-	// Tangani file gambar jika ada
+	// Menangani file gambar jika ada
 	file, header, err := c.Request.FormFile("full_draft_image")
 	if err == nil {
 		// Memeriksa ukuran file
@@ -209,54 +213,48 @@ func UpdateGame(c *gin.Context) {
 			return
 		}
 
-		ext := strings.ToLower(filepath.Ext(header.Filename))
-		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file type"})
+		// Upload gambar ke Cloudinary
+		cld, _ := cloudinary.NewFromURL(os.Getenv("CLOUDINARY_URL"))
+		uploadResp, err := cld.Upload.Upload(c.Request.Context(), file, uploader.UploadParams{PublicID: utils.GenerateUniqueFileName("draft")})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload image to Cloudinary"})
 			return
 		}
 
-		// Jika ada gambar sebelumnya, hapus
+		// Jika ada gambar sebelumnya, hapus dari Cloudinary
 		if game.FullDraftImage != "" {
-			oldImagePath := strings.Replace(game.FullDraftImage, os.Getenv("BASE_URL")+"/", "", 1)
-			if _, err := os.Stat(oldImagePath); err == nil {
-				if err := os.Remove(oldImagePath); err != nil {
-					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove old image"})
-					return
-				}
+			oldImagePublicID := utils.ExtractPublicID(game.FullDraftImage)
+			_, err := cld.Upload.Destroy(c.Request.Context(), uploader.DestroyParams{PublicID: oldImagePublicID})
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove old image from Cloudinary"})
+				return
 			}
 		}
 
-		// Simpan gambar baru
-		newFileName := utils.GenerateUniqueFileName("draft") + ext
-		newImagePath := fmt.Sprintf("public/images/%s", newFileName)
+		// Menyimpan URL gambar baru
+		game.FullDraftImage = uploadResp.SecureURL
+	}
 
-		dst, err := os.Create(newImagePath)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create file"})
-			return
+	// Update field game jika ada
+	if firstPickTeamID := c.Request.FormValue("first_pick_team_id"); firstPickTeamID != "" {
+		if id, err := strconv.ParseUint(firstPickTeamID, 10, 32); err == nil {
+			game.FirstPickTeamID = uint(id)
 		}
-		defer dst.Close()
-
-		if _, err = io.Copy(dst, file); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save new image"})
-			return
+	}
+	if secondPickTeamID := c.Request.FormValue("second_pick_team_id"); secondPickTeamID != "" {
+		if id, err := strconv.ParseUint(secondPickTeamID, 10, 32); err == nil {
+			game.SecondPickTeamID = uint(id)
 		}
-
-		game.FullDraftImage = os.Getenv("BASE_URL") + "/" + newImagePath
 	}
-
-	// Update game fields if provided in the form
-	if firstPickTeamID, err := strconv.ParseUint(c.Request.FormValue("first_pick_team_id"), 10, 32); err == nil {
-		game.FirstPickTeamID = uint(firstPickTeamID)
+	if winnerTeamID := c.Request.FormValue("winner_team_id"); winnerTeamID != "" {
+		if id, err := strconv.ParseUint(winnerTeamID, 10, 32); err == nil {
+			game.WinnerTeamID = uint(id)
+		}
 	}
-	if secondPickTeamID, err := strconv.ParseUint(c.Request.FormValue("second_pick_team_id"), 10, 32); err == nil {
-		game.SecondPickTeamID = uint(secondPickTeamID)
-	}
-	if winnerTeamID, err := strconv.ParseUint(c.Request.FormValue("winner_team_id"), 10, 32); err == nil {
-		game.WinnerTeamID = uint(winnerTeamID)
-	}
-	if gameNumber, err := strconv.Atoi(c.Request.FormValue("game_number")); err == nil {
-		game.GameNumber = gameNumber
+	if gameNumber := c.Request.FormValue("game_number"); gameNumber != "" {
+		if num, err := strconv.Atoi(gameNumber); err == nil {
+			game.GameNumber = num
+		}
 	}
 	if videoLink := c.Request.FormValue("video_link"); videoLink != "" {
 		game.VideoLink = videoLink
