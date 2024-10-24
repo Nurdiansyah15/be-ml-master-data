@@ -12,7 +12,7 @@ import (
 // @title ML Master Data API
 // @version 1.0
 // @description API for ML Master Data
-// @host localhost:8080
+// @host https://api.hertod-anal.cloud
 // @BasePath /api/
 
 // @securityDefinitions.apikey Bearer
