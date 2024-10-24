@@ -37,6 +37,7 @@ func SetupRouter() *gin.Engine {
 	{
 
 		protected.GET("/me", controllers.Me)
+		protected.PUT(("/me"), controllers.UpdateUser)
 
 		protected.GET("/tournaments", controllers.GetAllTournaments)
 		protected.GET(("/tournaments/:tournamentID"), controllers.GetTournamentByID)
