@@ -896,7 +896,7 @@ func GetAllTurtleResults(c *gin.Context) {
 			tr.phase, tr.setup, tr.initiate, tr.result
 		FROM turtle_results tr
 		JOIN teams t ON tr.team_id = t.team_id
-		WHERE tr.game_id = ? AND tr.team_id 
+		WHERE tr.game_id = ? AND tr.team_id  = ?
 	`
 
 	if err := config.DB.Raw(query, gameID, teamID).Scan(&results).Error; err != nil {
