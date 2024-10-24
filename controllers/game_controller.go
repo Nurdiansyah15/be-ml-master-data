@@ -600,23 +600,23 @@ func RemoveLordResult(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Security Bearer
-// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
 // @Param gameID path string true "Game ID"
 // @Success 200 {array} dto.LordResultResponseDto
 // @Failure 404 {string} string "Match or game not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /matches/{matchID}/games/{gameID}/lord-results [get]
+// @Router /games/{gameID}/teams/{teamID}/lord-results [get]
 func GetAllLordResults(c *gin.Context) {
-	matchID := c.Param("matchID")
+	teamID := c.Param("teamID")
 	gameID := c.Param("gameID")
 
 	// Validasi keberadaan match dan game
-	if err := config.DB.First(&models.Match{}, "match_id = ?", matchID).Error; err != nil {
+	if err := config.DB.First(&models.Match{}, "match_id = ?", teamID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
 		return
 	}
 
-	if err := config.DB.First(&models.Game{}, "game_id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
+	if err := config.DB.First(&models.Game{}, "game_id = ?", gameID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
 		return
 	}
@@ -630,10 +630,10 @@ func GetAllLordResults(c *gin.Context) {
 			l.phase, l.setup, l.initiate, l.result
 		FROM lord_results l
 		JOIN teams t ON l.team_id = t.team_id
-		WHERE l.game_id = ?
+		WHERE l.game_id = ? AND l.team_id = ?
 	`
 
-	if err := config.DB.Raw(query, gameID).Scan(&results).Error; err != nil {
+	if err := config.DB.Raw(query, gameID, teamID).Scan(&results).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -648,24 +648,24 @@ func GetAllLordResults(c *gin.Context) {
 // @Produce  json
 // @Security Bearer
 // @Param gameID path string true "Game ID"
-// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
 // @Param lordResultID path string true "Lord Result ID"
 // @Success 200 {object} dto.LordResultResponseDto
 // @Failure 404 {string} string "Match or game or Lord result not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /matches/{matchID}/games/{gameID}/lord-results/{lordResultID} [get]
+// @Router /games/{gameID}/teams/{teamID}/lord-results/{lordResultID} [get]
 func GetLordResultByID(c *gin.Context) {
-	matchID := c.Param("matchID")
+	teamID := c.Param("teamID")
 	gameID := c.Param("gameID")
 	lordResultID := c.Param("lordResultID")
 
 	// Validasi keberadaan match dan game
-	if err := config.DB.First(&models.Match{}, "match_id = ?", matchID).Error; err != nil {
+	if err := config.DB.First(&models.Match{}, "match_id = ?", teamID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
 		return
 	}
 
-	if err := config.DB.First(&models.Game{}, "game_id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
+	if err := config.DB.First(&models.Game{}, "game_id = ?", gameID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
 		return
 	}
@@ -679,10 +679,10 @@ func GetLordResultByID(c *gin.Context) {
 			l.phase, l.setup, l.initiate, l.result
 		FROM lord_results l
 		JOIN teams t ON l.team_id = t.team_id
-		WHERE l.lord_result_id = ? AND l.game_id = ?
+		WHERE l.lord_result_id = ? AND l.game_id = ? AND l.team_id = ?
 	`
 
-	if err := config.DB.Raw(query, lordResultID, gameID).Scan(&result).Error; err != nil {
+	if err := config.DB.Raw(query, lordResultID, gameID, teamID).Scan(&result).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Lord result not found"})
 		return
 	}
@@ -859,17 +859,30 @@ func RemoveTurtleResult(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Turtle result deleted successfully"})
 }
 
+// @Tags Game
+// @Summary Get all TurtleResults
+// @Description Get all TurtleResults for a game with the given game ID and match ID
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Param gameID path string true "Game ID"
+// @Param teamID path string true "Match ID"
+// @Success 200 {array} dto.TurtleResultResponseDto
+// @Failure 404 {string} string "Match or game not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /matches/{teamID}/games/{gameID}/turtle-results [get]
 func GetAllTurtleResults(c *gin.Context) {
 
-	matchID := c.Param("matchID")
+	teamID := c.Param("teamID")
 	gameID := c.Param("gameID")
 
-	if err := config.DB.First(&models.Match{}, "match_id = ?", matchID).Error; err != nil {
+	// Validasi keberadaan match dan game
+	if err := config.DB.First(&models.Match{}, "match_id = ?", teamID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
 		return
 	}
 
-	if err := config.DB.First(&models.Game{}, "game_id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
+	if err := config.DB.First(&models.Game{}, "game_id = ?", gameID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
 		return
 	}
@@ -883,10 +896,10 @@ func GetAllTurtleResults(c *gin.Context) {
 			tr.phase, tr.setup, tr.initiate, tr.result
 		FROM turtle_results tr
 		JOIN teams t ON tr.team_id = t.team_id
-		WHERE tr.game_id = ?
+		WHERE tr.game_id = ? AND tr.team_id 
 	`
 
-	if err := config.DB.Raw(query, gameID).Scan(&results).Error; err != nil {
+	if err := config.DB.Raw(query, gameID, teamID).Scan(&results).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -900,24 +913,25 @@ func GetAllTurtleResults(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Security Bearer
-// @Param matchID path string true "Match ID"
+// @Param teamID path string true "Team ID"
 // @Param gameID path string true "Game ID"
 // @Param turtleResultID path string true "Turtle result ID"
 // @Success 200 {object} dto.TurtleResultResponseDto
 // @Failure 404 {string} string "Match, Game, or Turtle result not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /matches/{matchID}/games/{gameID}/turtle-results/{turtleResultID} [get]
+// @Router /games/{gameID}/teams/{teamID}/turtle-results/{turtleResultID} [get]
 func GetTurtleResultByID(c *gin.Context) {
-	matchID := c.Param("matchID")
+	teamID := c.Param("teamID")
 	gameID := c.Param("gameID")
 	turtleResultID := c.Param("turtleResultID")
 
-	if err := config.DB.First(&models.Match{}, "match_id = ?", matchID).Error; err != nil {
+	// Validasi keberadaan match dan game
+	if err := config.DB.First(&models.Match{}, "match_id = ?", teamID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
 		return
 	}
 
-	if err := config.DB.First(&models.Game{}, "game_id = ? AND match_id = ?", gameID, matchID).Error; err != nil {
+	if err := config.DB.First(&models.Game{}, "game_id = ?", gameID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Game not found"})
 		return
 	}
@@ -931,10 +945,10 @@ func GetTurtleResultByID(c *gin.Context) {
 			tr.phase, tr.setup, tr.initiate, tr.result
 		FROM turtle_results tr
 		JOIN teams t ON tr.team_id = t.team_id
-		WHERE tr.turtle_result_id = ? AND tr.game_id = ?
+		WHERE tr.turtle_result_id = ? AND tr.game_id = ? AND tr.team_id = ?
 	`
 
-	if err := config.DB.Raw(query, turtleResultID, gameID).Scan(&result).Error; err != nil {
+	if err := config.DB.Raw(query, turtleResultID, gameID, teamID).Scan(&result).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Turtle result not found"})
 		return
 	}
@@ -1861,10 +1875,10 @@ func GetAllTrioMids(c *gin.Context) {
 		JOIN teams t ON tm.team_id = t.team_id
 		JOIN trio_mid_heros tmh ON tm.trio_mid_id = tmh.trio_mid_id
 		JOIN heros th ON tmh.hero_id = th.hero_id
-		WHERE tm.game_id = ?
+		WHERE tm.game_id = ? AND t.team_id = ?
 	`
 
-	if err := config.DB.Raw(query, gameID).Scan(&results).Error; err != nil {
+	if err := config.DB.Raw(query, gameID, teamID).Scan(&results).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -1940,10 +1954,10 @@ func GetTrioMidByID(c *gin.Context) {
 		JOIN teams t ON tm.team_id = t.team_id
 		JOIN trio_mid_heros tmh ON tm.trio_mid_id = tmh.trio_mid_id
 		JOIN heros th ON tmh.hero_id = th.hero_id
-		WHERE tm.trio_mid_id = ? AND tm.game_id = ?
+		WHERE tm.trio_mid_id = ? AND tm.game_id = ? AND t.team_id = ?
 	`
 
-	if err := config.DB.Raw(query, trioMidID, gameID).Scan(&result).Error; err != nil {
+	if err := config.DB.Raw(query, trioMidID, gameID, teamID).Scan(&result).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "TrioMid not found"})
 		return
 	}
