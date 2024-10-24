@@ -1,13 +1,17 @@
 package services
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 
 	"ml-master-data/models"
+	"ml-master-data/utils"
 
+	"github.com/cloudinary/cloudinary-go/v2"
+	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 	"gorm.io/gorm"
 )
 
@@ -119,16 +123,23 @@ func DeleteHero(db *gorm.DB, hero models.Hero) error {
 
 	if hero.Image != "" && hero.Image != "https://placehold.co/400x600" && strings.HasPrefix(hero.Image, os.Getenv("BASE_URL")) {
 		hero.Image = strings.Replace(hero.Image, os.Getenv("BASE_URL")+"/", "", 1)
-		// Cek apakah file Image lama ada di sistem
-		if _, err := os.Stat(hero.Image); err == nil {
-			// Jika file ada, hapus file Image lama dari folder images
-			if err := os.Remove(hero.Image); err != nil {
-				return fmt.Errorf("gagal menghapus gambar lama: %w", err)
-			}
-		} else if os.IsNotExist(err) {
-			// Jika file tidak ada, lanjutkan ke tahap selanjutnya
-			log.Printf("File gambar lama tidak ditemukan: %s", hero.Image)
+
+		// Ambil Public ID dari URL gambar
+		publicID := utils.ExtractPublicID(hero.Image)
+
+		// Inisialisasi Cloudinary
+		cld, err := cloudinary.NewFromURL(os.Getenv("CLOUDINARY_URL"))
+		if err != nil {
+			return fmt.Errorf("gagal menginisialisasi Cloudinary: %w", err)
 		}
+
+		// Hapus gambar dari Cloudinary
+		_, err = cld.Upload.Destroy(context.Background(), uploader.DestroyParams{PublicID: publicID})
+		if err != nil {
+			return fmt.Errorf("gagal menghapus gambar dari Cloudinary: %w", err)
+		}
+
+		log.Printf("Gambar hero berhasil dihapus dari Cloudinary: %s", hero.Image)
 	}
 
 	log.Printf("Hero dengan ID %d dan semua data terkait telah dihapus.", hero.HeroID)
