@@ -757,6 +757,15 @@ definitions:
     required:
     - role
     type: object
+  dto.UpdateUserDto:
+    properties:
+      old_password:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
   models.Coach:
     properties:
       coach_id:
@@ -5026,6 +5035,46 @@ paths:
       summary: Get team statistics
       tags:
       - Team
+  /user/update:
+    put:
+      consumes:
+      - application/json
+      description: Update username and password of the authenticated user
+      parameters:
+      - description: Update User
+        in: body
+        name: update
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateUserDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated user data
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Old password does not match
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update user
+      tags:
+      - Auth
 securityDefinitions:
   Bearer:
     in: header
