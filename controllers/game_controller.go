@@ -611,8 +611,8 @@ func GetAllLordResults(c *gin.Context) {
 	gameID := c.Param("gameID")
 
 	// Validasi keberadaan match dan game
-	if err := config.DB.First(&models.Match{}, "match_id = ?", teamID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+	if err := config.DB.First(&models.Team{}, "team_id = ?", teamID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
 		return
 	}
 
@@ -660,8 +660,8 @@ func GetLordResultByID(c *gin.Context) {
 	lordResultID := c.Param("lordResultID")
 
 	// Validasi keberadaan match dan game
-	if err := config.DB.First(&models.Match{}, "match_id = ?", teamID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+	if err := config.DB.First(&models.Team{}, "team_id = ?", teamID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
 		return
 	}
 
@@ -877,8 +877,8 @@ func GetAllTurtleResults(c *gin.Context) {
 	gameID := c.Param("gameID")
 
 	// Validasi keberadaan match dan game
-	if err := config.DB.First(&models.Match{}, "match_id = ?", teamID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+	if err := config.DB.First(&models.Team{}, "team_id = ?", teamID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
 		return
 	}
 
@@ -926,8 +926,8 @@ func GetTurtleResultByID(c *gin.Context) {
 	turtleResultID := c.Param("turtleResultID")
 
 	// Validasi keberadaan match dan game
-	if err := config.DB.First(&models.Match{}, "match_id = ?", teamID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+	if err := config.DB.First(&models.Team{}, "team_id = ?", teamID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
 		return
 	}
 
