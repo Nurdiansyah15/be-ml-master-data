@@ -112,7 +112,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Coach ID is required\" or \"File size must not exceed 500 KB\" or \"Invalid file type",
+                        "description": "Coach ID is required\" or \"File size must not exceed 1.5 MB\" or \"Invalid file type",
                         "schema": {
                             "type": "string"
                         }
@@ -5376,7 +5376,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Player ID is required\" or \"File size must not exceed 500 KB\" or \"Invalid file type",
+                        "description": "Player ID is required\" or \"File size must not exceed 1.5 MB\" or \"Invalid file type",
                         "schema": {
                             "type": "string"
                         }
@@ -5858,7 +5858,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Team ID is required\" or \"Name and Role are required\" or \"File size must not exceed 500 KB\" or \"Invalid file type",
+                        "description": "Team ID is required\" or \"Name and Role are required\" or \"File size must not exceed 1.5 MB\" or \"Invalid file type",
                         "schema": {
                             "type": "string"
                         }

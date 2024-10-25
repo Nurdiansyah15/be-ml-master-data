@@ -62,8 +62,8 @@ func CreateTeam(c *gin.Context) {
 		logoURL = "https://placehold.co/400x600"
 	} else {
 		// Validasi ukuran dan ekstensi file
-		if file.Size > 1000*1024 {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
+		if file.Size > 1.5*1024*1024 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 1.5 MB"})
 			return
 		}
 		ext := strings.ToLower(filepath.Ext(file.Filename))
@@ -130,8 +130,8 @@ func UpdateTeam(c *gin.Context) {
 
 	file, err := c.FormFile("image")
 	if err == nil {
-		if file.Size > 1000*1024 {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
+		if file.Size > 1.5*1024*1024 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 1.5 MB"})
 			return
 		}
 
@@ -249,7 +249,7 @@ func GetTeamByID(c *gin.Context) {
 // @Param name formData string true "Player name"
 // @Param image formData file false "Player image"
 // @Success 201 {object} models.Player
-// @Failure 400 {string} string "Team ID is required" or "Name and Role are required" or "File size must not exceed 500 KB" or "Invalid file type"
+// @Failure 400 {string} string "Team ID is required" or "Name and Role are required" or "File size must not exceed 1.5 MB" or "Invalid file type"
 // @Failure 404 {string} string "Team not found"
 // @Router /teams/{teamID}/players [post]
 func CreatePlayerInTeam(c *gin.Context) {
@@ -289,8 +289,8 @@ func CreatePlayerInTeam(c *gin.Context) {
 		imagePath = "https://placehold.co/400x600"
 	} else {
 		// Periksa ukuran file
-		if file.Size > 1000*1024 { // 500 KB
-			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
+		if file.Size > 1.5*1024*1024 { // 500 KB
+			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 1.5 MB"})
 			return
 		}
 
@@ -405,7 +405,7 @@ func CreateCoachInTeam(c *gin.Context) {
 // @Param name formData string false "Player name"
 // @Param image formData file false "Player image"
 // @Success 200 {object} models.Player
-// @Failure 400 {string} string "Player ID is required" or "File size must not exceed 500 KB" or "Invalid file type"
+// @Failure 400 {string} string "Player ID is required" or "File size must not exceed 1.5 MB" or "Invalid file type"
 // @Failure 404 {string} string "Player not found"
 // @Router /players/{teamID} [put]
 func UpdatePlayerInTeam(c *gin.Context) {
@@ -440,8 +440,8 @@ func UpdatePlayerInTeam(c *gin.Context) {
 	file, err := c.FormFile("image")
 	if err == nil {
 		// Periksa ukuran file
-		if file.Size > 1000*1024 { // 500 KB
-			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
+		if file.Size > 1.5*1024*1024 { // 500 KB
+			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 1.5 MB"})
 			return
 		}
 
@@ -542,7 +542,7 @@ func DeletePlayerInTeam(c *gin.Context) {
 // @Param name formData string false "Coach name"
 // @Param image formData file false "Coach image"
 // @Success 200 {object} models.Coach
-// @Failure 400 {string} string "Coach ID is required" or "File size must not exceed 500 KB" or "Invalid file type"
+// @Failure 400 {string} string "Coach ID is required" or "File size must not exceed 1.5 MB" or "Invalid file type"
 // @Failure 404 {string} string "Coach not found"
 // @Router /coaches/{coachID} [put]
 func UpdateCoachInTeam(c *gin.Context) {

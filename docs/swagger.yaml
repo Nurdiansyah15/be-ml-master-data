@@ -69,7 +69,7 @@ definitions:
       team_id:
         type: integer
     required:
-    - team_id
+      - team_id
     type: object
   dto.CoachMatchResponseDto:
     properties:
@@ -98,7 +98,7 @@ definitions:
       hero_id:
         type: integer
     required:
-    - hero_id
+      - hero_id
     type: object
   dto.ExplanerResponseDto:
     properties:
@@ -139,19 +139,19 @@ definitions:
         type: number
       role:
         enum:
-        - gold
-        - exp
-        - roam
-        - mid
-        - jungler
+          - gold
+          - exp
+          - roam
+          - mid
+          - jungler
         type: string
       total:
         type: integer
     required:
-    - hero_id
-    - pick_rate
-    - role
-    - total
+      - hero_id
+      - pick_rate
+      - role
+      - total
     type: object
   dto.FlexPickResponseDto:
     properties:
@@ -228,7 +228,7 @@ definitions:
       hero_id:
         type: integer
     required:
-    - hero_id
+      - hero_id
     type: object
   dto.GoldlanerResponseDto:
     properties:
@@ -275,9 +275,9 @@ definitions:
             is_banned:
               type: boolean
           required:
-          - game_id
-          - game_number
-          - is_banned
+            - game_id
+            - game_number
+            - is_banned
           type: object
         type: array
       hero_id:
@@ -287,10 +287,10 @@ definitions:
       total:
         type: integer
     required:
-    - first_phase
-    - hero_id
-    - second_phase
-    - total
+      - first_phase
+      - hero_id
+      - second_phase
+      - total
     type: object
   dto.HeroBanResponseDto:
     properties:
@@ -347,9 +347,9 @@ definitions:
             is_picked:
               type: boolean
           required:
-          - game_id
-          - game_number
-          - is_picked
+            - game_id
+            - game_number
+            - is_picked
           type: object
         type: array
       second_phase:
@@ -357,10 +357,10 @@ definitions:
       total:
         type: integer
     required:
-    - first_phase
-    - hero_id
-    - second_phase
-    - total
+      - first_phase
+      - hero_id
+      - second_phase
+      - total
     type: object
   dto.HeroPickResponseDto:
     properties:
@@ -408,8 +408,8 @@ definitions:
       username:
         type: string
     required:
-    - password
-    - username
+      - password
+      - username
     type: object
   dto.LordResultRequestDto:
     properties:
@@ -424,11 +424,11 @@ definitions:
       team_id:
         type: integer
     required:
-    - initiate
-    - phase
-    - result
-    - setup
-    - team_id
+      - initiate
+      - phase
+      - result
+      - setup
+      - team_id
     type: object
   dto.LordResultResponseDto:
     properties:
@@ -471,13 +471,13 @@ definitions:
       team_b_score:
         type: integer
     required:
-    - date
-    - day
-    - stage
-    - team_a_id
-    - team_a_score
-    - team_b_id
-    - team_b_score
+      - date
+      - day
+      - stage
+      - team_a_id
+      - team_a_score
+      - team_b_id
+      - team_b_score
     type: object
   dto.MatchResponseDto:
     properties:
@@ -524,15 +524,15 @@ definitions:
         type: integer
       role:
         enum:
-        - goldlaner
-        - explaner
-        - roamer
-        - midlaner
-        - jungler
+          - goldlaner
+          - explaner
+          - roamer
+          - midlaner
+          - jungler
         type: string
     required:
-    - player_id
-    - role
+      - player_id
+      - role
     type: object
   dto.PlayerMatchResponseDto:
     properties:
@@ -562,19 +562,19 @@ definitions:
         type: integer
       role:
         enum:
-        - gold
-        - exp
-        - roam
-        - mid
-        - jungler
+          - gold
+          - exp
+          - roam
+          - mid
+          - jungler
         type: string
       total:
         type: integer
     required:
-    - ban_rate
-    - hero_id
-    - role
-    - total
+      - ban_rate
+      - hero_id
+      - role
+      - total
     type: object
   dto.PriorityBanResponseDto:
     properties:
@@ -606,19 +606,19 @@ definitions:
         type: number
       role:
         enum:
-        - gold
-        - exp
-        - roam
-        - mid
-        - jungler
+          - gold
+          - exp
+          - roam
+          - mid
+          - jungler
         type: string
       total:
         type: integer
     required:
-    - hero_id
-    - pick_rate
-    - role
-    - total
+      - hero_id
+      - pick_rate
+      - role
+      - total
     type: object
   dto.PriorityPickResponseDto:
     properties:
@@ -647,7 +647,7 @@ definitions:
       name:
         type: string
     required:
-    - name
+      - name
     type: object
   dto.TrioMidRequestDto:
     properties:
@@ -658,8 +658,8 @@ definitions:
       role:
         type: string
     required:
-    - hero_id
-    - role
+      - hero_id
+      - role
     type: object
   dto.TrioMidResponseDto:
     properties:
@@ -707,11 +707,11 @@ definitions:
       team_id:
         type: integer
     required:
-    - initiate
-    - phase
-    - result
-    - setup
-    - team_id
+      - initiate
+      - phase
+      - result
+      - setup
+      - team_id
     type: object
   dto.TurtleResultResponseDto:
     properties:
@@ -742,20 +742,20 @@ definitions:
       role:
         type: string
     required:
-    - role
+      - role
     type: object
   dto.UpdatePlayerMatchRequestDto:
     properties:
       role:
         enum:
-        - goldlaner
-        - explaner
-        - roamer
-        - midlaner
-        - jungler
+          - goldlaner
+          - explaner
+          - roamer
+          - midlaner
+          - jungler
         type: string
     required:
-    - role
+      - role
     type: object
   dto.UpdateUserDto:
     properties:
@@ -942,13 +942,13 @@ paths:
     delete:
       description: Delete a coach in a team and all its related data
       parameters:
-      - description: Coach ID
-        in: path
-        name: coachID
-        required: true
-        type: string
+        - description: Coach ID
+          in: path
+          name: coachID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Coach deleted successfully
@@ -967,27 +967,27 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Delete a coach in a team
       tags:
-      - Team
+        - Team
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get a coach by ID with the given coach ID
       parameters:
-      - description: Coach ID
-        in: path
-        name: coachID
-        required: true
-        type: string
+        - description: Coach ID
+          in: path
+          name: coachID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Coach'
+            $ref: "#/definitions/models.Coach"
         "400":
           description: Coach ID is required
           schema:
@@ -1001,35 +1001,36 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get a coach by ID
       tags:
-      - Team
+        - Team
     put:
       description: Update a coach in a team and save its image
       parameters:
-      - description: Coach ID
-        in: path
-        name: coachID
-        required: true
-        type: string
-      - description: Coach name
-        in: formData
-        name: name
-        type: string
-      - description: Coach image
-        in: formData
-        name: image
-        type: file
+        - description: Coach ID
+          in: path
+          name: coachID
+          required: true
+          type: string
+        - description: Coach name
+          in: formData
+          name: name
+          type: string
+        - description: Coach image
+          in: formData
+          name: image
+          type: file
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Coach'
+            $ref: "#/definitions/models.Coach"
         "400":
-          description: Coach ID is required" or "File size must not exceed 500 KB"
+          description:
+            Coach ID is required" or "File size must not exceed 1.5 MB"
             or "Invalid file type
           schema:
             type: string
@@ -1038,68 +1039,69 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Update a coach in a team
       tags:
-      - Team
+        - Team
   /games/{gameID}/teams/{teamID}/explaners:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get all Explaners for a game with the given game ID and match ID
       parameters:
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/dto.ExplanerResponseDto'
+              $ref: "#/definitions/dto.ExplanerResponseDto"
             type: array
         "500":
           description: Internal server error
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all Explaners for a game
       tags:
-      - Game
+        - Game
     post:
       consumes:
-      - application/json
-      description: Add an explaner for a game with the given game ID and match ID
+        - application/json
+      description:
+        Add an explaner for a game with the given game ID and match ID
         with the given information
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Explaner data
-        in: body
-        name: explaner
-        required: true
-        schema:
-          $ref: '#/definitions/dto.ExplanerRequestDto'
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Explaner data
+          in: body
+          name: explaner
+          required: true
+          schema:
+            $ref: "#/definitions/dto.ExplanerRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Explaner added successfully
@@ -1118,34 +1120,35 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Add an explaner
       tags:
-      - Game
+        - Game
   /games/{gameID}/teams/{teamID}/explaners/{explanerID}:
     delete:
       consumes:
-      - application/json
-      description: Delete an Explaner with the given game ID, match ID, and Explaner
+        - application/json
+      description:
+        Delete an Explaner with the given game ID, match ID, and Explaner
         ID
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Explaner ID
-        in: path
-        name: explanerID
-        required: true
-        type: string
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Explaner ID
+          in: path
+          name: explanerID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Explaner deleted successfully
@@ -1164,38 +1167,39 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Delete an Explaner
       tags:
-      - Game
+        - Game
     get:
       consumes:
-      - application/json
-      description: Get an explaner by ID for a game with the given game ID and match
+        - application/json
+      description:
+        Get an explaner by ID for a game with the given game ID and match
         ID
       parameters:
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Explaner ID
-        in: path
-        name: explanerID
-        required: true
-        type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Explaner ID
+          in: path
+          name: explanerID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.ExplanerResponseDto'
+            $ref: "#/definitions/dto.ExplanerResponseDto"
         "400":
           description: Invalid input
           schema:
@@ -1209,44 +1213,45 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get an explaner by ID
       tags:
-      - Game
+        - Game
     put:
       consumes:
-      - application/json
-      description: Update an Explaner with the given game ID, match ID, and Explaner
+        - application/json
+      description:
+        Update an Explaner with the given game ID, match ID, and Explaner
         ID with the given information
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Explaner ID
-        in: path
-        name: explanerID
-        required: true
-        type: string
-      - description: Explaner data
-        in: body
-        name: explaner
-        required: true
-        schema:
-          $ref: '#/definitions/dto.ExplanerRequestDto'
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Explaner ID
+          in: path
+          name: explanerID
+          required: true
+          type: string
+        - description: Explaner data
+          in: body
+          name: explaner
+          required: true
+          schema:
+            $ref: "#/definitions/dto.ExplanerRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Explaner updated successfully
           schema:
-            $ref: '#/definitions/models.Explaner'
+            $ref: "#/definitions/models.Explaner"
         "400":
           description: Invalid input
           schema:
@@ -1260,35 +1265,36 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Update an Explaner
       tags:
-      - Game
+        - Game
   /games/{gameID}/teams/{teamID}/game-results:
     get:
       consumes:
-      - application/json
-      description: Get all game results for a team in a game with the given game ID
+        - application/json
+      description:
+        Get all game results for a team in a game with the given game ID
         and team ID
       parameters:
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: All game results found successfully
           schema:
             items:
-              $ref: '#/definitions/controllers.GameResultDto'
+              $ref: "#/definitions/controllers.GameResultDto"
             type: array
         "400":
           description: Invalid input
@@ -1303,35 +1309,36 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all game results for a team in a game
       tags:
-      - Game
+        - Game
   /games/{gameID}/teams/{teamID}/goldlaners:
     get:
       consumes:
-      - application/json
-      description: Get all Goldlaners for a game with the given game ID and match
+        - application/json
+      description:
+        Get all Goldlaners for a game with the given game ID and match
         ID
       parameters:
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/dto.GoldlanerResponseDto'
+              $ref: "#/definitions/dto.GoldlanerResponseDto"
             type: array
         "404":
           description: Match or game not found
@@ -1342,34 +1349,35 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all Goldlaners for a game
       tags:
-      - Game
+        - Game
     post:
       consumes:
-      - application/json
-      description: Add a goldlaner for a game with the given game ID and match ID
+        - application/json
+      description:
+        Add a goldlaner for a game with the given game ID and match ID
         with the given information
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Goldlaner data
-        in: body
-        name: goldlaner
-        required: true
-        schema:
-          $ref: '#/definitions/dto.GoldlanerRequestDto'
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Goldlaner data
+          in: body
+          name: goldlaner
+          required: true
+          schema:
+            $ref: "#/definitions/dto.GoldlanerRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Goldlaner added successfully
@@ -1388,34 +1396,35 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Add a goldlaner
       tags:
-      - Game
+        - Game
   /games/{gameID}/teams/{teamID}/goldlaners/{goldlanerID}:
     delete:
       consumes:
-      - application/json
-      description: Delete a Goldlaner with the given game ID, match ID, and Goldlaner
+        - application/json
+      description:
+        Delete a Goldlaner with the given game ID, match ID, and Goldlaner
         ID
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Goldlaner ID
-        in: path
-        name: goldlanerID
-        required: true
-        type: string
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Goldlaner ID
+          in: path
+          name: goldlanerID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Goldlaner deleted successfully
@@ -1434,37 +1443,37 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Delete a Goldlaner
       tags:
-      - Game
+        - Game
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get a Goldlaner by the given game ID, match ID, and Goldlaner ID
       parameters:
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Goldlaner ID
-        in: path
-        name: goldlanerID
-        required: true
-        type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Goldlaner ID
+          in: path
+          name: goldlanerID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.GoldlanerResponseDto'
+            $ref: "#/definitions/dto.GoldlanerResponseDto"
         "404":
           description: Match or game or Goldlaner not found
           schema:
@@ -1474,44 +1483,45 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get a Goldlaner by ID
       tags:
-      - Game
+        - Game
     put:
       consumes:
-      - application/json
-      description: Update a Goldlaner with the given game ID, match ID, and Goldlaner
+        - application/json
+      description:
+        Update a Goldlaner with the given game ID, match ID, and Goldlaner
         ID with the given information
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Goldlaner ID
-        in: path
-        name: goldlanerID
-        required: true
-        type: string
-      - description: Goldlaner data
-        in: body
-        name: goldlaner
-        required: true
-        schema:
-          $ref: '#/definitions/dto.GoldlanerRequestDto'
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Goldlaner ID
+          in: path
+          name: goldlanerID
+          required: true
+          type: string
+        - description: Goldlaner data
+          in: body
+          name: goldlaner
+          required: true
+          schema:
+            $ref: "#/definitions/dto.GoldlanerRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Goldlaner updated successfully
           schema:
-            $ref: '#/definitions/models.Goldlaner'
+            $ref: "#/definitions/models.Goldlaner"
         "400":
           description: Invalid input
           schema:
@@ -1525,35 +1535,36 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Update a Goldlaner
       tags:
-      - Game
+        - Game
   /games/{gameID}/teams/{teamID}/lord-results:
     get:
       consumes:
-      - application/json
-      description: Get all lord results for a game with the given game ID and match
+        - application/json
+      description:
+        Get all lord results for a game with the given game ID and match
         ID
       parameters:
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/dto.LordResultResponseDto'
+              $ref: "#/definitions/dto.LordResultResponseDto"
             type: array
         "404":
           description: Match or game not found
@@ -1564,39 +1575,40 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all lord results for a game
       tags:
-      - Game
+        - Game
   /games/{gameID}/teams/{teamID}/lord-results/{lordResultID}:
     get:
       consumes:
-      - application/json
-      description: Get a LordResult by the given game ID, match ID, and Lord Result
+        - application/json
+      description:
+        Get a LordResult by the given game ID, match ID, and Lord Result
         ID
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Lord Result ID
-        in: path
-        name: lordResultID
-        required: true
-        type: string
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Lord Result ID
+          in: path
+          name: lordResultID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.LordResultResponseDto'
+            $ref: "#/definitions/dto.LordResultResponseDto"
         "404":
           description: Match or game or Lord result not found
           schema:
@@ -1606,39 +1618,40 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get a LordResult by ID
       tags:
-      - Game
+        - Game
   /games/{gameID}/teams/{teamID}/trio-mid-results/{trioMidID}:
     get:
       consumes:
-      - application/json
-      description: Get a TrioMid result with the given game ID, match ID, and TrioMid
+        - application/json
+      description:
+        Get a TrioMid result with the given game ID, match ID, and TrioMid
         ID
       parameters:
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: TrioMid ID
-        in: path
-        name: trioMidID
-        required: true
-        type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: TrioMid ID
+          in: path
+          name: trioMidID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Trio mid result found successfully
           schema:
-            $ref: '#/definitions/models.TrioMid'
+            $ref: "#/definitions/models.TrioMid"
         "400":
           description: Invalid input
           schema:
@@ -1652,34 +1665,35 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get a TrioMid result by ID
       tags:
-      - Game
+        - Game
     put:
       consumes:
-      - application/json
-      description: Update a TrioMid with the given team ID and game ID with the given
+        - application/json
+      description:
+        Update a TrioMid with the given team ID and game ID with the given
         information
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Trio mid data
-        in: body
-        name: trioMid
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.TrioMidResultDto'
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Trio mid data
+          in: body
+          name: trioMid
+          required: true
+          schema:
+            $ref: "#/definitions/controllers.TrioMidResultDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Trio mid result updated successfully
@@ -1698,68 +1712,69 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Update a TrioMid result
       tags:
-      - Game
+        - Game
   /games/{gameID}/teams/{teamID}/trio-mids:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get all TrioMids for a game with the given game ID
       parameters:
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/dto.TrioMidResponseDto'
+              $ref: "#/definitions/dto.TrioMidResponseDto"
             type: array
         "500":
           description: Internal server error
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all TrioMids for a game
       tags:
-      - Game
+        - Game
     post:
       consumes:
-      - application/json
-      description: Add a TrioMid for a game with the given game ID and match ID with
+        - application/json
+      description:
+        Add a TrioMid for a game with the given game ID and match ID with
         the given information
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: TrioMid data
-        in: body
-        name: trioMid
-        required: true
-        schema:
-          $ref: '#/definitions/dto.TrioMidRequestDto'
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: TrioMid data
+          in: body
+          name: trioMid
+          required: true
+          schema:
+            $ref: "#/definitions/dto.TrioMidRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: TrioMid added successfully
@@ -1778,34 +1793,35 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Add a TrioMid
       tags:
-      - Game
+        - Game
   /games/{gameID}/teams/{teamID}/trio-mids/{trioMidHeroID}:
     delete:
       consumes:
-      - application/json
-      description: Delete a TrioMid with the given game ID, match ID, and TrioMid
+        - application/json
+      description:
+        Delete a TrioMid with the given game ID, match ID, and TrioMid
         ID
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: TrioMid ID
-        in: path
-        name: trioMidHeroID
-        required: true
-        type: string
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: TrioMid ID
+          in: path
+          name: trioMidHeroID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: TrioMid deleted successfully
@@ -1824,44 +1840,45 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Delete a TrioMid
       tags:
-      - Game
+        - Game
     put:
       consumes:
-      - application/json
-      description: Update a TrioMid with the given game ID, match ID, and TrioMid
+        - application/json
+      description:
+        Update a TrioMid with the given game ID, match ID, and TrioMid
         ID with the given information
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: TrioMid ID
-        in: path
-        name: trioMidHeroID
-        required: true
-        type: string
-      - description: Trio mid data
-        in: body
-        name: trioMid
-        required: true
-        schema:
-          $ref: '#/definitions/dto.TrioMidRequestDto'
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: TrioMid ID
+          in: path
+          name: trioMidHeroID
+          required: true
+          type: string
+        - description: Trio mid data
+          in: body
+          name: trioMid
+          required: true
+          schema:
+            $ref: "#/definitions/dto.TrioMidRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Trio mid updated successfully
           schema:
-            $ref: '#/definitions/models.TrioMid'
+            $ref: "#/definitions/models.TrioMid"
         "400":
           description: Invalid input
           schema:
@@ -1875,38 +1892,38 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Update a TrioMid
       tags:
-      - Game
+        - Game
   /games/{gameID}/teams/{teamID}/trio-mids/{trioMidID}:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get a TrioMid with the given game ID, match ID, and TrioMid ID
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: TrioMid ID
-        in: path
-        name: trioMidID
-        required: true
-        type: string
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: TrioMid ID
+          in: path
+          name: trioMidID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Trio mid found successfully
           schema:
-            $ref: '#/definitions/dto.TrioMidResponseDto'
+            $ref: "#/definitions/dto.TrioMidResponseDto"
         "400":
           description: Invalid input
           schema:
@@ -1920,39 +1937,40 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get a TrioMid by ID
       tags:
-      - Game
+        - Game
   /games/{gameID}/teams/{teamID}/turtle-results/{turtleResultID}:
     get:
       consumes:
-      - application/json
-      description: Get a TurtleResult by ID for a game with the given game ID and
+        - application/json
+      description:
+        Get a TurtleResult by ID for a game with the given game ID and
         match ID
       parameters:
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Turtle result ID
-        in: path
-        name: turtleResultID
-        required: true
-        type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Turtle result ID
+          in: path
+          name: turtleResultID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.TurtleResultResponseDto'
+            $ref: "#/definitions/dto.TurtleResultResponseDto"
         "404":
           description: Match, Game, or Turtle result not found
           schema:
@@ -1962,64 +1980,65 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get a TurtleResult by ID
       tags:
-      - Game
+        - Game
   /heroes:
     get:
       description: Get all heroes data
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Hero'
+              $ref: "#/definitions/models.Hero"
             type: array
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all heroes
       tags:
-      - Hero
+        - Hero
     post:
       description: Create a hero and save its image
       parameters:
-      - description: Hero name
-        in: formData
-        name: name
-        required: true
-        type: string
-      - description: Hero image
-        in: formData
-        name: image
-        required: true
-        type: file
+        - description: Hero name
+          in: formData
+          name: name
+          required: true
+          type: string
+        - description: Hero image
+          in: formData
+          name: image
+          required: true
+          type: file
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Hero'
+            $ref: "#/definitions/models.Hero"
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Create a hero
       tags:
-      - Hero
+        - Hero
   /heroes/{heroID}:
     delete:
-      description: Delete a hero by ID and remove its image from the system if it
+      description:
+        Delete a hero by ID and remove its image from the system if it
         exists
       parameters:
-      - description: Hero ID
-        in: path
-        name: heroID
-        required: true
-        type: string
+        - description: Hero ID
+          in: path
+          name: heroID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Hero deleted successfully
@@ -2038,72 +2057,72 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Delete a hero
       tags:
-      - Hero
+        - Hero
     get:
       description: Get a hero data by ID
       parameters:
-      - description: Hero ID
-        in: path
-        name: heroID
-        required: true
-        type: string
+        - description: Hero ID
+          in: path
+          name: heroID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Hero'
+            $ref: "#/definitions/models.Hero"
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get a hero by ID
       tags:
-      - Hero
+        - Hero
     put:
       description: Update a hero and save its image
       parameters:
-      - description: Hero ID
-        in: path
-        name: heroID
-        required: true
-        type: string
-      - description: Hero name
-        in: formData
-        name: name
-        type: string
-      - description: Hero image
-        in: formData
-        name: image
-        type: file
+        - description: Hero ID
+          in: path
+          name: heroID
+          required: true
+          type: string
+        - description: Hero name
+          in: formData
+          name: name
+          type: string
+        - description: Hero image
+          in: formData
+          name: image
+          type: file
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Hero'
+            $ref: "#/definitions/models.Hero"
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Update a hero
       tags:
-      - Hero
+        - Hero
   /login:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Login to get JWT token
       parameters:
-      - description: Login
-        in: body
-        name: login
-        required: true
-        schema:
-          $ref: '#/definitions/dto.LoginDto'
+        - description: Login
+          in: body
+          name: login
+          required: true
+          schema:
+            $ref: "#/definitions/dto.LoginDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Success
@@ -2123,19 +2142,19 @@ paths:
             type: string
       summary: Login
       tags:
-      - Auth
+        - Auth
   /matches/{matchID}:
     delete:
       description: Delete a match by ID
       operationId: delete-match
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Match deleted successfully
@@ -2155,22 +2174,22 @@ paths:
             type: string
       summary: Delete a match
       tags:
-      - Match
+        - Match
     get:
       description: Get a match by ID
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.MatchResponseDto'
+            $ref: "#/definitions/dto.MatchResponseDto"
         "400":
           description: Invalid input
           schema:
@@ -2184,33 +2203,33 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get a match by ID
       tags:
-      - Match
+        - Match
     put:
       consumes:
-      - application/json
+        - application/json
       description: Update a match with the given match ID with the given information
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Match data
-        in: body
-        name: match
-        required: true
-        schema:
-          $ref: '#/definitions/dto.MatchRequestDto'
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Match data
+          in: body
+          name: match
+          required: true
+          schema:
+            $ref: "#/definitions/dto.MatchRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Match updated successfully
           schema:
-            $ref: '#/definitions/models.Match'
+            $ref: "#/definitions/models.Match"
         "400":
           description: Invalid input
           schema:
@@ -2224,86 +2243,87 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Update a match
       tags:
-      - Match
+        - Match
   /matches/{matchID}/games:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get all games for a match with the given match ID
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/dto.GameResponseDto'
+              $ref: "#/definitions/dto.GameResponseDto"
             type: array
         "500":
           description: Internal server error
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all games for a match
       tags:
-      - Game
+        - Game
     post:
       consumes:
-      - multipart/form-data
-      description: Create a new game for the specified match with additional information
+        - multipart/form-data
+      description:
+        Create a new game for the specified match with additional information
         including the first pick team ID, second pick team ID, winner team ID, game
         number, video link, and optionally a full draft image.
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: First Pick Team ID
-        in: formData
-        name: first_pick_team_id
-        required: true
-        type: integer
-      - description: Second Pick Team ID
-        in: formData
-        name: second_pick_team_id
-        required: true
-        type: integer
-      - description: Winner Team ID
-        in: formData
-        name: winner_team_id
-        required: true
-        type: integer
-      - description: Game Number
-        in: formData
-        name: game_number
-        required: true
-        type: integer
-      - description: Video Link
-        in: formData
-        name: video_link
-        type: string
-      - description: Full Draft Image
-        in: formData
-        name: full_draft_image
-        type: file
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: First Pick Team ID
+          in: formData
+          name: first_pick_team_id
+          required: true
+          type: integer
+        - description: Second Pick Team ID
+          in: formData
+          name: second_pick_team_id
+          required: true
+          type: integer
+        - description: Winner Team ID
+          in: formData
+          name: winner_team_id
+          required: true
+          type: integer
+        - description: Game Number
+          in: formData
+          name: game_number
+          required: true
+          type: integer
+        - description: Video Link
+          in: formData
+          name: video_link
+          type: string
+        - description: Full Draft Image
+          in: formData
+          name: full_draft_image
+          type: file
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Game created successfully
           schema:
-            $ref: '#/definitions/models.Game'
+            $ref: "#/definitions/models.Game"
         "400":
           description: Bad Request
           schema:
@@ -2317,28 +2337,28 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Create a new game
       tags:
-      - Game
+        - Game
   /matches/{matchID}/games/{gameID}:
     delete:
       consumes:
-      - application/json
+        - application/json
       description: Delete a game with the given game ID and match ID
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Game deleted successfully
@@ -2357,32 +2377,32 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Delete a game
       tags:
-      - Game
+        - Game
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get a game by ID
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.GameResponseDto'
+            $ref: "#/definitions/dto.GameResponseDto"
         "400":
           description: Invalid input
           schema:
@@ -2396,57 +2416,58 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get a game by ID
       tags:
-      - Game
+        - Game
     put:
       consumes:
-      - multipart/form-data
-      description: Update a game with the given game ID and match ID with the given
+        - multipart/form-data
+      description:
+        Update a game with the given game ID and match ID with the given
         information
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: First Pick Team ID
-        in: formData
-        name: first_pick_team_id
-        type: integer
-      - description: Second Pick Team ID
-        in: formData
-        name: second_pick_team_id
-        type: integer
-      - description: Winner Team ID
-        in: formData
-        name: winner_team_id
-        type: integer
-      - description: Game Number
-        in: formData
-        name: game_number
-        type: integer
-      - description: Video Link
-        in: formData
-        name: video_link
-        type: string
-      - description: Full Draft Image
-        in: formData
-        name: full_draft_image
-        type: file
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: First Pick Team ID
+          in: formData
+          name: first_pick_team_id
+          type: integer
+        - description: Second Pick Team ID
+          in: formData
+          name: second_pick_team_id
+          type: integer
+        - description: Winner Team ID
+          in: formData
+          name: winner_team_id
+          type: integer
+        - description: Game Number
+          in: formData
+          name: game_number
+          type: integer
+        - description: Video Link
+          in: formData
+          name: video_link
+          type: string
+        - description: Full Draft Image
+          in: formData
+          name: full_draft_image
+          type: file
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Game updated successfully
           schema:
-            $ref: '#/definitions/models.Game'
+            $ref: "#/definitions/models.Game"
         "400":
           description: Bad Request
           schema:
@@ -2460,34 +2481,34 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Update a game
       tags:
-      - Game
+        - Game
   /matches/{matchID}/games/{gameID}/lord-results:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Add a lord result for a game with the given game ID and match ID
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Lord result data
-        in: body
-        name: lordResult
-        required: true
-        schema:
-          $ref: '#/definitions/dto.LordResultRequestDto'
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Lord result data
+          in: body
+          name: lordResult
+          required: true
+          schema:
+            $ref: "#/definitions/dto.LordResultRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Lord result added successfully
@@ -2506,34 +2527,35 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Add a lord result
       tags:
-      - Game
+        - Game
   /matches/{matchID}/games/{gameID}/lord-results/{lordResultID}:
     delete:
       consumes:
-      - application/json
-      description: Delete a LordResult with the given game ID, match ID, and Lord
+        - application/json
+      description:
+        Delete a LordResult with the given game ID, match ID, and Lord
         Result ID
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Lord Result ID
-        in: path
-        name: lordResultID
-        required: true
-        type: string
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Lord Result ID
+          in: path
+          name: lordResultID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Lord result deleted successfully
@@ -2552,44 +2574,45 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Delete a LordResult
       tags:
-      - Game
+        - Game
     put:
       consumes:
-      - application/json
-      description: Update a LordResult with the given game ID, match ID, and Lord
+        - application/json
+      description:
+        Update a LordResult with the given game ID, match ID, and Lord
         Result ID with the given information
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Lord Result ID
-        in: path
-        name: lordResultID
-        required: true
-        type: string
-      - description: Lord result data
-        in: body
-        name: lordResult
-        required: true
-        schema:
-          $ref: '#/definitions/dto.LordResultRequestDto'
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Lord Result ID
+          in: path
+          name: lordResultID
+          required: true
+          type: string
+        - description: Lord result data
+          in: body
+          name: lordResult
+          required: true
+          schema:
+            $ref: "#/definitions/dto.LordResultRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Lord result updated successfully
           schema:
-            $ref: '#/definitions/models.LordResult'
+            $ref: "#/definitions/models.LordResult"
         "400":
           description: Invalid input
           schema:
@@ -2603,35 +2626,36 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Update a LordResult
       tags:
-      - Game
+        - Game
   /matches/{matchID}/games/{gameID}/turtle-results:
     post:
       consumes:
-      - application/json
-      description: Add a turtle result for a game with the given game ID and match
+        - application/json
+      description:
+        Add a turtle result for a game with the given game ID and match
         ID
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Turtle result data
-        in: body
-        name: turtleResult
-        required: true
-        schema:
-          $ref: '#/definitions/dto.TurtleResultRequestDto'
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Turtle result data
+          in: body
+          name: turtleResult
+          required: true
+          schema:
+            $ref: "#/definitions/dto.TurtleResultRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Turtle result added successfully
@@ -2650,34 +2674,35 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Add a turtle result
       tags:
-      - Game
+        - Game
   /matches/{matchID}/games/{gameID}/turtle-results/{turtleResultID}:
     delete:
       consumes:
-      - application/json
-      description: Delete a TurtleResult with the given game ID, match ID, and Turtle
+        - application/json
+      description:
+        Delete a TurtleResult with the given game ID, match ID, and Turtle
         Result ID
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Turtle Result ID
-        in: path
-        name: turtleResultID
-        required: true
-        type: string
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Turtle Result ID
+          in: path
+          name: turtleResultID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Turtle result deleted successfully
@@ -2696,44 +2721,45 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Delete a TurtleResult
       tags:
-      - Game
+        - Game
     put:
       consumes:
-      - application/json
-      description: Update a turtle result with the given game ID, match ID, and turtle
+        - application/json
+      description:
+        Update a turtle result with the given game ID, match ID, and turtle
         result ID with the given information
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Turtle Result ID
-        in: path
-        name: turtleResultID
-        required: true
-        type: string
-      - description: Turtle result data
-        in: body
-        name: turtleResult
-        required: true
-        schema:
-          $ref: '#/definitions/dto.TurtleResultRequestDto'
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Turtle Result ID
+          in: path
+          name: turtleResultID
+          required: true
+          type: string
+        - description: Turtle result data
+          in: body
+          name: turtleResult
+          required: true
+          schema:
+            $ref: "#/definitions/dto.TurtleResultRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Turtle result updated successfully
           schema:
-            $ref: '#/definitions/models.TurtleResult'
+            $ref: "#/definitions/models.TurtleResult"
         "400":
           description: Invalid input
           schema:
@@ -2747,30 +2773,30 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Update a turtle result
       tags:
-      - Game
+        - Game
   /matches/{matchID}/teams:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get teams by match ID
       operationId: get-teams-by-match-id
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Team list
           schema:
             items:
-              $ref: '#/definitions/models.Team'
+              $ref: "#/definitions/models.Team"
             type: array
         "400":
           description: Invalid input
@@ -2785,34 +2811,34 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get teams by match ID
       tags:
-      - Match
+        - Match
   /matches/{matchID}/teams/{teamID}/coaches:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get all coaches match with the given match ID and team ID
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Coaches match found
           schema:
             items:
-              $ref: '#/definitions/dto.CoachMatchResponseDto'
+              $ref: "#/definitions/dto.CoachMatchResponseDto"
             type: array
         "400":
           description: Invalid input
@@ -2827,33 +2853,33 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all coaches match
       tags:
-      - Match
+        - Match
     post:
       consumes:
-      - application/json
+        - application/json
       description: Add a coach match with the given match ID, team ID and coach ID
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Coach ID
-        in: body
-        name: coachID
-        required: true
-        schema:
-          type: integer
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Coach ID
+          in: body
+          name: coachID
+          required: true
+          schema:
+            type: integer
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Coach match added successfully
@@ -2872,34 +2898,35 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Add a coach match
       tags:
-      - Match
+        - Match
   /matches/{matchID}/teams/{teamID}/coaches/{coachID}:
     delete:
       consumes:
-      - application/json
-      description: Remove a coach match with the given match ID, team ID, and coach
+        - application/json
+      description:
+        Remove a coach match with the given match ID, team ID, and coach
         ID
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Coach ID
-        in: path
-        name: coachID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Coach ID
+          in: path
+          name: coachID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Coach match removed successfully
@@ -2918,39 +2945,40 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Remove a coach match
       tags:
-      - Match
+        - Match
     put:
       consumes:
-      - application/json
-      description: Update a coach in a match by specifying the match ID, team ID,
+        - application/json
+      description:
+        Update a coach in a match by specifying the match ID, team ID,
         and coach ID
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Coach ID
-        in: path
-        name: coachID
-        required: true
-        type: string
-      - description: Update coach match request
-        in: body
-        name: dto
-        required: true
-        schema:
-          $ref: '#/definitions/dto.UpdateCoachMatchRequestDto'
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Coach ID
+          in: path
+          name: coachID
+          required: true
+          type: string
+        - description: Update coach match request
+          in: body
+          name: dto
+          required: true
+          schema:
+            $ref: "#/definitions/dto.UpdateCoachMatchRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Coach match updated successfully
@@ -2969,34 +2997,34 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Update a coach in a match
       tags:
-      - Match
+        - Match
   /matches/{matchID}/teams/{teamID}/flex-picks:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get all flex picks of a match by team
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Flex pick list
           schema:
             items:
-              $ref: '#/definitions/dto.FlexPickResponseDto'
+              $ref: "#/definitions/dto.FlexPickResponseDto"
             type: array
         "400":
           description: Invalid input
@@ -3011,34 +3039,34 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all flex picks
       tags:
-      - Match
+        - Match
     post:
       consumes:
-      - application/json
+        - application/json
       description: Add flex pick to match
       operationId: add-flex-pick
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Flex pick
-        in: body
-        name: flexPick
-        required: true
-        schema:
-          $ref: '#/definitions/dto.FlexPickRequestDto'
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Flex pick
+          in: body
+          name: flexPick
+          required: true
+          schema:
+            $ref: "#/definitions/dto.FlexPickRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Flex pick added successfully
@@ -3057,34 +3085,34 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Add flex pick
       tags:
-      - Match
+        - Match
   /matches/{matchID}/teams/{teamID}/flex-picks/{flexPickID}:
     delete:
       consumes:
-      - application/json
+        - application/json
       description: Delete flex pick by ID
       operationId: delete-flex-pick
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Flex pick ID
-        in: path
-        name: flexPickID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Flex pick ID
+          in: path
+          name: flexPickID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Flex pick deleted successfully
@@ -3103,38 +3131,38 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Delete flex pick
       tags:
-      - Match
+        - Match
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get a flex pick by its ID
       operationId: get-flex-pick-by-id
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Flex pick ID
-        in: path
-        name: flexPickID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Flex pick ID
+          in: path
+          name: flexPickID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.FlexPickResponseDto'
+            $ref: "#/definitions/dto.FlexPickResponseDto"
         "400":
           description: Invalid input
           schema:
@@ -3144,37 +3172,37 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get flex pick by ID
       tags:
-      - Match
+        - Match
     put:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Flex Pick ID
-        in: path
-        name: flexPickID
-        required: true
-        type: string
-      - description: Flex pick
-        in: body
-        name: flexPick
-        required: true
-        schema:
-          $ref: '#/definitions/dto.FlexPickRequestDto'
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Flex Pick ID
+          in: path
+          name: flexPickID
+          required: true
+          type: string
+        - description: Flex pick
+          in: body
+          name: flexPick
+          required: true
+          schema:
+            $ref: "#/definitions/dto.FlexPickRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Flex pick updated successfully
@@ -3193,34 +3221,34 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       tags:
-      - Match
+        - Match
   /matches/{matchID}/teams/{teamID}/hero-bans:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get all hero bans of a match by team
       operationId: get-all-hero-bans
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Hero bans
           schema:
             items:
-              $ref: '#/definitions/dto.HeroBanResponseDto'
+              $ref: "#/definitions/dto.HeroBanResponseDto"
             type: array
         "400":
           description: Invalid input
@@ -3235,34 +3263,34 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all hero bans
       tags:
-      - Match
+        - Match
     post:
       consumes:
-      - application/json
+        - application/json
       description: Add hero ban to match
       operationId: add-hero-ban
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Hero ban
-        in: body
-        name: heroBan
-        required: true
-        schema:
-          $ref: '#/definitions/dto.HeroBanRequestDto'
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Hero ban
+          in: body
+          name: heroBan
+          required: true
+          schema:
+            $ref: "#/definitions/dto.HeroBanRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Hero ban added successfully
@@ -3281,36 +3309,37 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Add hero ban
       tags:
-      - Match
+        - Match
   /matches/{matchID}/teams/{teamID}/hero-bans-first-phase-more-than-zero:
     get:
       consumes:
-      - application/json
-      description: Get all hero bans with first phase more than zero of a match by
+        - application/json
+      description:
+        Get all hero bans with first phase more than zero of a match by
         team
       operationId: get-all-hero-bans-with-first-phase-more-than-zero
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/dto.HeroBanResponseDto'
+              $ref: "#/definitions/dto.HeroBanResponseDto"
             type: array
         "400":
           description: Invalid input
@@ -3321,34 +3350,34 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all hero bans with first phase more than zero
       tags:
-      - Match
+        - Match
   /matches/{matchID}/teams/{teamID}/hero-bans/{HeroBanID}:
     delete:
       consumes:
-      - application/json
+        - application/json
       description: Remove hero ban from match
       operationId: remove-hero-ban
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: HeroBan ID
-        in: path
-        name: HeroBanID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: HeroBan ID
+          in: path
+          name: HeroBanID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "400":
           description: Invalid input
@@ -3363,39 +3392,39 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Remove hero ban
       tags:
-      - Match
+        - Match
     put:
       consumes:
-      - application/json
+        - application/json
       description: Update hero ban in match
       operationId: update-hero-ban
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Hero ban ID
-        in: path
-        name: HeroBanID
-        required: true
-        type: string
-      - description: Hero ban
-        in: body
-        name: heroBan
-        required: true
-        schema:
-          $ref: '#/definitions/dto.HeroBanRequestDto'
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Hero ban ID
+          in: path
+          name: HeroBanID
+          required: true
+          type: string
+        - description: Hero ban
+          in: body
+          name: heroBan
+          required: true
+          schema:
+            $ref: "#/definitions/dto.HeroBanRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Hero ban updated successfully
@@ -3414,36 +3443,37 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Update hero ban
       tags:
-      - Match
+        - Match
   /matches/{matchID}/teams/{teamID}/hero-picks:
     get:
       consumes:
-      - application/json
-      description: Get all hero picks in a match with the given team ID, including
+        - application/json
+      description:
+        Get all hero picks in a match with the given team ID, including
         nested game picks
       operationId: get-all-hero-picks
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/dto.HeroPickResponseDto'
+              $ref: "#/definitions/dto.HeroPickResponseDto"
             type: array
         "400":
           description: Invalid input
@@ -3454,34 +3484,34 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all hero picks
       tags:
-      - Match
+        - Match
     post:
       consumes:
-      - application/json
+        - application/json
       description: Add hero pick to match
       operationId: add-hero-pick
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Hero pick
-        in: body
-        name: heroPick
-        required: true
-        schema:
-          $ref: '#/definitions/dto.HeroPickRequestDto'
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Hero pick
+          in: body
+          name: heroPick
+          required: true
+          schema:
+            $ref: "#/definitions/dto.HeroPickRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Hero pick added successfully
@@ -3500,36 +3530,37 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Add hero pick
       tags:
-      - Match
+        - Match
   /matches/{matchID}/teams/{teamID}/hero-picks-first-phase-more-than-zero:
     get:
       consumes:
-      - application/json
-      description: Get all hero picks with first phase more than zero of a match by
+        - application/json
+      description:
+        Get all hero picks with first phase more than zero of a match by
         team
       operationId: get-all-hero-picks-with-first-phase-more-than-zero
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/dto.HeroPickResponseDto'
+              $ref: "#/definitions/dto.HeroPickResponseDto"
             type: array
         "400":
           description: Invalid input
@@ -3540,34 +3571,34 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all hero picks with first phase more than zero
       tags:
-      - Match
+        - Match
   /matches/{matchID}/teams/{teamID}/hero-picks/{heroPickID}:
     delete:
       consumes:
-      - application/json
+        - application/json
       description: Remove hero pick from match
       operationId: remove-hero-pick
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Hero pick ID
-        in: path
-        name: heroPickID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Hero pick ID
+          in: path
+          name: heroPickID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "400":
           description: Invalid input
@@ -3582,38 +3613,38 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Remove hero pick
       tags:
-      - Match
+        - Match
     put:
       consumes:
-      - application/json
+        - application/json
       description: Update hero pick in match
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Hero pick ID
-        in: path
-        name: heroPickID
-        required: true
-        type: string
-      - description: Hero pick
-        in: body
-        name: heroPick
-        required: true
-        schema:
-          $ref: '#/definitions/dto.HeroPickRequestDto'
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Hero pick ID
+          in: path
+          name: heroPickID
+          required: true
+          type: string
+        - description: Hero pick
+          in: body
+          name: heroPick
+          required: true
+          schema:
+            $ref: "#/definitions/dto.HeroPickRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Hero pick updated successfully
@@ -3632,35 +3663,36 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Update hero pick
       tags:
-      - Match
+        - Match
   /matches/{matchID}/teams/{teamID}/players:
     get:
       consumes:
-      - application/json
-      description: Get all players for a match and team with the given match ID and
+        - application/json
+      description:
+        Get all players for a match and team with the given match ID and
         team ID
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/dto.PlayerMatchResponseDto'
+              $ref: "#/definitions/dto.PlayerMatchResponseDto"
             type: array
         "400":
           description: Invalid input
@@ -3675,32 +3707,33 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all players for a match and team
       tags:
-      - Match
+        - Match
     post:
-      description: Add a player to a match by specifying the match ID, team ID, and
+      description:
+        Add a player to a match by specifying the match ID, team ID, and
         player ID
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Player match request
-        in: body
-        name: dto
-        required: true
-        schema:
-          $ref: '#/definitions/dto.PlayerMatchRequestDto'
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Player match request
+          in: body
+          name: dto
+          required: true
+          schema:
+            $ref: "#/definitions/dto.PlayerMatchRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Player match added successfully
@@ -3719,34 +3752,35 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Add a player to a match
       tags:
-      - Match
+        - Match
   /matches/{matchID}/teams/{teamID}/players/{playerID}:
     delete:
       consumes:
-      - application/json
-      description: Remove a player match with the given match ID, team ID and player
+        - application/json
+      description:
+        Remove a player match with the given match ID, team ID and player
         ID
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Player ID
-        in: path
-        name: playerID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Player ID
+          in: path
+          name: playerID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Player match removed successfully
@@ -3765,39 +3799,40 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Remove a player match
       tags:
-      - Match
+        - Match
     put:
       consumes:
-      - application/json
-      description: Update a player match with the given match ID, team ID, and player
+        - application/json
+      description:
+        Update a player match with the given match ID, team ID, and player
         ID
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Player ID
-        in: path
-        name: playerID
-        required: true
-        type: string
-      - description: Player match
-        in: body
-        name: playerMatch
-        required: true
-        schema:
-          $ref: '#/definitions/dto.UpdatePlayerMatchRequestDto'
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Player ID
+          in: path
+          name: playerID
+          required: true
+          type: string
+        - description: Player match
+          in: body
+          name: playerMatch
+          required: true
+          schema:
+            $ref: "#/definitions/dto.UpdatePlayerMatchRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Player match updated successfully
@@ -3816,35 +3851,35 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Update a player match
       tags:
-      - Match
+        - Match
   /matches/{matchID}/teams/{teamID}/priority-bans:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get all priority bans in a match with specific team
       operationId: get-all-priority-bans
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Priority bans
           schema:
             items:
-              $ref: '#/definitions/dto.PriorityBanResponseDto'
+              $ref: "#/definitions/dto.PriorityBanResponseDto"
             type: array
         "400":
           description: Invalid input
@@ -3859,34 +3894,34 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all priority bans
       tags:
-      - Match
+        - Match
     post:
       consumes:
-      - application/json
+        - application/json
       description: Add priority ban to match
       operationId: add-priority-ban
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Priority ban
-        in: body
-        name: priorityBan
-        required: true
-        schema:
-          $ref: '#/definitions/dto.PriorityBanRequestDto'
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Priority ban
+          in: body
+          name: priorityBan
+          required: true
+          schema:
+            $ref: "#/definitions/dto.PriorityBanRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Priority ban added successfully
@@ -3905,34 +3940,34 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Add priority ban
       tags:
-      - Match
+        - Match
   /matches/{matchID}/teams/{teamID}/priority-bans/{priorityBanID}:
     delete:
       consumes:
-      - application/json
+        - application/json
       description: Delete priority ban in match
       operationId: delete-priority-ban
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Priority Ban ID
-        in: path
-        name: priorityBanID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Priority Ban ID
+          in: path
+          name: priorityBanID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Priority ban deleted successfully
@@ -3951,38 +3986,38 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Delete priority ban
       tags:
-      - Match
+        - Match
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get priority ban by ID in a match
       operationId: get-priority-ban-by-id
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Priority Ban ID
-        in: path
-        name: priorityBanID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Priority Ban ID
+          in: path
+          name: priorityBanID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Priority Ban
           schema:
-            $ref: '#/definitions/dto.PriorityBanResponseDto'
+            $ref: "#/definitions/dto.PriorityBanResponseDto"
         "400":
           description: Invalid input
           schema:
@@ -3996,39 +4031,39 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get priority ban by ID
       tags:
-      - Match
+        - Match
     put:
       consumes:
-      - application/json
+        - application/json
       description: Update priority ban in match
       operationId: update-priority-ban
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Priority Ban ID
-        in: path
-        name: priorityBanID
-        required: true
-        type: string
-      - description: Priority Ban
-        in: body
-        name: priorityBan
-        required: true
-        schema:
-          $ref: '#/definitions/dto.PriorityBanRequestDto'
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Priority Ban ID
+          in: path
+          name: priorityBanID
+          required: true
+          type: string
+        - description: Priority Ban
+          in: body
+          name: priorityBan
+          required: true
+          schema:
+            $ref: "#/definitions/dto.PriorityBanRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Priority ban updated successfully
@@ -4047,35 +4082,35 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Update priority ban
       tags:
-      - Match
+        - Match
   /matches/{matchID}/teams/{teamID}/priority-picks:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get all priority picks of a match by team
       operationId: get-all-priority-picks
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Priority pick list
           schema:
             items:
-              $ref: '#/definitions/dto.PriorityPickResponseDto'
+              $ref: "#/definitions/dto.PriorityPickResponseDto"
             type: array
         "400":
           description: Invalid input
@@ -4090,34 +4125,34 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all priority picks
       tags:
-      - Match
+        - Match
     post:
       consumes:
-      - application/json
+        - application/json
       description: Add priority pick to match
       operationId: add-priority-pick
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Priority pick
-        in: body
-        name: priorityPick
-        required: true
-        schema:
-          $ref: '#/definitions/dto.PriorityPickRequestDto'
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Priority pick
+          in: body
+          name: priorityPick
+          required: true
+          schema:
+            $ref: "#/definitions/dto.PriorityPickRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Priority pick added successfully
@@ -4136,34 +4171,34 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Add priority pick
       tags:
-      - Match
+        - Match
   /matches/{matchID}/teams/{teamID}/priority-picks/{priorityPickID}:
     delete:
       consumes:
-      - application/json
+        - application/json
       description: Delete a priority pick by its ID
       operationId: delete-priority-pick
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Priority Pick ID
-        in: path
-        name: priorityPickID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Priority Pick ID
+          in: path
+          name: priorityPickID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Priority pick deleted successfully
@@ -4182,38 +4217,38 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Delete priority pick
       tags:
-      - Match
+        - Match
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get a priority pick by its ID
       operationId: get-priority-pick-by-id
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Priority pick ID
-        in: path
-        name: priorityPickID
-        required: true
-        type: string
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Priority pick ID
+          in: path
+          name: priorityPickID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.PriorityPickResponseDto'
+            $ref: "#/definitions/dto.PriorityPickResponseDto"
         "400":
           description: Invalid input
           schema:
@@ -4223,38 +4258,38 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get priority pick by ID
       tags:
-      - Match
+        - Match
     put:
       consumes:
-      - application/json
+        - application/json
       description: Update priority pick in match
       parameters:
-      - description: Match ID
-        in: path
-        name: matchID
-        required: true
-        type: string
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Priority pick ID
-        in: path
-        name: priorityPickID
-        required: true
-        type: string
-      - description: Priority pick
-        in: body
-        name: priorityPick
-        required: true
-        schema:
-          $ref: '#/definitions/dto.PriorityPickRequestDto'
+        - description: Match ID
+          in: path
+          name: matchID
+          required: true
+          type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Priority pick ID
+          in: path
+          name: priorityPickID
+          required: true
+          type: string
+        - description: Priority pick
+          in: body
+          name: priorityPick
+          required: true
+          schema:
+            $ref: "#/definitions/dto.PriorityPickRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Priority pick updated successfully
@@ -4273,35 +4308,36 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Update priority pick
       tags:
-      - Match
+        - Match
   /matches/{teamID}/games/{gameID}/turtle-results:
     get:
       consumes:
-      - application/json
-      description: Get all TurtleResults for a game with the given game ID and match
+        - application/json
+      description:
+        Get all TurtleResults for a game with the given game ID and match
         ID
       parameters:
-      - description: Game ID
-        in: path
-        name: gameID
-        required: true
-        type: string
-      - description: Match ID
-        in: path
-        name: teamID
-        required: true
-        type: string
+        - description: Game ID
+          in: path
+          name: gameID
+          required: true
+          type: string
+        - description: Match ID
+          in: path
+          name: teamID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/dto.TurtleResultResponseDto'
+              $ref: "#/definitions/dto.TurtleResultResponseDto"
             type: array
         "404":
           description: Match or game not found
@@ -4312,40 +4348,40 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all TurtleResults
       tags:
-      - Game
+        - Game
   /me:
     get:
       description: Get user data from JWT token
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: User data
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: "#/definitions/models.User"
         "500":
           description: Internal server error
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get user data
       tags:
-      - Auth
+        - Auth
   /players/{playerID}:
     delete:
       description: Delete a player in a team and all its related data
       parameters:
-      - description: Player ID
-        in: path
-        name: playerID
-        required: true
-        type: string
+        - description: Player ID
+          in: path
+          name: playerID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Player deleted successfully
@@ -4364,27 +4400,27 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Delete a player in a team
       tags:
-      - Team
+        - Team
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get a player by ID with the given player ID
       parameters:
-      - description: Player ID
-        in: path
-        name: playerID
-        required: true
-        type: string
+        - description: Player ID
+          in: path
+          name: playerID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Player'
+            $ref: "#/definitions/models.Player"
         "400":
           description: Player ID is required
           schema:
@@ -4398,35 +4434,36 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get a player by ID
       tags:
-      - Team
+        - Team
   /players/{playerID}/tournaments/{tournamentID}/player-statistics:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get player statistics with the given player ID and tournament ID
       parameters:
-      - description: Player ID
-        in: path
-        name: playerID
-        required: true
-        type: string
-      - description: Tournament ID
-        in: path
-        name: tournamentID
-        required: true
-        type: string
+        - description: Player ID
+          in: path
+          name: playerID
+          required: true
+          type: string
+        - description: Tournament ID
+          in: path
+          name: tournamentID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/controllers.PlayerStats'
+            $ref: "#/definitions/controllers.PlayerStats"
         "400":
-          description: Player ID and Tournament ID are required" or "Invalid Player
+          description:
+            Player ID and Tournament ID are required" or "Invalid Player
             ID format" or "Invalid Tournament ID format
           schema:
             type: string
@@ -4435,36 +4472,37 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get player statistics
       tags:
-      - Team
+        - Team
   /players/{teamID}:
     put:
       description: Update a player in a team and save its image
       parameters:
-      - description: Player ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Player name
-        in: formData
-        name: name
-        type: string
-      - description: Player image
-        in: formData
-        name: image
-        type: file
+        - description: Player ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Player name
+          in: formData
+          name: name
+          type: string
+        - description: Player image
+          in: formData
+          name: image
+          type: file
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Player'
+            $ref: "#/definitions/models.Player"
         "400":
-          description: Player ID is required" or "File size must not exceed 500 KB"
+          description:
+            Player ID is required" or "File size must not exceed 1.5 MB"
             or "Invalid file type
           schema:
             type: string
@@ -4473,51 +4511,51 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Update a player in a team
       tags:
-      - Team
+        - Team
   /teams:
     get:
       description: Get all teams
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Team'
+              $ref: "#/definitions/models.Team"
             type: array
         "500":
           description: Internal server error
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all teams
       tags:
-      - Team
+        - Team
     post:
       description: Create a team and save its logo
       parameters:
-      - description: Team name
-        in: formData
-        name: name
-        required: true
-        type: string
-      - description: Team logo
-        in: formData
-        name: image
-        required: true
-        type: file
+        - description: Team name
+          in: formData
+          name: name
+          required: true
+          type: string
+        - description: Team logo
+          in: formData
+          name: image
+          required: true
+          type: file
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Team'
+            $ref: "#/definitions/models.Team"
         "400":
           description: Bad request
           schema:
@@ -4527,19 +4565,19 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Create a team
       tags:
-      - Team
+        - Team
   /teams/{teamID}:
     delete:
       description: Delete a team and all related data
       parameters:
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
       responses:
         "200":
           description: Team deleted successfully
@@ -4562,25 +4600,25 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Delete a team
       tags:
-      - Team
+        - Team
     get:
       description: Get a team by ID
       parameters:
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Team'
+            $ref: "#/definitions/models.Team"
         "400":
           description: Team ID is required
           schema:
@@ -4590,33 +4628,33 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get a team by ID
       tags:
-      - Team
+        - Team
     put:
       description: Update a team and save its logo
       parameters:
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Team name
-        in: formData
-        name: name
-        type: string
-      - description: Team logo
-        in: formData
-        name: image
-        type: file
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Team name
+          in: formData
+          name: name
+          type: string
+        - description: Team logo
+          in: formData
+          name: image
+          type: file
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Team'
+            $ref: "#/definitions/models.Team"
         "400":
           description: Bad request
           schema:
@@ -4626,29 +4664,29 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Update a team
       tags:
-      - Team
+        - Team
   /teams/{teamID}/coaches:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get all coaches in a team with the given team ID
       parameters:
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Coach'
+              $ref: "#/definitions/models.Coach"
             type: array
         "400":
           description: Team ID is required
@@ -4663,34 +4701,34 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all coaches in a team
       tags:
-      - Team
+        - Team
     post:
       description: Create a coach in a team and save its image
       parameters:
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Coach name
-        in: formData
-        name: name
-        required: true
-        type: string
-      - description: Coach image
-        in: formData
-        name: image
-        type: file
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Coach name
+          in: formData
+          name: name
+          required: true
+          type: string
+        - description: Coach image
+          in: formData
+          name: image
+          type: file
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Coach'
+            $ref: "#/definitions/models.Coach"
         "400":
           description: Bad request
           schema:
@@ -4708,29 +4746,29 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Create a coach in a team
       tags:
-      - Team
+        - Team
   /teams/{teamID}/players:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get all players in a team with the given team ID
       parameters:
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Player'
+              $ref: "#/definitions/models.Player"
             type: array
         "400":
           description: Team ID is required
@@ -4745,36 +4783,37 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all players in a team
       tags:
-      - Team
+        - Team
     post:
       description: Create a player in a team by ID and save its image
       parameters:
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Player name
-        in: formData
-        name: name
-        required: true
-        type: string
-      - description: Player image
-        in: formData
-        name: image
-        type: file
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Player name
+          in: formData
+          name: name
+          required: true
+          type: string
+        - description: Player image
+          in: formData
+          name: image
+          type: file
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Player'
+            $ref: "#/definitions/models.Player"
         "400":
-          description: Team ID is required" or "Name and Role are required" or "File
+          description:
+            Team ID is required" or "Name and Role are required" or "File
             size must not exceed 500 KB" or "Invalid file type
           schema:
             type: string
@@ -4783,47 +4822,47 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Create a player in a team
       tags:
-      - Team
+        - Team
   /tournaments:
     get:
       description: Get all tournaments
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Tournament'
+              $ref: "#/definitions/models.Tournament"
             type: array
         "500":
           description: Internal server error
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all tournaments
       tags:
-      - Tournament
+        - Tournament
     post:
       description: Create a new tournament with the given name
       parameters:
-      - description: Tournament request
-        in: body
-        name: dto
-        required: true
-        schema:
-          $ref: '#/definitions/dto.TournamentRequestDto'
+        - description: Tournament request
+          in: body
+          name: dto
+          required: true
+          schema:
+            $ref: "#/definitions/dto.TournamentRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Tournament'
+            $ref: "#/definitions/models.Tournament"
         "400":
           description: Invalid input
           schema:
@@ -4833,21 +4872,21 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Create a new tournament
       tags:
-      - Tournament
+        - Tournament
   /tournaments/{tournamentID}:
     delete:
       description: Delete a tournament with the given tournament ID
       parameters:
-      - description: Tournament ID
-        in: path
-        name: tournamentID
-        required: true
-        type: string
+        - description: Tournament ID
+          in: path
+          name: tournamentID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Tournament deleted successfully
@@ -4866,25 +4905,25 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Delete a tournament
       tags:
-      - Tournament
+        - Tournament
     get:
       description: Get a tournament by ID
       parameters:
-      - description: Tournament ID
-        in: path
-        name: tournamentID
-        required: true
-        type: string
+        - description: Tournament ID
+          in: path
+          name: tournamentID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Tournament'
+            $ref: "#/definitions/models.Tournament"
         "400":
           description: Invalid input
           schema:
@@ -4894,31 +4933,31 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get a tournament by ID
       tags:
-      - Tournament
+        - Tournament
     put:
       description: Update a tournament with the given name
       parameters:
-      - description: Tournament ID
-        in: path
-        name: tournamentID
-        required: true
-        type: string
-      - description: Tournament request
-        in: body
-        name: dto
-        required: true
-        schema:
-          $ref: '#/definitions/dto.TournamentRequestDto'
+        - description: Tournament ID
+          in: path
+          name: tournamentID
+          required: true
+          type: string
+        - description: Tournament request
+          in: body
+          name: dto
+          required: true
+          schema:
+            $ref: "#/definitions/dto.TournamentRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Tournament'
+            $ref: "#/definitions/models.Tournament"
         "400":
           description: Invalid input
           schema:
@@ -4932,33 +4971,33 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Update a tournament
       tags:
-      - Tournament
+        - Tournament
   /tournaments/{tournamentID}/coachs/{coachID}/coach-statistics:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get coach statistics with the given coach ID and tournament ID
       parameters:
-      - description: Coach ID
-        in: path
-        name: coachID
-        required: true
-        type: string
-      - description: Tournament ID
-        in: path
-        name: tournamentID
-        required: true
-        type: string
+        - description: Coach ID
+          in: path
+          name: coachID
+          required: true
+          type: string
+        - description: Tournament ID
+          in: path
+          name: tournamentID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/controllers.CoachStats'
+            $ref: "#/definitions/controllers.CoachStats"
         "400":
           description: Coach ID and Tournament ID are required
           schema:
@@ -4972,27 +5011,27 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get coach statistics
       tags:
-      - Team
+        - Team
   /tournaments/{tournamentID}/matches:
     get:
       description: Get all matches for a tournament with the given tournament ID
       parameters:
-      - description: Tournament ID
-        in: path
-        name: tournamentID
-        required: true
-        type: string
+        - description: Tournament ID
+          in: path
+          name: tournamentID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/dto.MatchResponseDto'
+              $ref: "#/definitions/dto.MatchResponseDto"
             type: array
         "400":
           description: Invalid input
@@ -5007,59 +5046,59 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get all matches for a tournament
       tags:
-      - Match
+        - Match
     post:
       description: Create a match for a tournament and save its data
       parameters:
-      - description: Tournament ID
-        in: path
-        name: tournamentID
-        required: true
-        type: string
-      - description: Match request
-        in: body
-        name: dto
-        required: true
-        schema:
-          $ref: '#/definitions/dto.MatchRequestDto'
+        - description: Tournament ID
+          in: path
+          name: tournamentID
+          required: true
+          type: string
+        - description: Match request
+          in: body
+          name: dto
+          required: true
+          schema:
+            $ref: "#/definitions/dto.MatchRequestDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Match'
+            $ref: "#/definitions/models.Match"
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Create a match for a tournament
       tags:
-      - Match
+        - Match
   /tournaments/{tournamentID}/teams/{teamID}/team-statistics:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get team statistics with the given team ID
       parameters:
-      - description: Team ID
-        in: path
-        name: teamID
-        required: true
-        type: string
-      - description: Tournament ID
-        in: path
-        name: tournamentID
-        required: true
-        type: string
+        - description: Team ID
+          in: path
+          name: teamID
+          required: true
+          type: string
+        - description: Tournament ID
+          in: path
+          name: tournamentID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/controllers.TeamStatisticsDto'
+            $ref: "#/definitions/controllers.TeamStatisticsDto"
         "400":
           description: Team ID is required" or "Invalid Team ID format
           schema:
@@ -5073,29 +5112,29 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Get team statistics
       tags:
-      - Team
+        - Team
   /user/update:
     put:
       consumes:
-      - application/json
+        - application/json
       description: Update username and password of the authenticated user
       parameters:
-      - description: Update User
-        in: body
-        name: update
-        required: true
-        schema:
-          $ref: '#/definitions/dto.UpdateUserDto'
+        - description: Update User
+          in: body
+          name: update
+          required: true
+          schema:
+            $ref: "#/definitions/dto.UpdateUserDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Updated user data
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: "#/definitions/models.User"
         "400":
           description: Invalid input
           schema:
@@ -5113,10 +5152,10 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+        - Bearer: []
       summary: Update user
       tags:
-      - Auth
+        - Auth
 securityDefinitions:
   Bearer:
     in: header

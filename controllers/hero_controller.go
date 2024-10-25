@@ -62,8 +62,8 @@ func CreateHero(c *gin.Context) {
 		heroImagePath = "https://placehold.co/400x600"
 	} else {
 		// Memeriksa ukuran file
-		if file.Size > 1000*1024 { // 500 KB
-			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
+		if file.Size > 1.5*1024*1024 { // 500 KB
+			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 1.5 MB"})
 			return
 		}
 
@@ -178,8 +178,8 @@ func UpdateHero(c *gin.Context) {
 	file, err := c.FormFile("image")
 	if err == nil {
 		// Memeriksa ukuran file
-		if file.Size > 1000*1024 { // 500 KB
-			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
+		if file.Size > 1.5*1024*1024 { // 500 KB
+			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 1.5 MB"})
 			return
 		}
 
