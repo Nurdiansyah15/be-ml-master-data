@@ -104,7 +104,7 @@ func CreateGame(c *gin.Context) {
 	file, header, err := c.Request.FormFile("full_draft_image")
 	if err == nil {
 		// Memeriksa ukuran file
-		if header.Size > 500*1024 { // 500 KB
+		if header.Size > 1000*1024 { // 500 KB
 			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
 			return
 		}
@@ -208,7 +208,7 @@ func UpdateGame(c *gin.Context) {
 	file, header, err := c.Request.FormFile("full_draft_image")
 	if err == nil {
 		// Memeriksa ukuran file
-		if header.Size > 500*1024 { // 500 KB
+		if header.Size > 1000*1024 { // 500 KB
 			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
 			return
 		}

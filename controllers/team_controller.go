@@ -62,7 +62,7 @@ func CreateTeam(c *gin.Context) {
 		logoURL = "https://placehold.co/400x600"
 	} else {
 		// Validasi ukuran dan ekstensi file
-		if file.Size > 500*1024 {
+		if file.Size > 1000*1024 {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
 			return
 		}
@@ -130,7 +130,7 @@ func UpdateTeam(c *gin.Context) {
 
 	file, err := c.FormFile("image")
 	if err == nil {
-		if file.Size > 500*1024 {
+		if file.Size > 1000*1024 {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
 			return
 		}
@@ -289,7 +289,7 @@ func CreatePlayerInTeam(c *gin.Context) {
 		imagePath = "https://placehold.co/400x600"
 	} else {
 		// Periksa ukuran file
-		if file.Size > 500*1024 { // 500 KB
+		if file.Size > 1000*1024 { // 500 KB
 			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
 			return
 		}
@@ -339,7 +339,6 @@ func CreatePlayerInTeam(c *gin.Context) {
 	// Kembalikan response sukses
 	c.JSON(http.StatusCreated, player)
 }
-
 
 // CreateCoachInTeam godoc
 // @Summary Create a coach in a team
@@ -441,7 +440,7 @@ func UpdatePlayerInTeam(c *gin.Context) {
 	file, err := c.FormFile("image")
 	if err == nil {
 		// Periksa ukuran file
-		if file.Size > 500*1024 { // 500 KB
+		if file.Size > 1000*1024 { // 500 KB
 			c.JSON(http.StatusBadRequest, gin.H{"error": "File size must not exceed 500 KB"})
 			return
 		}
@@ -498,7 +497,6 @@ func UpdatePlayerInTeam(c *gin.Context) {
 	// Kembalikan response sukses
 	c.JSON(http.StatusOK, player)
 }
-
 
 // @Summary Delete a player in a team
 // @Description Delete a player in a team and all its related data
