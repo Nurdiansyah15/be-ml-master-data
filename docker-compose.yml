@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  app:
+    build: .
+    container_name: golang_app
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"  # Sesuaikan port app kamu
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:
